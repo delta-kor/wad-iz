@@ -1,7 +1,8 @@
 import React from 'react';
+import Cover from './components/Cover';
 
 function App() {
-  return <h1>hello world!</h1>;
+  return <Cover></Cover>;
 }
 
 export default App;
