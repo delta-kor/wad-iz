@@ -5,6 +5,7 @@ import TwitterIcon from '../icon/twitter.svg';
 import YoutubeIcon from '../icon/youtube.svg';
 import { Color } from '../styles/color';
 import { Shadow } from '../styles/shadow';
+import { Transform } from '../utils/transform';
 
 const Layout = styled.div`
   position: fixed;
@@ -67,7 +68,7 @@ interface Props {
   amount: number;
 }
 
-export default class Cover extends Component<any, any> {
+export default class Cover extends Component<Props, any> {
   render() {
     return (
       <Layout>
@@ -76,7 +77,7 @@ export default class Cover extends Component<any, any> {
           <Icon src={TwitterIcon} />
           <Icon src={YoutubeIcon} />
         </IconMenu>
-        <Amount>3,237,563,210 ₩</Amount>
+        <Amount>{Transform.toCurrency(this.props.amount)}</Amount>
         <Description>32억 3756만 3210 원</Description>
       </Layout>
     );

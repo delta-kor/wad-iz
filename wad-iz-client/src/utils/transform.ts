@@ -34,4 +34,12 @@ export class Transform {
     }
     return result;
   }
+
+  public static toCurrency(number: number): string {
+    return Transform.addComma(number) + ' ₩';
+  }
+
+  public static toCurrencyLocaleNumber(number: number): string {
+    return Transform.toLocaleNumber(number) + ' 원';
+  }
 }
