@@ -1,7 +1,50 @@
+@font-face {
+  font-family: Product Sans;
+  font-weight: 400;
+  src: url(http://lt2.kr/assets/font/product_sans_regular.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/product_sans_regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: Product Sans;
+  font-weight: 700;
+  src: url(http://lt2.kr/assets/font/product_sans_bold.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/product_sans_bold.woff) format('woff');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-weight: 400;
+  src: url(http://lt2.kr/assets/font/noto_regular.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/noto_regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-weight: 400;
+  src: url(http://lt2.kr/assets/font/noto_regular.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/noto_regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-weight: 500;
+  src: url(http://lt2.kr/assets/font/noto_medium.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/noto_medium.woff) format('woff');
+}
+
+@font-face {
+  font-family: Noto Sans KR;
+  font-weight: 700;
+  src: url(http://lt2.kr/assets/font/noto_bold.woff2) format('woff2'),
+    url(http://lt2.kr/assets/font/noto_bold.woff) format('woff');
+}
+
 * {
   margin: 0;
   padding: 0;
   outline: none;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  font-family: Product Sans, Noto Sans KR;
 }
