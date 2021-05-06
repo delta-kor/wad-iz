@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Cover from './components/Cover';
 
-function App() {
-  return <Cover amount={3237563210}></Cover>;
+export default class App extends Component<any, any> {
+  render() {
+    return (
+      <div>
+        <Cover amount={3237563210}></Cover>
+      </div>
+    );
+  }
 }
-
-export default App;

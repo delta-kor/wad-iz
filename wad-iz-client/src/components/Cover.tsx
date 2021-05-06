@@ -8,8 +8,8 @@ import { Shadow } from '../styles/shadow';
 import { Transform } from '../utils/transform';
 
 const Layout = styled.div`
-  position: fixed;
-  top: 0;
+  position: sticky;
+  top: -240px;
   left: 0;
   right: 0;
   height: 358px;
@@ -40,7 +40,6 @@ const Amount = styled.div`
   left: 0;
   right: 0;
   top: 138px;
-  font-family: Product Sans;
   font-style: normal;
   font-weight: bold;
   font-size: 36px;
@@ -55,7 +54,6 @@ const Description = styled.div`
   left: 36px;
   right: 36px;
   top: 190px;
-  font-family: Noto Sans KR;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
