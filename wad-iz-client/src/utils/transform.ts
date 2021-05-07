@@ -1,4 +1,8 @@
 export class Transform {
+  public static round(number: number, to: number): string {
+    return parseFloat(number.toString()).toFixed(to);
+  }
+
   public static reverse(string: string): string {
     return string.split('').reverse().join('');
   }
