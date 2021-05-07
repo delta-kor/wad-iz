@@ -9,7 +9,7 @@ import { Transform } from '../utils/transform';
 
 const Layout = styled.div`
   position: sticky;
-  top: -240px;
+  top: -294px;
   left: 0;
   right: 0;
   height: 358px;
