@@ -76,7 +76,7 @@ export default class Cover extends Component<Props, any> {
           <Icon src={YoutubeIcon} />
         </IconMenu>
         <Amount>{Transform.toCurrency(this.props.amount)}</Amount>
-        <Description>32억 3756만 3210 원</Description>
+        <Description>{Transform.toCurrencyLocaleNumber(this.props.amount)}</Description>
       </Layout>
     );
   }
