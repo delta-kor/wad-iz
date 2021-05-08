@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Navigator from './components/bar/Navigator';
 import DayCard from './components/card/Day';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
@@ -28,6 +29,7 @@ export default class App extends Component<any, any> {
             kwizSupporter={18482}
           />
         </CardStack>
+        <Navigator />
       </div>
     );
   }
