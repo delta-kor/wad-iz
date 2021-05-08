@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
@@ -66,6 +67,97 @@ const GraphLabel = styled.div`
   color: ${Color.BLUE};
 `;
 
+const GraphWrapper = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  display: flex;
+`;
+
+const KwizGraph = styled(motion.div)`
+  display: inline-block;
+  margin: 0 6px 0 0;
+  height: 8px;
+  background: ${Color.BLUE};
+  box-shadow: ${Shadow.BLUE};
+  border-radius: 100px;
+`;
+
+const EmptyGraph = styled(motion.div)`
+  display: inline-block;
+  height: 8px;
+  background: #f6f4fa;
+  border-radius: 100px;
+  flex-grow: 1;
+`;
+
+const LabelWrapper = styled.div`
+  position: absolute;
+  display: grid;
+  top: 172px;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  row-gap: 6px;
+`;
+
+const LabelItem = styled.div`
+  position: relative;
+  height: 14px;
+`;
+
+const LabelIconKwiz = styled.div`
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 2px;
+  left: calc(50% - 10px / 2 - 27px);
+  background: ${Color.BLUE};
+  box-shadow: ${Shadow.BLUE};
+  border-radius: 10px;
+`;
+
+const LabelTitleKwiz = styled.div`
+  position: absolute;
+  width: 42px;
+  height: 14px;
+  left: calc(50% - 42px / 2 + 12px);
+  top: 0;
+  font-style: normal;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+  line-height: 14px;
+  color: ${Color.BLUE};
+`;
+
+const LabelIconIwiz = styled.div`
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 2px;
+  left: calc(50% - 10px / 2 - 27px);
+  background: ${Color.RED};
+  box-shadow: ${Shadow.RED};
+  border-radius: 10px;
+`;
+
+const LabelTitleIwiz = styled.div`
+  position: absolute;
+  width: 42px;
+  height: 14px;
+  left: calc(50% - 42px / 2 + 12px);
+  top: 0;
+  font-style: normal;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+  line-height: 14px;
+  color: ${Color.RED};
+`;
+
 interface Props {
   totalAmount: number;
   totalSupporter: number;
@@ -75,23 +167,45 @@ interface Props {
 
 export default class SurveyCard extends Component<Props, any> {
   render() {
-    const kwizAmountPercentage =
-      Transform.round((this.props.kwizAmount / this.props.totalAmount) * 100, 2) + ' %';
-    const kwizSupporterPercentage =
-      Transform.round((this.props.kwizSupporter / this.props.totalSupporter) * 100, 2) + ' %';
+    const kwizAmountPercentage = (this.props.kwizAmount / this.props.totalAmount) * 100;
+    const kwizSupporterPercentage = (this.props.kwizSupporter / this.props.totalSupporter) * 100;
     return (
       <Layout>
         <Title>수요조사</Title>
         <GraphBlockWrapper>
           <GraphBlock>
             <GraphTitle>참여 금액</GraphTitle>
-            <GraphLabel>{kwizAmountPercentage}</GraphLabel>
+            <GraphLabel>{Transform.round(kwizAmountPercentage, 2)} %</GraphLabel>
+            <GraphWrapper>
+              <KwizGraph
+                animate={{ width: kwizAmountPercentage + '%' }}
+                transition={{ type: 'spring', damping: 30 }}
+              />
+              <EmptyGraph />
+            </GraphWrapper>
           </GraphBlock>
           <GraphBlock>
             <GraphTitle>참여 인원</GraphTitle>
-            <GraphLabel>{kwizSupporterPercentage}</GraphLabel>
+            <GraphLabel>{Transform.round(kwizSupporterPercentage, 2)} %</GraphLabel>
+            <GraphWrapper>
+              <KwizGraph
+                animate={{ width: kwizSupporterPercentage + '%' }}
+                transition={{ type: 'spring', damping: 30 }}
+              />
+              <EmptyGraph />
+            </GraphWrapper>
           </GraphBlock>
         </GraphBlockWrapper>
+        <LabelWrapper>
+          <LabelItem>
+            <LabelIconKwiz />
+            <LabelTitleKwiz>K-WIZ</LabelTitleKwiz>
+          </LabelItem>
+          <LabelItem>
+            <LabelIconIwiz />
+            <LabelTitleIwiz>I-WIZ</LabelTitleIwiz>
+          </LabelItem>
+        </LabelWrapper>
       </Layout>
     );
   }

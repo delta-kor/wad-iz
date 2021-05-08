@@ -101,7 +101,7 @@ interface Props {
 
 export default class DayCard extends Component<Props, any> {
   render() {
-    const upPercentage = (this.props.total / this.props.up) * 100 + '%';
+    const upPercentage = (this.props.total / this.props.up) * 100;
     return (
       <Layout>
         <Title>24시간</Title>
@@ -109,9 +109,12 @@ export default class DayCard extends Component<Props, any> {
         <Up>+ {Transform.toCurrency(this.props.up)}</Up>
         <Down>- {Transform.toCurrency(this.props.down)}</Down>
         <GraphWrapper>
-          <UpGraph animate={{ width: upPercentage }} transition={{ type: 'spring', damping: 30 }} />
+          <UpGraph
+            animate={{ width: upPercentage + '%' }}
+            transition={{ type: 'spring', damping: 30 }}
+          />
           <DownGraph
-            animate={{ width: `calc(100% - ${upPercentage})` }}
+            animate={{ width: `calc(100% - ${upPercentage}%)` }}
             transition={{ delay: 0.25, type: 'spring', bounce: 0.7, damping: 30 }}
           />
         </GraphWrapper>
