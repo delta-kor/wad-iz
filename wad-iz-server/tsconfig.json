@@ -13,6 +13,6 @@
     "experimentalDecorators": true,
     "incremental": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../wad-iz-type/**/*.ts"],
   "exclude": ["node_modules"]
 }
