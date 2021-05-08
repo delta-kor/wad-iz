@@ -1,0 +1,10 @@
+{
+  "name": "wad-iz-server",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "typescript": "^4.2.4"
+  }
+}
