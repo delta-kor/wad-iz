@@ -24,6 +24,13 @@ export default class App {
     });
   }
 
+  public onSocketEstablished(ws: Socket): void {
+    for (const socket of this.sockets) {
+      if (socket === ws) continue;
+      socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
+    }
+  }
+
   public onSocketDisconnect(ws: Socket): void {
     this.sockets.delete(ws);
   }

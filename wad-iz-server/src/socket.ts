@@ -11,19 +11,23 @@ export enum SocketState {
 
 export default class Socket {
   public readonly ws: WebSocket;
+  public readonly app: App;
   public state: SocketState;
-  private ip: string | null;
-  private nickname: string | null;
-  private profileImage: string | null;
+  public ip: string | null;
+  public userId: string | null;
+  public nickname: string | null;
+  public profileImage: string | null;
 
   constructor(ws: WebSocket, app: App) {
     this.ws = ws;
+    this.app = app;
     this.state = SocketState.PENDING;
     this.ip = null;
+    this.userId = null;
     this.nickname = null;
     this.profileImage = null;
 
-    this.ws.addEventListener('close', () => app.onSocketDisconnect(this));
+    this.ws.addEventListener('close', () => this.app.onSocketDisconnect(this));
     this.ws.addEventListener('message', ({ data }) => {
       try {
         const json = JSON.parse(data);
@@ -50,16 +54,23 @@ export default class Socket {
 
       if (packet.token) {
         jwt.verify(packet.token, process.env.SECRET!, (err, decoded: any) => {
-          if (err) return false;
+          if (err) throw new Error();
+          this.userId = decoded.user_id || null;
           this.nickname = decoded.nickname || null;
           this.profileImage = decoded.profile_image || null;
-          this.state = SocketState.DEFAULT;
         });
       } else {
-        const token = jwt.sign({ nickname: null, profile_image: null }, process.env.SECRET!);
+        const userId = crypto.randomBytes(8).toString('hex');
+        this.userId = userId;
+        const token = jwt.sign(
+          { user_id: userId, nickname: null, profile_image: null },
+          process.env.SECRET!
+        );
         this.sendToken(token);
-        this.state = SocketState.DEFAULT;
       }
+
+      this.state = SocketState.DEFAULT;
+      this.app.onSocketEstablished(this);
     }
   }
 
@@ -85,6 +96,17 @@ export default class Socket {
       type: 'token',
       packet_id: null,
       token,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendConnect(userId: string, nickname: string | null, profileImage: string | null): void {
+    const packet: ConnectServerPacket = {
+      type: 'connect',
+      packet_id: null,
+      user_id: userId,
+      nickname: nickname,
+      profile_image: profileImage,
     };
     this.sendPacket(packet);
   }
