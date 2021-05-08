@@ -9,3 +9,5 @@ interface ClientPacketBase extends PacketBase {
 interface ServerPacketBase extends PacketBase {
   packet_id: number | null;
 }
+
+type ClientPacket = TicketClientPacket;

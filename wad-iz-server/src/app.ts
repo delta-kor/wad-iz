@@ -17,8 +17,14 @@ export default class App {
     });
 
     this.server.on('connection', ws => {
-      const socket = new Socket(ws);
+      const socket = new Socket(ws, this);
+      this.sockets.add(socket);
+
       socket.sendWelcome();
     });
+  }
+
+  public onSocketDisconnect(ws: Socket): void {
+    this.sockets.delete(ws);
   }
 }

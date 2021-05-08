@@ -10,9 +10,12 @@
     "start": "yarn build && yarn deploy"
   },
   "dependencies": {
+    "dotenv": "^9.0.0",
+    "jsonwebtoken": "^8.5.1",
     "ws": "^7.4.5"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^15.0.2",
     "@types/ws": "^7.4.2",
     "tsc-watch": "^4.2.9",
