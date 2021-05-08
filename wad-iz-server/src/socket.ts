@@ -70,7 +70,7 @@ export default class Socket {
       }
 
       this.state = SocketState.DEFAULT;
-      this.app.onSocketEstablished(this);
+      this.app.onSocketEstablished(this, packet.packet_id);
     }
   }
 
@@ -96,6 +96,16 @@ export default class Socket {
       type: 'token',
       packet_id: null,
       token,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendTicket(packetId: number, nickname: string | null, profileImage: string | null): void {
+    const packet: TicketServerPacket = {
+      type: 'ticket',
+      packet_id: packetId,
+      nickname: nickname,
+      profile_image: profileImage,
     };
     this.sendPacket(packet);
   }

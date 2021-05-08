@@ -6,6 +6,7 @@ interface TicketClientPacket extends ClientPacketBase {
 
 interface TicketServerPacket extends ServerPacketBase {
   type: 'ticket';
+  packet_id: number;
   nickname: string | null;
   profile_image: string | null;
 }

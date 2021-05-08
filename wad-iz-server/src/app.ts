@@ -24,10 +24,13 @@ export default class App {
     });
   }
 
-  public onSocketEstablished(ws: Socket): void {
+  public onSocketEstablished(ws: Socket, packetId: number): void {
     for (const socket of this.sockets) {
-      if (socket === ws) continue;
-      socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
+      if (socket === ws) {
+        socket.sendTicket(packetId, ws.nickname, ws.profileImage);
+      } else {
+        socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
+      }
     }
   }
 
