@@ -1,5 +1,5 @@
 import { Server } from 'ws';
-import Socket from './socket';
+import Socket, { SocketState } from './socket';
 
 export default class App {
   private readonly server: Server;
@@ -27,8 +27,20 @@ export default class App {
   public onSocketEstablished(ws: Socket, packetId: number): void {
     for (const socket of this.sockets) {
       if (socket === ws) {
-        socket.sendTicket(packetId, ws.nickname, ws.profileImage);
-      } else {
+        socket.sendTicket(packetId);
+
+        const users: ISyncUser[] = [];
+        for (const socket of this.sockets) {
+          if (socket.state === SocketState.PENDING) continue;
+          if (socket === ws) continue;
+          users.push({
+            user_id: socket.userId!,
+            nickname: socket.nickname,
+            profile_image: socket.profileImage,
+          });
+        }
+        socket.sendSyncUser(users);
+      } else if (socket.state !== SocketState.PENDING) {
         socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
       }
     }

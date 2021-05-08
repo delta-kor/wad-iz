@@ -100,12 +100,13 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendTicket(packetId: number, nickname: string | null, profileImage: string | null): void {
+  public sendTicket(packetId: number): void {
     const packet: TicketServerPacket = {
       type: 'ticket',
       packet_id: packetId,
-      nickname: nickname,
-      profile_image: profileImage,
+      user_id: this.userId!,
+      nickname: this.nickname,
+      profile_image: this.profileImage,
     };
     this.sendPacket(packet);
   }
@@ -117,6 +118,15 @@ export default class Socket {
       user_id: userId,
       nickname: nickname,
       profile_image: profileImage,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendSyncUser(users: ISyncUser[]): void {
+    const packet: SyncUserServerPacket = {
+      type: 'sync-user',
+      packet_id: null,
+      users,
     };
     this.sendPacket(packet);
   }
