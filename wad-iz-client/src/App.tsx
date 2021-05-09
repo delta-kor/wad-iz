@@ -1,3 +1,4 @@
+import { AnimateSharedLayout, motion } from 'framer-motion';
 import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
@@ -43,7 +44,7 @@ const PcCardStackRight = styled.div`
   gap: 32px 0;
 `;
 
-const ProfileWrapper = styled.div`
+const ProfileWrapper = styled(motion.div)`
   position: absolute;
   height: 276px;
   left: 0px;
@@ -51,7 +52,7 @@ const ProfileWrapper = styled.div`
   top: calc(50% - 276px / 2);
 `;
 
-const PcProfileWrapper = styled.div`
+const PcProfileWrapper = styled(motion.div)`
   position: absolute;
   width: 414px;
   height: 276px;
@@ -153,7 +154,7 @@ export default class App extends Component<any, State> {
     let content, pcContent;
     if (this.state.menu === 0) {
       content = (
-        <div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
           <CardStack>
             {directCard}
@@ -161,10 +162,10 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
           </CardStack>
-        </div>
+        </motion.div>
       );
       pcContent = (
-        <div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <PcCardStackLeft>
             <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
             {directCard}
@@ -174,11 +175,11 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
           </PcCardStackRight>
-        </div>
+        </motion.div>
       );
     } else if (this.state.menu === 2) {
       content = (
-        <ProfileWrapper>
+        <ProfileWrapper initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Profile
             nickname={this.socket.nickname!}
             profileImageUrl={this.profileImageMap.get(this.socket.profileImage!)}
@@ -186,7 +187,7 @@ export default class App extends Component<any, State> {
         </ProfileWrapper>
       );
       pcContent = (
-        <PcProfileWrapper>
+        <PcProfileWrapper initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Profile
             nickname={this.socket.nickname!}
             profileImageUrl={this.profileImageMap.get(this.socket.profileImage!)}
@@ -196,7 +197,7 @@ export default class App extends Component<any, State> {
     }
 
     return (
-      <div>
+      <AnimateSharedLayout>
         <MediaQuery maxWidth={1024}>
           <Navigator onClick={this.onNavigatorClick} active={this.state.menu} />
           {content}
@@ -205,7 +206,7 @@ export default class App extends Component<any, State> {
           <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           {pcContent}
         </MediaQuery>
-      </div>
+      </AnimateSharedLayout>
     );
   }
 }
