@@ -4,6 +4,8 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
+const directAmount = 603173643;
+const directLastUpdate = '05/07 17:00';
 
 export default class App {
   private readonly server: Server;
@@ -31,6 +33,7 @@ export default class App {
 
       socket.sendWelcome();
       socket.sendWadizSync();
+      socket.sendDirectSync(directAmount, directLastUpdate);
     });
   }
 
@@ -46,7 +49,7 @@ export default class App {
       )!;
       const amountText = amountElement.textContent!;
       const supporterText = supporterElement.textContent!;
-      const amount = parseInt(amountText.replace(/,/g, ''));
+      const amount = parseInt(amountText.replace(/,/g, '')) - directAmount;
       const supporter = parseInt(supporterText.replace(/,/g, ''));
 
       if (this.amount === null || this.supporter === null) {
@@ -85,7 +88,7 @@ export default class App {
             profile_image: socket.profileImage,
           });
         }
-        socket.sendSyncUser(users);
+        socket.sendUserSync(users);
       } else if (socket.state !== SocketState.PENDING) {
         socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
       }

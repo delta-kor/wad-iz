@@ -120,7 +120,7 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendSyncUser(users: IUser[]): void {
+  public sendUserSync(users: IUser[]): void {
     const packet: UserSyncServerPacket = {
       type: 'user-sync',
       packet_id: null,
@@ -153,6 +153,16 @@ export default class Socket {
       packet_id: null,
       amount: this.app.amount,
       supporter: this.app.supporter,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendDirectSync(amount: number, lastUpdate: string): void {
+    const packet: DirectSyncServerPacket = {
+      type: 'direct-sync',
+      packet_id: null,
+      amount: amount,
+      last_update: lastUpdate,
     };
     this.sendPacket(packet);
   }
