@@ -59,7 +59,7 @@ const GraphLabel = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-  width: 58px;
+  width: 64px;
   font-style: normal;
   font-weight: bold;
   font-size: 14px;

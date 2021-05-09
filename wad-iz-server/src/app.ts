@@ -8,6 +8,13 @@ const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 const directAmount = 603173643;
 const directLastUpdate = '05/07 17:00';
 
+export interface ChatMessage {
+  userId: string;
+  nickname: string;
+  profileImage: string;
+  chat: Chat;
+}
+
 export default class App {
   private readonly server: Server;
   private readonly sockets: Set<Socket>;
@@ -16,6 +23,8 @@ export default class App {
   public supporter: number | null = null;
   public dailyUp: number | null = null;
   public dailyDown: number | null = null;
+
+  public chatList: ChatMessage[] = [];
 
   constructor(port: number) {
     this.server = new Server({ port });
@@ -146,7 +155,9 @@ export default class App {
             profile_image: socket.profileImage!,
           });
         }
+
         socket.sendUserSync(users);
+        socket.sendChatSync();
       } else if (socket.state !== SocketState.PENDING) {
         socket.sendConnect(ws.userId!, ws.nickname!, ws.profileImage!);
       }
@@ -162,6 +173,13 @@ export default class App {
   }
 
   public onProfileUpdate(userId: string, nickname: string, profileImage: string): void {
+    this.chatList.forEach(chat => {
+      if (chat.userId === userId) {
+        chat.nickname = nickname;
+        chat.profileImage = profileImage;
+      }
+    });
+
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
       socket.sendProfileUpdate(userId, nickname, profileImage);
@@ -170,9 +188,13 @@ export default class App {
 
   public onChatReceive(userId: string, nickname: string, profileImage: string, chat: Chat): any {
     if (chat.type === 'text') {
+      if (!chat.content || !chat.content.trim().length) return false;
       chat.content = chat.content.slice(0, 200);
     }
     if (chat.type !== 'text') return false;
+
+    this.chatList.push({ userId, nickname, profileImage, chat });
+    if (this.chatList.length > 500) this.chatList.shift();
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;

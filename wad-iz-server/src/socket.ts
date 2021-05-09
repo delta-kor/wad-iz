@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import App from './app';
+import App, { ChatMessage } from './app';
 import ProfileImage from './profile-image';
 
 export enum SocketState {
@@ -280,6 +280,24 @@ export default class Socket {
       nickname: nickname,
       profile_image: profileImage,
       chat: chat,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendChatSync(): void {
+    const chats = [];
+    for (const message of this.app.chatList) {
+      chats.push({
+        user_id: message.userId,
+        nickname: message.nickname,
+        profile_image: message.profileImage,
+        chat: message.chat,
+      });
+    }
+    const packet: ChatSyncServerPacket = {
+      type: 'chat-sync',
+      packet_id: null,
+      chats,
     };
     this.sendPacket(packet);
   }

@@ -249,13 +249,12 @@ export default class App extends Component<any, State> {
       this.setState({ users });
 
       const chats = this.state.chats;
-      chats.map(chat => {
+      chats.forEach(chat => {
         if (chat.userId === packet.user_id) {
           chat.nickname = packet.nickname;
           chat.profileImageUrl =
             this.profileImageMap.get(packet.profile_image) || falloutProfileImage;
         }
-        return true;
       });
       this.setState({ chats });
     });
@@ -268,6 +267,19 @@ export default class App extends Component<any, State> {
         profileImageUrl: this.profileImageMap.get(packet.profile_image) || falloutProfileImage,
         chat: packet.chat,
       });
+      this.setState({ chats });
+    });
+
+    this.socket.on('chat-sync', (packet: ChatSyncServerPacket) => {
+      const chats = this.state.chats;
+      for (const chat of packet.chats) {
+        chats.push({
+          userId: chat.user_id,
+          nickname: chat.nickname,
+          profileImageUrl: this.profileImageMap.get(chat.profile_image) || falloutProfileImage,
+          chat: chat.chat,
+        });
+      }
       this.setState({ chats });
     });
   }
