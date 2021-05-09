@@ -63,9 +63,15 @@ export default class Socket {
         });
       } else {
         const userId = crypto.randomBytes(8).toString('hex');
+        const nickname = `WIZ-${Math.round(Math.random() * 10000)
+          .toString()
+          .padStart(4, '0')}`;
+        const profileImage = 'logo.iz.1';
         this.userId = userId;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
         const token = jwt.sign(
-          { user_id: userId, nickname: null, profile_image: null },
+          { user_id: userId, nickname: this.nickname, profile_image: this.profileImage },
           process.env.SECRET!
         );
         this.sendToken(token);
