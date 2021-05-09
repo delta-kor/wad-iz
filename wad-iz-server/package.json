@@ -10,11 +10,14 @@
     "start": "yarn build && yarn deploy"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "dotenv": "^9.0.0",
+    "jsdom": "^16.5.3",
     "jsonwebtoken": "^8.5.1",
     "ws": "^7.4.5"
   },
   "devDependencies": {
+    "@types/jsdom": "^16.2.10",
     "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^15.0.2",
     "@types/ws": "^7.4.2",

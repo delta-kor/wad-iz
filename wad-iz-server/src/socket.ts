@@ -130,4 +130,32 @@ export default class Socket {
     };
     this.sendPacket(packet);
   }
+
+  public sendWadizUpdate(
+    amount: number,
+    supporter: number,
+    amountDelta: number,
+    supporterDelta: number
+  ): void {
+    const packet: WadizUpdateServerPacket = {
+      type: 'wadiz-update',
+      packet_id: null,
+      amount,
+      supporter,
+      amount_delta: amountDelta,
+      supporter_delta: supporterDelta,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendWadizSync(): any {
+    if (this.app.amount === null || this.app.supporter === null) return false;
+    const packet: WadizSyncServerPacket = {
+      type: 'wadiz-sync',
+      packet_id: null,
+      amount: this.app.amount,
+      supporter: this.app.supporter,
+    };
+    this.sendPacket(packet);
+  }
 }
