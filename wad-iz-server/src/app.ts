@@ -37,6 +37,7 @@ export default class App {
       socket.sendWadizSync();
       socket.sendDirectSync(directAmount, directLastUpdate);
       socket.sendDailySync();
+      socket.sendProfileImage();
     });
   }
 

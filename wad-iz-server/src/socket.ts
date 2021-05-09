@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import App from './app';
+import ProfileImage from './profile-image';
 
 export enum SocketState {
   PENDING,
@@ -205,6 +206,25 @@ export default class Socket {
       packet_id: null,
       up: this.app.dailyUp,
       down: this.app.dailyDown,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendProfileImage(): void {
+    const images: IProfileImage[] = [];
+    for (const top of Object.keys(ProfileImage)) {
+      for (const middle of Object.keys(ProfileImage[top])) {
+        const items = ProfileImage[top][middle];
+        for (const item of items) {
+          const key = `${top}.${middle}.${item}`;
+          images.push({ key, url: `http://lt2.kr/image/${key}.png` });
+        }
+      }
+    }
+    const packet: ProfileImageServerPacket = {
+      type: 'profile-image',
+      packet_id: null,
+      images,
     };
     this.sendPacket(packet);
   }
