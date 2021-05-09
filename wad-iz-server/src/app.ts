@@ -168,7 +168,7 @@ export default class App {
     }
   }
 
-  public onChatReceive(userId: string, chat: Chat): any {
+  public onChatReceive(userId: string, nickname: string, profileImage: string, chat: Chat): any {
     if (chat.type === 'text') {
       chat.content = chat.content.slice(0, 200);
     }
@@ -176,7 +176,7 @@ export default class App {
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
-      socket.sendChat(userId, chat);
+      socket.sendChat(userId, nickname, profileImage, chat);
     }
   }
 }

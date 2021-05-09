@@ -102,7 +102,7 @@ export default class Socket {
     }
 
     if (packet.type === 'chat') {
-      this.app.onChatReceive(this.userId!, packet.chat);
+      this.app.onChatReceive(this.userId!, this.nickname!, this.profileImage!, packet.chat);
     }
   }
 
@@ -272,11 +272,13 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendChat(userId: string, chat: Chat): void {
+  public sendChat(userId: string, nickname: string, profileImage: string, chat: Chat): void {
     const packet: ChatServerPacket = {
       type: 'chat',
       packet_id: null,
       user_id: userId,
+      nickname: nickname,
+      profile_image: profileImage,
       chat: chat,
     };
     this.sendPacket(packet);

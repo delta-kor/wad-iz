@@ -10,6 +10,7 @@ import DayCard from './components/card/Day';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
+import ChatWrapper from './components/chat/ChatWrapper';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
 import { Color } from './styles/color';
@@ -98,6 +99,13 @@ interface User {
   profileImage: string;
 }
 
+export interface ChatMessage {
+  userId: string;
+  nickname: string;
+  profileImageUrl: string;
+  chat: Chat;
+}
+
 interface State {
   menu: number;
   directAmount: number;
@@ -109,7 +117,10 @@ interface State {
 
   userId: string;
   users: User[];
+  chats: ChatMessage[];
 }
+
+const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
 
 export default class App extends Component<any, State> {
   private socket!: Socket;
@@ -127,6 +138,32 @@ export default class App extends Component<any, State> {
       dailyDown: 1,
       userId: '',
       users: [],
+      chats: [
+        // {
+        //   userId: 'a1',
+        //   nickname: 'A1',
+        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
+        //   chat: { type: 'text', content: '안녕' },
+        // },
+        // {
+        //   userId: 'a1',
+        //   nickname: 'A1',
+        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
+        //   chat: { type: 'text', content: '안녕22' },
+        // },
+        // {
+        //   userId: 'a2',
+        //   nickname: 'A2',
+        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.2.png',
+        //   chat: { type: 'text', content: '안녕333' },
+        // },
+        // {
+        //   userId: 'a1',
+        //   nickname: 'A1',
+        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
+        //   chat: { type: 'text', content: '안녕4444' },
+        // },
+      ],
     };
   }
 
@@ -210,6 +247,28 @@ export default class App extends Component<any, State> {
         profileImage: packet.profile_image,
       });
       this.setState({ users });
+
+      const chats = this.state.chats;
+      chats.map(chat => {
+        if (chat.userId === packet.user_id) {
+          chat.nickname = packet.nickname;
+          chat.profileImageUrl =
+            this.profileImageMap.get(packet.profile_image) || falloutProfileImage;
+        }
+        return true;
+      });
+      this.setState({ chats });
+    });
+
+    this.socket.on('chat', (packet: ChatServerPacket) => {
+      const chats = this.state.chats;
+      chats.push({
+        userId: packet.user_id,
+        nickname: packet.nickname,
+        profileImageUrl: this.profileImageMap.get(packet.profile_image) || falloutProfileImage,
+        chat: packet.chat,
+      });
+      this.setState({ chats });
     });
   }
 
@@ -329,6 +388,7 @@ export default class App extends Component<any, State> {
             viewers={this.state.users.length}
             onBack={() => this.onNavigatorClick(0)}
           />
+          <ChatWrapper isPc={false} messages={this.state.chats} />
           <ChatInputer onTextSend={this.onTextChatSend} />
         </div>
       );
@@ -340,6 +400,7 @@ export default class App extends Component<any, State> {
               viewers={this.state.users.length}
               onBack={() => this.onNavigatorClick(0)}
             />
+            <ChatWrapper isPc={true} messages={this.state.chats} />
             <ChatInputer onTextSend={this.onTextChatSend} />
           </PcChatWrapper>
           <PcChatPanel layoutId={'navigator'}>
@@ -357,7 +418,7 @@ export default class App extends Component<any, State> {
         <ProfileWrapper initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Profile
             nickname={profile.nickname}
-            profileImageUrl={this.profileImageMap.get(profile.profileImage)}
+            profileImageUrl={this.profileImageMap.get(profile.profileImage) || falloutProfileImage}
             onInteract={this.onProfileInteract}
           />
         </ProfileWrapper>
@@ -366,7 +427,7 @@ export default class App extends Component<any, State> {
         <PcProfileWrapper initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <Profile
             nickname={profile.nickname}
-            profileImageUrl={this.profileImageMap.get(profile.profileImage)}
+            profileImageUrl={this.profileImageMap.get(profile.profileImage) || falloutProfileImage}
             onInteract={this.onProfileInteract}
           />
         </PcProfileWrapper>
