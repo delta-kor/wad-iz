@@ -42,7 +42,10 @@ export default class App {
 
   private mountWatchers(): void {
     const wadizWatcher = async () => {
-      const response = await axios.get(wadizUrl);
+      const response = await axios.get(wadizUrl, { validateStatus: () => true });
+      if (response.status !== 200) {
+        console.log(response.data);
+      }
       const document = new JSDOM(response.data).window.document;
       const amountElement = document.querySelector(
         '.wd-ui-sub-opener-info .total-amount > strong'
@@ -114,8 +117,17 @@ export default class App {
     wadizWatcher();
     dailyWatcher();
 
-    setInterval(wadizWatcher, 3000);
-    setInterval(dailyWatcher, 3000);
+    setInterval(() => {
+      wadizWatcher();
+      dailyWatcher();
+    }, 3000);
+  }
+
+  public getUserId(userId: string): null | Socket {
+    for (const socket of this.sockets) {
+      if (socket.userId === userId) return socket;
+    }
+    return null;
   }
 
   public onSocketEstablished(ws: Socket, packetId: number): void {

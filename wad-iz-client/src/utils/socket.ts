@@ -31,13 +31,14 @@ export default class Socket extends EventEmitter {
         type: 'ticket',
         packet_id: this.packetId,
         ticket,
-        token: null,
+        token: localStorage.getItem('token'),
       };
       const response = await this.request<TicketServerPacket>(packet);
       this.userId = response.user_id;
       this.nickname = response.nickname;
       this.profileImage = response.profile_image;
     });
+
     this.ws.addEventListener('message', ({ data: text }) => {
       const data = JSON.parse(text) as ServerPacket;
       for (const resolve of this.resolves) {

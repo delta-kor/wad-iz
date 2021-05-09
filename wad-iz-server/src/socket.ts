@@ -53,6 +53,10 @@ export default class Socket {
       if (packet.token) {
         jwt.verify(packet.token, process.env.SECRET!, (err, decoded: any) => {
           if (err) throw new Error();
+          const connectedUser = this.app.getUserId(decoded.user_id);
+          if (connectedUser) {
+            connectedUser.closeForMultipleConnect();
+          }
           this.userId = decoded.user_id || null;
           this.nickname = decoded.nickname || null;
           this.profileImage = decoded.profile_image || null;
@@ -109,6 +113,15 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
+  public closeForMultipleConnect(): void {
+    const packet: MultipleConnectServerPacket = {
+      type: 'multiple-connect',
+      packet_id: null,
+    };
+    this.sendPacket(packet);
+    this.ws.close();
+  }
+
   public sendConnect(userId: string, nickname: string | null, profileImage: string | null): void {
     const packet: ConnectServerPacket = {
       type: 'connect',
@@ -121,6 +134,7 @@ export default class Socket {
   }
 
   public sendUserSync(users: IUser[]): void {
+    users = users.filter(user => user.user_id !== this.userId);
     const packet: UserSyncServerPacket = {
       type: 'user-sync',
       packet_id: null,

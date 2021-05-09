@@ -42,6 +42,9 @@ export default class App extends Component<any, State> {
   componentDidMount() {
     this.socket = new Socket();
 
+    this.socket.on('token', (packet: TokenServerPacket) => {
+      localStorage.setItem('token', packet.token);
+    });
     this.socket.on('direct-sync', (packet: DirectSyncServerPacket) => {
       this.setState({ directAmount: packet.amount, directLastUpdate: packet.last_update });
     });
