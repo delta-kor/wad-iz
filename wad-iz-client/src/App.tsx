@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
 import Navigator from './components/bar/Navigator';
 import DayCard from './components/card/Day';
@@ -60,11 +61,14 @@ export default class App extends Component<any, State> {
     this.socket.on('daily-update', (packet: DailyUpdateServerPacket) => {
       this.setState({ dailyUp: packet.up, dailyDown: packet.down });
     });
+    this.socket.on('multiple-connect', () => {
+      alert('다른 기기에서 접속하여 서버와의 연결을 끊었습니다');
+    });
   }
 
   render() {
     return (
-      <div>
+      <MediaQuery maxWidth={1024}>
         <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
         <CardStack>
           <MoneyCard
@@ -90,7 +94,7 @@ export default class App extends Component<any, State> {
           />
         </CardStack>
         <Navigator />
-      </div>
+      </MediaQuery>
     );
   }
 }

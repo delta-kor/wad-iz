@@ -119,7 +119,8 @@ export default class Socket {
       packet_id: null,
     };
     this.sendPacket(packet);
-    this.ws.close();
+    this.state = SocketState.PENDING;
+    this.userId = null;
   }
 
   public sendConnect(userId: string, nickname: string | null, profileImage: string | null): void {
