@@ -73,10 +73,14 @@ const NicknameEditButton = styled.img`
 
 interface Props {
   nickname: string;
-  profileImageUrl: string;
+  profileImageUrl?: string;
 }
 
 export default class Profile extends Component<Props, any> {
+  static defaultProps = {
+    profileImageUrl: 'http://lt2.kr/image/logo.iz.1',
+  };
+
   render() {
     return (
       <Layout>

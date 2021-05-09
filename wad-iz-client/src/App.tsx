@@ -70,7 +70,8 @@ interface State {
 }
 
 export default class App extends Component<any, State> {
-  private socket!: Socket;
+  private socket: Socket = new Socket();
+  public profileImageMap: Map<string, string> = new Map();
 
   constructor(props: any) {
     super(props);
@@ -86,8 +87,9 @@ export default class App extends Component<any, State> {
   }
 
   componentDidMount() {
-    this.socket = new Socket();
-
+    this.socket.on('multiple-connect', () => {
+      alert('다른 기기에서 접속하여 서버와의 연결을 끊었습니다');
+    });
     this.socket.on('token', (packet: TokenServerPacket) => {
       localStorage.setItem('token', packet.token);
     });
@@ -106,8 +108,10 @@ export default class App extends Component<any, State> {
     this.socket.on('daily-update', (packet: DailyUpdateServerPacket) => {
       this.setState({ dailyUp: packet.up, dailyDown: packet.down });
     });
-    this.socket.on('multiple-connect', () => {
-      alert('다른 기기에서 접속하여 서버와의 연결을 끊었습니다');
+    this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
+      for (const image of packet.images) {
+        this.profileImageMap.set(image.key, image.url);
+      }
     });
   }
 
@@ -175,12 +179,18 @@ export default class App extends Component<any, State> {
     } else if (this.state.menu === 2) {
       content = (
         <ProfileWrapper>
-          <Profile nickname={this.socket.nickname!} profileImageUrl={'http://lt2.kr/izone.png'} />
+          <Profile
+            nickname={this.socket.nickname!}
+            profileImageUrl={this.profileImageMap.get(this.socket.profileImage!)}
+          />
         </ProfileWrapper>
       );
       pcContent = (
         <PcProfileWrapper>
-          <Profile nickname={this.socket.nickname!} profileImageUrl={'http://lt2.kr/izone.png'} />
+          <Profile
+            nickname={this.socket.nickname!}
+            profileImageUrl={this.profileImageMap.get(this.socket.profileImage!)}
+          />
         </PcProfileWrapper>
       );
     }
