@@ -72,7 +72,7 @@ export default class Socket {
         this.nickname = nickname;
         this.profileImage = profileImage;
         const token = jwt.sign(
-          { user_id: userId, nickname: this.nickname, profile_image: this.profileImage },
+          { user_id: this.userId, nickname: this.nickname, profile_image: this.profileImage },
           process.env.SECRET!
         );
         this.sendToken(token);
@@ -80,6 +80,25 @@ export default class Socket {
 
       this.state = SocketState.DEFAULT;
       this.app.onSocketEstablished(this, packet.packet_id);
+    }
+
+    if (packet.type === 'profile-update') {
+      const nickname = packet.nickname;
+      const profileImage = packet.profile_image;
+
+      if (nickname.length > 12) return false;
+      if (profileImage.length > 50) return false;
+
+      this.nickname = nickname;
+      this.profileImage = profileImage;
+
+      this.app.onProfileUpdate(this.userId!, this.nickname, this.profileImage);
+
+      const token = jwt.sign(
+        { user_id: this.userId, nickname: this.nickname, profile_image: this.profileImage },
+        process.env.SECRET!
+      );
+      this.sendToken(token);
     }
   }
 
@@ -114,8 +133,8 @@ export default class Socket {
       type: 'ticket',
       packet_id: packetId,
       user_id: this.userId!,
-      nickname: this.nickname,
-      profile_image: this.profileImage,
+      nickname: this.nickname!,
+      profile_image: this.profileImage!,
     };
     this.sendPacket(packet);
   }
@@ -130,13 +149,22 @@ export default class Socket {
     this.userId = null;
   }
 
-  public sendConnect(userId: string, nickname: string | null, profileImage: string | null): void {
+  public sendConnect(userId: string, nickname: string, profileImage: string): void {
     const packet: ConnectServerPacket = {
       type: 'connect',
       packet_id: null,
       user_id: userId,
       nickname: nickname,
       profile_image: profileImage,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendDisconnect(userId: string): void {
+    const packet: DisconnectServerPacket = {
+      type: 'disconnect',
+      packet_id: null,
+      user_id: userId,
     };
     this.sendPacket(packet);
   }
@@ -225,6 +253,17 @@ export default class Socket {
       type: 'profile-image',
       packet_id: null,
       images,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendProfileUpdate(userId: string, nickname: string, profileImage: string): void {
+    const packet: ProfileUpdateServerPacket = {
+      type: 'profile-update',
+      packet_id: null,
+      user_id: userId,
+      nickname: nickname,
+      profile_image: profileImage,
     };
     this.sendPacket(packet);
   }

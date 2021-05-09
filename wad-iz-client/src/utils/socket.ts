@@ -73,4 +73,15 @@ export default class Socket extends EventEmitter {
     const data = await response.text();
     return data;
   }
+
+  public updateProfile(nickname: string, profileImage: string): void {
+    const packet: ProfileUpdateClientPacket = {
+      type: 'profile-update',
+      packet_id: this.packetId,
+      nickname: nickname,
+      profile_image: profileImage,
+    };
+    this.sendPacket(packet);
+    this.packetId++;
+  }
 }

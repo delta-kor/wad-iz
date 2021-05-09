@@ -1,7 +1,7 @@
 interface IUser {
   user_id: string;
-  nickname: string | null;
-  profile_image: string | null;
+  nickname: string;
+  profile_image: string;
 }
 
 interface UserSyncServerPacket extends ServerPacketBase {

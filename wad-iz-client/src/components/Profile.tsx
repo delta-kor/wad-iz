@@ -74,6 +74,7 @@ const NicknameEditButton = styled.img`
 interface Props {
   nickname: string;
   profileImageUrl?: string;
+  onInteract(type: string): void;
 }
 
 export default class Profile extends Component<Props, any> {
@@ -85,11 +86,11 @@ export default class Profile extends Component<Props, any> {
     return (
       <Layout>
         <ProfileImage src={this.props.profileImageUrl} />
-        <LeftIconButton src={LeftIcon} />
-        <RightIconButton src={RightIcon} />
+        <LeftIconButton src={LeftIcon} onClick={() => this.props.onInteract('left')} />
+        <RightIconButton src={RightIcon} onClick={() => this.props.onInteract('right')} />
         <NicknameWrapper>
           <Nickname>{this.props.nickname}</Nickname>
-          <NicknameEditButton src={EditIcon} />
+          <NicknameEditButton src={EditIcon} onClick={() => this.props.onInteract('nickname')} />
         </NicknameWrapper>
       </Layout>
     );

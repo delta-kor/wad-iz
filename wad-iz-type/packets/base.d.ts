@@ -10,13 +10,19 @@ interface ServerPacketBase extends PacketBase {
   packet_id: number | null;
 }
 
-type ClientPacket = TicketClientPacket;
+type ClientPacket = TicketClientPacket | ProfileUpdateClientPacket;
 type ServerPacket =
   | ConnectServerPacket
+  | DailySyncServerPacket
+  | DailyUpdateServerPacket
   | DirectSyncServerPacket
-  | UserSyncServerPacket
+  | DisconnectServerPacket
+  | MultipleConnectServerPacket
+  | ProfileImageServerPacket
+  | ProfileUpdateServerPacket
   | TicketServerPacket
   | TokenServerPacket
+  | UserSyncServerPacket
   | WadizSyncServerPacket
   | WadizUpdateServerPacket
   | WelcomeServerPacket;

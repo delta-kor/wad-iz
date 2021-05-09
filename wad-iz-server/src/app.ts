@@ -142,18 +142,27 @@ export default class App {
           if (socket === ws) continue;
           users.push({
             user_id: socket.userId!,
-            nickname: socket.nickname,
-            profile_image: socket.profileImage,
+            nickname: socket.nickname!,
+            profile_image: socket.profileImage!,
           });
         }
         socket.sendUserSync(users);
       } else if (socket.state !== SocketState.PENDING) {
-        socket.sendConnect(ws.userId!, ws.nickname, ws.profileImage);
+        socket.sendConnect(ws.userId!, ws.nickname!, ws.profileImage!);
       }
     }
   }
 
   public onSocketDisconnect(ws: Socket): void {
     this.sockets.delete(ws);
+    for (const socket of this.sockets) {
+      socket.sendDisconnect(ws.userId!);
+    }
+  }
+
+  public onProfileUpdate(userId: string, nickname: string, profileImage: string): void {
+    for (const socket of this.sockets) {
+      socket.sendProfileUpdate(userId, nickname, profileImage);
+    }
   }
 }
