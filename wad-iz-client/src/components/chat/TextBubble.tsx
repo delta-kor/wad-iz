@@ -14,6 +14,7 @@ const Layout = styled.div`
   font-size: 18px;
   line-height: 24px;
   color: ${Color.WHITE};
+  word-break: break-all;
 `;
 
 interface Props {

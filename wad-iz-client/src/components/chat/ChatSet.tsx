@@ -4,9 +4,8 @@ import { Shadow } from '../../styles/shadow';
 import TextBubble from './TextBubble';
 
 const Layout = styled.div`
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  column-gap: 16px;
+  display: flex;
+  gap: 0 16px;
 `;
 
 const ProfileImage = styled.img`

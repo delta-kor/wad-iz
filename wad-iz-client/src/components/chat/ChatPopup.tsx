@@ -29,6 +29,9 @@ const Text = styled.div`
   font-size: 14px;
   line-height: 14px;
   color: ${Color.WHITE};
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const Bottom = styled.img`

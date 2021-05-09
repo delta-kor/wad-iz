@@ -138,32 +138,7 @@ export default class App extends Component<any, State> {
       dailyDown: 1,
       userId: '',
       users: [],
-      chats: [
-        // {
-        //   userId: 'a1',
-        //   nickname: 'A1',
-        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
-        //   chat: { type: 'text', content: '안녕' },
-        // },
-        // {
-        //   userId: 'a1',
-        //   nickname: 'A1',
-        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
-        //   chat: { type: 'text', content: '안녕22' },
-        // },
-        // {
-        //   userId: 'a2',
-        //   nickname: 'A2',
-        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.2.png',
-        //   chat: { type: 'text', content: '안녕333' },
-        // },
-        // {
-        //   userId: 'a1',
-        //   nickname: 'A1',
-        //   profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
-        //   chat: { type: 'text', content: '안녕4444' },
-        // },
-      ],
+      chats: [],
     };
   }
 
