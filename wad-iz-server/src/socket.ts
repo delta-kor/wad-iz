@@ -100,6 +100,10 @@ export default class Socket {
       );
       this.sendToken(token);
     }
+
+    if (packet.type === 'chat') {
+      this.app.onChatReceive(this.userId!, packet.chat);
+    }
   }
 
   private sendJson(json: any): void {
@@ -264,6 +268,16 @@ export default class Socket {
       user_id: userId,
       nickname: nickname,
       profile_image: profileImage,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendChat(userId: string, chat: Chat): void {
+    const packet: ChatServerPacket = {
+      type: 'chat',
+      packet_id: null,
+      user_id: userId,
+      chat: chat,
     };
     this.sendPacket(packet);
   }

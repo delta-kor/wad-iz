@@ -8,7 +8,7 @@ const Layout = styled.div<any>`
   position: relative;
   height: 126px;
   background: ${Color.BLUE};
-  box-shadow: ${props => (props.noShadow ? 'none' : Shadow.DOWN)};
+  box-shadow: ${props => (props.noShadow ? 'none' : Shadow.BLUE)};
   border-radius: 16px;
   z-index: 2;
 `;

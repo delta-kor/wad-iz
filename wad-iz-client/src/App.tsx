@@ -258,6 +258,10 @@ export default class App extends Component<any, State> {
     }
   };
 
+  onTextChatSend = (text: string) => {
+    this.socket.sendTextChat(text);
+  };
+
   render() {
     const directCard = (
       <MoneyCard
@@ -325,7 +329,7 @@ export default class App extends Component<any, State> {
             viewers={this.state.users.length}
             onBack={() => this.onNavigatorClick(0)}
           />
-          <ChatInputer />
+          <ChatInputer onTextSend={this.onTextChatSend} />
         </div>
       );
       pcContent = (
@@ -336,7 +340,7 @@ export default class App extends Component<any, State> {
               viewers={this.state.users.length}
               onBack={() => this.onNavigatorClick(0)}
             />
-            <ChatInputer />
+            <ChatInputer onTextSend={this.onTextChatSend} />
           </PcChatWrapper>
           <PcChatPanel layoutId={'navigator'}>
             <PcChatCardStack layoutId={'card-stack'}>

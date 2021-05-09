@@ -156,13 +156,27 @@ export default class App {
   public onSocketDisconnect(ws: Socket): void {
     this.sockets.delete(ws);
     for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
       socket.sendDisconnect(ws.userId!);
     }
   }
 
   public onProfileUpdate(userId: string, nickname: string, profileImage: string): void {
     for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
       socket.sendProfileUpdate(userId, nickname, profileImage);
+    }
+  }
+
+  public onChatReceive(userId: string, chat: Chat): any {
+    if (chat.type === 'text') {
+      chat.content = chat.content.slice(0, 200);
+    }
+    if (chat.type !== 'text') return false;
+
+    for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
+      socket.sendChat(userId, chat);
     }
   }
 }

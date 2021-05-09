@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Component } from 'react';
+import { ChangeEvent, Component, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import EmoticonIcon from '../../icon/emoticon.svg';
 import SendIcon from '../../icon/send.svg';
@@ -56,19 +56,46 @@ const Send = styled.img`
 
 interface Props {
   placeholder: string;
+  onTextSend(value: string): void;
 }
 
-export default class ChatInputer extends Component<Props, any> {
+interface State {
+  value: string;
+}
+
+export default class ChatInputer extends Component<Props, State> {
+  state = {
+    value: '',
+  };
+
   static defaultProps = {
     placeholder: '채팅을 입력해주세요',
+  };
+
+  onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ value: e.target.value });
+  };
+
+  onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') this.onSubmit();
+  };
+
+  onSubmit = () => {
+    this.props.onTextSend(this.state.value);
+    this.setState({ value: '' });
   };
 
   render() {
     return (
       <Layout initial={{ bottom: -76 }} animate={{ bottom: 0 }} transition={{ delay: 0.2 }}>
         <Emoticon src={EmoticonIcon} />
-        <Input placeholder={this.props.placeholder} />
-        <Send src={SendIcon} />
+        <Input
+          placeholder={this.props.placeholder}
+          onChange={this.onInputChange}
+          value={this.state.value}
+          onKeyDown={this.onKeyDown}
+        />
+        <Send src={SendIcon} onClick={this.onSubmit} />
       </Layout>
     );
   }
