@@ -8,6 +8,7 @@ import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
 import Cover from './components/Cover';
+import Profile from './components/Profile';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
 
@@ -40,6 +41,14 @@ const PcCardStackRight = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 32px 0;
+`;
+
+const ProfileWrapper = styled.div`
+  position: absolute;
+  height: 276px;
+  left: 0px;
+  right: 0px;
+  top: calc(50% - 276px / 2);
 `;
 
 interface State {
@@ -153,6 +162,17 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
           </PcCardStackRight>
+        </div>
+      );
+    } else if (this.state.menu === 2) {
+      content = (
+        <ProfileWrapper>
+          <Profile nickname={this.socket.nickname!} profileImageUrl={'http://lt2.kr/izone.png'} />
+        </ProfileWrapper>
+      );
+      pcContent = (
+        <div>
+          <Profile nickname={this.socket.nickname!} profileImageUrl={'http://lt2.kr/izone.png'} />
         </div>
       );
     }
