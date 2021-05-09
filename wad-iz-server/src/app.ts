@@ -106,7 +106,7 @@ export default class App {
         for (const socket of this.sockets) {
           socket.sendDailyUpdate(up, down);
         }
-        this.dailyDown = up;
+        this.dailyUp = up;
         this.dailyDown = down;
       }
     };
@@ -115,7 +115,7 @@ export default class App {
     dailyWatcher();
 
     setInterval(wadizWatcher, 3000);
-    setInterval(dailyWatcher, 5000);
+    setInterval(dailyWatcher, 3000);
   }
 
   public onSocketEstablished(ws: Socket, packetId: number): void {

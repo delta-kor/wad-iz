@@ -20,6 +20,8 @@ interface State {
   directLastUpdate: string;
   wadizAmount: number;
   wadizSupporter: number;
+  dailyUp: number;
+  dailyDown: number;
 }
 
 export default class App extends Component<any, State> {
@@ -32,6 +34,8 @@ export default class App extends Component<any, State> {
       directLastUpdate: '',
       wadizAmount: 0,
       wadizSupporter: 0,
+      dailyUp: 1,
+      dailyDown: 1,
     };
   }
 
@@ -46,6 +50,12 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('wadiz-update', (packet: WadizUpdateServerPacket) => {
       this.setState({ wadizAmount: packet.amount, wadizSupporter: packet.supporter });
+    });
+    this.socket.on('daily-sync', (packet: DailySyncServerPacket) => {
+      this.setState({ dailyUp: packet.up, dailyDown: packet.down });
+    });
+    this.socket.on('daily-update', (packet: DailyUpdateServerPacket) => {
+      this.setState({ dailyUp: packet.up, dailyDown: packet.down });
     });
   }
 
@@ -64,7 +74,11 @@ export default class App extends Component<any, State> {
             label={Transform.toSupporterText(this.state.wadizSupporter)}
             amount={this.state.wadizAmount}
           />
-          <DayCard total={4117562} up={21148894} down={17041332} />
+          <DayCard
+            total={this.state.dailyUp - this.state.dailyDown}
+            up={this.state.dailyUp}
+            down={this.state.dailyDown}
+          />
           <SurveyCard
             totalAmount={3341459287}
             totalSupporter={9846}
