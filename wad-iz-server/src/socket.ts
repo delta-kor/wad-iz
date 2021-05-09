@@ -32,9 +32,7 @@ export default class Socket {
       try {
         const json = JSON.parse(data);
         this.onPacket(json).catch(e => console.error(e));
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
     });
   }
 
@@ -122,9 +120,9 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendSyncUser(users: ISyncUser[]): void {
-    const packet: SyncUserServerPacket = {
-      type: 'sync-user',
+  public sendSyncUser(users: IUser[]): void {
+    const packet: UserSyncServerPacket = {
+      type: 'user-sync',
       packet_id: null,
       users,
     };

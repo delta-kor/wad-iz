@@ -75,7 +75,7 @@ export default class App {
       if (socket === ws) {
         socket.sendTicket(packetId);
 
-        const users: ISyncUser[] = [];
+        const users: IUser[] = [];
         for (const socket of this.sockets) {
           if (socket.state === SocketState.PENDING) continue;
           if (socket === ws) continue;

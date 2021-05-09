@@ -5,6 +5,7 @@ import DayCard from './components/card/Day';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import Cover from './components/Cover';
+import Socket from './utils/socket';
 
 const CardStack = styled.div`
   display: grid;
@@ -14,6 +15,12 @@ const CardStack = styled.div`
 `;
 
 export default class App extends Component<any, any> {
+  private socket!: Socket;
+
+  componentDidMount() {
+    this.socket = new Socket();
+  }
+
   render() {
     return (
       <div>

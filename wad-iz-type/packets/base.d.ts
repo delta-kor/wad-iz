@@ -11,3 +11,11 @@ interface ServerPacketBase extends PacketBase {
 }
 
 type ClientPacket = TicketClientPacket;
+type ServerPacket =
+  | ConnectServerPacket
+  | UserSyncServerPacket
+  | TicketServerPacket
+  | TokenServerPacket
+  | WadizSyncServerPacket
+  | WadizUpdateServerPacket
+  | WelcomeServerPacket;
