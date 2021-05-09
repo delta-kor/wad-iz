@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 const url = 'ws://localhost/';
 
 interface PacketPromise {
@@ -5,7 +7,7 @@ interface PacketPromise {
   resolve: any;
 }
 
-export default class Socket {
+export default class Socket extends EventEmitter {
   private readonly ws: WebSocket;
   private readonly resolves: PacketPromise[];
   private packetId: number;
@@ -15,6 +17,7 @@ export default class Socket {
   public profileImage: string | null = null;
 
   constructor() {
+    super();
     this.ws = new WebSocket(url);
     this.resolves = [];
     this.packetId = 1;
@@ -40,6 +43,8 @@ export default class Socket {
       for (const resolve of this.resolves) {
         if (resolve.packetId === data.packet_id) resolve.resolve(data);
       }
+
+      this.emit(data.type, data);
     });
   }
 

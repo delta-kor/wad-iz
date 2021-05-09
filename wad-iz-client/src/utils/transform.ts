@@ -46,4 +46,8 @@ export class Transform {
   public static toCurrencyLocaleNumber(number: number): string {
     return Transform.toLocaleNumber(number) + ' 원';
   }
+
+  public static toSupporterText(number: number): string {
+    return `${Transform.addComma(number)} 명 참여`;
+  }
 }

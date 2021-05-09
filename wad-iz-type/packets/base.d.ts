@@ -13,6 +13,7 @@ interface ServerPacketBase extends PacketBase {
 type ClientPacket = TicketClientPacket;
 type ServerPacket =
   | ConnectServerPacket
+  | DirectSyncServerPacket
   | UserSyncServerPacket
   | TicketServerPacket
   | TokenServerPacket

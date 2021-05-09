@@ -178,7 +178,7 @@ export default class SurveyCard extends Component<Props, any> {
             <GraphLabel>{Transform.round(kwizAmountPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
               <KwizGraph
-                animate={{ width: kwizAmountPercentage + '%' }}
+                animate={{ width: Math.min(100, kwizAmountPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30 }}
               />
               <EmptyGraph />
@@ -189,7 +189,7 @@ export default class SurveyCard extends Component<Props, any> {
             <GraphLabel>{Transform.round(kwizSupporterPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
               <KwizGraph
-                animate={{ width: kwizSupporterPercentage + '%' }}
+                animate={{ width: Math.min(100, kwizSupporterPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30 }}
               />
               <EmptyGraph />
