@@ -167,6 +167,10 @@ export default class App extends Component<any, State> {
     });
 
     this.socket.on('profile-update', (packet: ProfileUpdateServerPacket) => {
+      if (this.state.userId === packet.user_id) {
+        this.socket.nickname = packet.nickname;
+        this.socket.profileImage = packet.profile_image;
+      }
       const users = this.state.users.filter(user => user.userId !== packet.user_id);
       users.push({
         userId: packet.user_id,
@@ -199,6 +203,26 @@ export default class App extends Component<any, State> {
         return false;
       }
       this.socket.updateProfile(nickname, this.socket.profileImage!);
+    }
+    if (type === 'right') {
+      let index = Array.from(this.profileImageMap.keys()).indexOf(this.socket.profileImage!) + 1;
+      if (index >= this.profileImageMap.size) {
+        index = 0;
+      }
+      this.socket.updateProfile(
+        this.socket.nickname!,
+        Array.from(this.profileImageMap.keys())[index]
+      );
+    }
+    if (type === 'left') {
+      let index = Array.from(this.profileImageMap.keys()).indexOf(this.socket.profileImage!) - 1;
+      if (index < 0) {
+        index = this.profileImageMap.size - 1;
+      }
+      this.socket.updateProfile(
+        this.socket.nickname!,
+        Array.from(this.profileImageMap.keys())[index]
+      );
     }
   };
 

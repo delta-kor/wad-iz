@@ -79,7 +79,7 @@ interface Props {
 
 export default class Profile extends Component<Props, any> {
   static defaultProps = {
-    profileImageUrl: 'http://lt2.kr/image/logo.iz.1',
+    profileImageUrl: 'http://lt2.kr/image/logo.iz.1.png',
   };
 
   render() {
