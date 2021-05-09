@@ -33,15 +33,16 @@ const Icon = styled.img<any>`
 interface Props {
   active: boolean;
   src: string;
+  onClick: () => void;
 }
 
 export default class NavigatorItem extends Component<Props, any> {
   render() {
     const content = <Icon src={this.props.src} active={this.props.active} />;
     if (this.props.active) {
-      return <ActiveLayout>{content}</ActiveLayout>;
+      return <ActiveLayout onClick={this.props.onClick}>{content}</ActiveLayout>;
     } else {
-      return <Layout>{content}</Layout>;
+      return <Layout onClick={this.props.onClick}>{content}</Layout>;
     }
   }
 }

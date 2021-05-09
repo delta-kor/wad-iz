@@ -24,13 +24,30 @@ const Layout = styled.div`
   user-select: none;
 `;
 
-export default class NavigatorPc extends Component<any, any> {
+interface Props {
+  onClick: (index: number) => void;
+  active: number;
+}
+
+export default class NavigatorPc extends Component<Props, any> {
   render() {
     return (
       <Layout>
-        <NavigatorItem active={true} src={PlanetIcon} />
-        <NavigatorItem active={false} src={ChatIcon} />
-        <NavigatorItem active={false} src={SettingsIcon} />
+        <NavigatorItem
+          onClick={() => this.props.onClick(0)}
+          active={this.props.active === 0}
+          src={PlanetIcon}
+        />
+        <NavigatorItem
+          onClick={() => this.props.onClick(1)}
+          active={this.props.active === 1}
+          src={ChatIcon}
+        />
+        <NavigatorItem
+          onClick={() => this.props.onClick(2)}
+          active={this.props.active === 2}
+          src={SettingsIcon}
+        />
       </Layout>
     );
   }

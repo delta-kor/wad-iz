@@ -43,6 +43,7 @@ const PcCardStackRight = styled.div`
 `;
 
 interface State {
+  menu: number;
   directAmount: number;
   directLastUpdate: string;
   wadizAmount: number;
@@ -57,6 +58,7 @@ export default class App extends Component<any, State> {
   constructor(props: any) {
     super(props);
     this.state = {
+      menu: 0,
       directAmount: 0,
       directLastUpdate: '',
       wadizAmount: 0,
@@ -92,64 +94,78 @@ export default class App extends Component<any, State> {
     });
   }
 
+  onNavigatorClick = (index: number) => {
+    if (index === 0 || index === 2) this.setState({ menu: index });
+  };
+
   render() {
+    const directCard = (
+      <MoneyCard
+        title={'직영'}
+        label={this.state.directLastUpdate}
+        amount={this.state.directAmount}
+      />
+    );
+    const wadizCard = (
+      <MoneyCard
+        title={'wadiz'}
+        label={Transform.toSupporterText(this.state.wadizSupporter)}
+        amount={this.state.wadizAmount}
+      />
+    );
+    const dayCard = (
+      <DayCard
+        total={this.state.dailyUp - this.state.dailyDown}
+        up={this.state.dailyUp}
+        down={this.state.dailyDown}
+      />
+    );
+    const surveyCard = (
+      <SurveyCard
+        totalAmount={3341459287}
+        totalSupporter={9846}
+        kwizAmount={this.state.directAmount + this.state.wadizAmount}
+        kwizSupporter={this.state.wadizSupporter}
+      />
+    );
+
+    let content, pcContent;
+    if (this.state.menu === 0) {
+      content = (
+        <div>
+          <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
+          <CardStack>
+            {directCard}
+            {wadizCard}
+            {dayCard}
+            {surveyCard}
+          </CardStack>
+        </div>
+      );
+      pcContent = (
+        <div>
+          <PcCardStackLeft>
+            <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+            {directCard}
+            {wadizCard}
+          </PcCardStackLeft>
+          <PcCardStackRight>
+            {dayCard}
+            {surveyCard}
+          </PcCardStackRight>
+        </div>
+      );
+    }
+
     return (
       <div>
         <MediaQuery maxWidth={1024}>
-          <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
-          <CardStack>
-            <MoneyCard
-              title={'직영'}
-              label={this.state.directLastUpdate}
-              amount={this.state.directAmount}
-            />
-            <MoneyCard
-              title={'wadiz'}
-              label={Transform.toSupporterText(this.state.wadizSupporter)}
-              amount={this.state.wadizAmount}
-            />
-            <DayCard
-              total={this.state.dailyUp - this.state.dailyDown}
-              up={this.state.dailyUp}
-              down={this.state.dailyDown}
-            />
-            <SurveyCard
-              totalAmount={3341459287}
-              totalSupporter={9846}
-              kwizAmount={this.state.directAmount + this.state.wadizAmount}
-              kwizSupporter={this.state.wadizSupporter}
-            />
-          </CardStack>
-          <Navigator />
+          <Navigator onClick={this.onNavigatorClick} active={this.state.menu} />
+          {content}
         </MediaQuery>
         <MediaQuery minWidth={1024}>
-          <NavigatorPc />
-          <PcCardStackLeft>
-            <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
-            <MoneyCard
-              title={'직영'}
-              label={this.state.directLastUpdate}
-              amount={this.state.directAmount}
-            />
-            <MoneyCard
-              title={'wadiz'}
-              label={Transform.toSupporterText(this.state.wadizSupporter)}
-              amount={this.state.wadizAmount}
-            />
-          </PcCardStackLeft>
-          <PcCardStackRight>
-            <DayCard
-              total={this.state.dailyUp - this.state.dailyDown}
-              up={this.state.dailyUp}
-              down={this.state.dailyDown}
-            />
-            <SurveyCard
-              totalAmount={3341459287}
-              totalSupporter={9846}
-              kwizAmount={this.state.directAmount + this.state.wadizAmount}
-              kwizSupporter={this.state.wadizSupporter}
-            />
-          </PcCardStackRight>
+          <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
+          {pcContent}
         </MediaQuery>
       </div>
     );

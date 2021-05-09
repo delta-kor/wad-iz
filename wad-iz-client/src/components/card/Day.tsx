@@ -11,6 +11,7 @@ const Layout = styled.div`
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
+  z-index: 2;
 `;
 
 const Title = styled.div`

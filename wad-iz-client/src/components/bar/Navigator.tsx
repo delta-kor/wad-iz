@@ -20,15 +20,33 @@ const Layout = styled.div`
   column-gap: 42px;
   justify-content: center;
   align-items: center;
+  z-index: 3;
 `;
 
-export default class Navigator extends Component<any, any> {
+interface Props {
+  onClick: (index: number) => void;
+  active: number;
+}
+
+export default class Navigator extends Component<Props, any> {
   render() {
     return (
       <Layout>
-        <NavigatorItem active={true} src={PlanetIcon} />
-        <NavigatorItem active={false} src={ChatIcon} />
-        <NavigatorItem active={false} src={SettingsIcon} />
+        <NavigatorItem
+          onClick={() => this.props.onClick(0)}
+          active={this.props.active === 0}
+          src={PlanetIcon}
+        />
+        <NavigatorItem
+          onClick={() => this.props.onClick(1)}
+          active={this.props.active === 1}
+          src={ChatIcon}
+        />
+        <NavigatorItem
+          onClick={() => this.props.onClick(2)}
+          active={this.props.active === 2}
+          src={SettingsIcon}
+        />
       </Layout>
     );
   }

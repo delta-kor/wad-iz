@@ -10,6 +10,7 @@ const Layout = styled.div`
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};
   border-radius: 16px;
+  z-index: 2;
 `;
 
 const Amount = styled.div`

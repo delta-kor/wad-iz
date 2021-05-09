@@ -16,6 +16,7 @@ const Layout = styled.div`
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};
   border-radius: 0px 0px 36px 36px;
+  z-index: 1;
 `;
 
 const IconMenu = styled.div`
