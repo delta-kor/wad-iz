@@ -7,6 +7,7 @@ const Layout = styled.div`
   position: relative;
   width: 56px;
   height: 56px;
+  cursor: pointer;
 `;
 
 const ActiveLayout = styled.div`
@@ -16,6 +17,7 @@ const ActiveLayout = styled.div`
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};
   border-radius: 100px;
+  cursor: pointer;
 `;
 
 const Icon = styled.img<any>`

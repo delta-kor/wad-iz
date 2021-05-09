@@ -101,7 +101,7 @@ interface Props {
 
 export default class DayCard extends Component<Props, any> {
   render() {
-    const upPercentage = (this.props.total / this.props.up) * 100;
+    const upPercentage = (this.props.up / (this.props.up + this.props.down)) * 100;
     return (
       <Layout>
         <Title>24시간</Title>

@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
 import Navigator from './components/bar/Navigator';
+import NavigatorPc from './components/bar/NavigatorPc';
 import DayCard from './components/card/Day';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
+import TotalCard from './components/card/Total';
 import Cover from './components/Cover';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
@@ -14,6 +16,30 @@ const CardStack = styled.div`
   margin: -94px 0 0 0;
   padding: 0 36px 132px 36px;
   row-gap: 24px;
+`;
+
+const PcCardStackLeft = styled.div`
+  position: absolute;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 342px / 2 - 69px);
+  width: 342px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px 0;
+`;
+
+const PcCardStackRight = styled.div`
+  position: absolute;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 342px / 2 + 305px);
+  width: 342px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px 0;
 `;
 
 interface State {
@@ -68,33 +94,64 @@ export default class App extends Component<any, State> {
 
   render() {
     return (
-      <MediaQuery maxWidth={1024}>
-        <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
-        <CardStack>
-          <MoneyCard
-            title={'직영'}
-            label={this.state.directLastUpdate}
-            amount={this.state.directAmount}
-          />
-          <MoneyCard
-            title={'wadiz'}
-            label={Transform.toSupporterText(this.state.wadizSupporter)}
-            amount={this.state.wadizAmount}
-          />
-          <DayCard
-            total={this.state.dailyUp - this.state.dailyDown}
-            up={this.state.dailyUp}
-            down={this.state.dailyDown}
-          />
-          <SurveyCard
-            totalAmount={3341459287}
-            totalSupporter={9846}
-            kwizAmount={this.state.directAmount + this.state.wadizAmount}
-            kwizSupporter={this.state.wadizSupporter}
-          />
-        </CardStack>
-        <Navigator />
-      </MediaQuery>
+      <div>
+        <MediaQuery maxWidth={1024}>
+          <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
+          <CardStack>
+            <MoneyCard
+              title={'직영'}
+              label={this.state.directLastUpdate}
+              amount={this.state.directAmount}
+            />
+            <MoneyCard
+              title={'wadiz'}
+              label={Transform.toSupporterText(this.state.wadizSupporter)}
+              amount={this.state.wadizAmount}
+            />
+            <DayCard
+              total={this.state.dailyUp - this.state.dailyDown}
+              up={this.state.dailyUp}
+              down={this.state.dailyDown}
+            />
+            <SurveyCard
+              totalAmount={3341459287}
+              totalSupporter={9846}
+              kwizAmount={this.state.directAmount + this.state.wadizAmount}
+              kwizSupporter={this.state.wadizSupporter}
+            />
+          </CardStack>
+          <Navigator />
+        </MediaQuery>
+        <MediaQuery minWidth={1024}>
+          <NavigatorPc />
+          <PcCardStackLeft>
+            <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+            <MoneyCard
+              title={'직영'}
+              label={this.state.directLastUpdate}
+              amount={this.state.directAmount}
+            />
+            <MoneyCard
+              title={'wadiz'}
+              label={Transform.toSupporterText(this.state.wadizSupporter)}
+              amount={this.state.wadizAmount}
+            />
+          </PcCardStackLeft>
+          <PcCardStackRight>
+            <DayCard
+              total={this.state.dailyUp - this.state.dailyDown}
+              up={this.state.dailyUp}
+              down={this.state.dailyDown}
+            />
+            <SurveyCard
+              totalAmount={3341459287}
+              totalSupporter={9846}
+              kwizAmount={this.state.directAmount + this.state.wadizAmount}
+              kwizSupporter={this.state.wadizSupporter}
+            />
+          </PcCardStackRight>
+        </MediaQuery>
+      </div>
     );
   }
 }
