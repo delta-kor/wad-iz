@@ -166,4 +166,25 @@ export default class Socket {
     };
     this.sendPacket(packet);
   }
+
+  public sendDailyUpdate(up: number, down: number): any {
+    const packet: DailyUpdateServerPacket = {
+      type: 'daily-update',
+      packet_id: null,
+      up,
+      down,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendDailySync(): any {
+    if (this.app.dailyUp === null || this.app.dailyDown === null) return false;
+    const packet: DailySyncServerPacket = {
+      type: 'daily-sync',
+      packet_id: null,
+      up: this.app.dailyUp,
+      down: this.app.dailyDown,
+    };
+    this.sendPacket(packet);
+  }
 }

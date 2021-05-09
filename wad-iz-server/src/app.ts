@@ -2,6 +2,7 @@ import { Server } from 'ws';
 import Socket, { SocketState } from './socket';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
+import Fund from './models/fund';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 const directAmount = 603173643;
@@ -10,14 +11,15 @@ const directLastUpdate = '05/07 17:00';
 export default class App {
   private readonly server: Server;
   private readonly sockets: Set<Socket>;
-  public amount: number | null;
-  public supporter: number | null;
+
+  public amount: number | null = null;
+  public supporter: number | null = null;
+  public dailyUp: number | null = null;
+  public dailyDown: number | null = null;
 
   constructor(port: number) {
     this.server = new Server({ port });
     this.sockets = new Set();
-    this.amount = null;
-    this.supporter = null;
     this.mountEventListeners();
     this.mountWatchers();
   }
@@ -34,11 +36,12 @@ export default class App {
       socket.sendWelcome();
       socket.sendWadizSync();
       socket.sendDirectSync(directAmount, directLastUpdate);
+      socket.sendDailySync();
     });
   }
 
   private mountWatchers(): void {
-    setInterval(async () => {
+    const wadizWatcher = async () => {
       const response = await axios.get(wadizUrl);
       const document = new JSDOM(response.data).window.document;
       const amountElement = document.querySelector(
@@ -70,7 +73,49 @@ export default class App {
         this.amount = amount;
         this.supporter = supporter;
       }
-    }, 3000);
+    };
+
+    const dailyWatcher = async () => {
+      const date = new Date();
+      date.setDate(new Date().getDate() - 1);
+      const fundList = await Fund.find({ time: { $gt: date } })
+        .sort({ time: 1 })
+        .exec();
+
+      let up = 0;
+      let down = 0;
+      let lastAmount = fundList[0].amount;
+      for (const item of fundList) {
+        const delta = item.amount - lastAmount;
+        if (delta === 0) continue;
+        if (delta > 0) up += delta;
+        if (delta < 0) down -= delta;
+        lastAmount = item.amount;
+      }
+
+      if (this.dailyUp === null || this.dailyDown === null) {
+        this.dailyUp = up;
+        this.dailyDown = down;
+        for (const socket of this.sockets) {
+          socket.sendDailySync();
+        }
+        return true;
+      }
+
+      if (this.dailyUp !== up || this.dailyDown !== down) {
+        for (const socket of this.sockets) {
+          socket.sendDailyUpdate(up, down);
+        }
+        this.dailyDown = up;
+        this.dailyDown = down;
+      }
+    };
+
+    wadizWatcher();
+    dailyWatcher();
+
+    setInterval(wadizWatcher, 3000);
+    setInterval(dailyWatcher, 5000);
   }
 
   public onSocketEstablished(ws: Socket, packetId: number): void {
