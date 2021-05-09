@@ -51,6 +51,14 @@ const ProfileWrapper = styled.div`
   top: calc(50% - 276px / 2);
 `;
 
+const PcProfileWrapper = styled.div`
+  position: absolute;
+  width: 414px;
+  height: 276px;
+  left: calc(50% - 414px / 2 + 118px);
+  top: calc(50% - 276px / 2);
+`;
+
 interface State {
   menu: number;
   directAmount: number;
@@ -171,9 +179,9 @@ export default class App extends Component<any, State> {
         </ProfileWrapper>
       );
       pcContent = (
-        <div>
+        <PcProfileWrapper>
           <Profile nickname={this.socket.nickname!} profileImageUrl={'http://lt2.kr/izone.png'} />
-        </div>
+        </PcProfileWrapper>
       );
     }
 

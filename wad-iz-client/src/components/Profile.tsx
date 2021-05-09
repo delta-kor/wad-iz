@@ -27,6 +27,8 @@ const LeftIconButton = styled.img`
   height: 36px;
   left: calc(50% - 36px / 2 - 114px);
   top: calc(50% - 36px / 2 - 42px);
+  cursor: pointer;
+  user-select: none;
 `;
 
 const RightIconButton = styled.img`
@@ -35,6 +37,8 @@ const RightIconButton = styled.img`
   height: 36px;
   left: calc(50% - 36px / 2 + 114px);
   top: calc(50% - 36px / 2 - 42px);
+  cursor: pointer;
+  user-select: none;
 `;
 
 const NicknameWrapper = styled.div`
@@ -63,6 +67,8 @@ const Nickname = styled.div`
 const NicknameEditButton = styled.img`
   width: 24px;
   height: 24px;
+  cursor: pointer;
+  user-select: none;
 `;
 
 interface Props {
