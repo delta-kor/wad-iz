@@ -2,6 +2,8 @@ import { AnimateSharedLayout, motion } from 'framer-motion';
 import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
+import ChatInputer from './components/bar/ChatInputer';
+import ChatTop from './components/bar/ChatTop';
 import Navigator from './components/bar/Navigator';
 import NavigatorPc from './components/bar/NavigatorPc';
 import DayCard from './components/card/Day';
@@ -58,6 +60,14 @@ const PcProfileWrapper = styled(motion.div)`
   height: 276px;
   left: calc(50% - 414px / 2 + 118px);
   top: calc(50% - 276px / 2);
+`;
+
+const PcChatWrapper = styled(motion.div)`
+  position: absolute;
+  left: 480px;
+  right: 0;
+  top: 0;
+  bottom: 0;
 `;
 
 interface User {
@@ -189,7 +199,7 @@ export default class App extends Component<any, State> {
   };
 
   onNavigatorClick = (index: number) => {
-    if (index === 0 || index === 2) this.setState({ menu: index });
+    this.setState({ menu: index });
   };
 
   onProfileInteract = (type: 'left' | 'right' | 'nickname') => {
@@ -283,6 +293,27 @@ export default class App extends Component<any, State> {
           </PcCardStackRight>
         </motion.div>
       );
+    } else if (this.state.menu === 1) {
+      content = (
+        <div>
+          <ChatTop
+            title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
+            viewers={this.state.users.length}
+            onBack={() => this.onNavigatorClick(0)}
+          />
+          <ChatInputer />
+        </div>
+      );
+      pcContent = (
+        <PcChatWrapper>
+          <ChatTop
+            title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
+            viewers={this.state.users.length}
+            onBack={() => this.onNavigatorClick(0)}
+          />
+          <ChatInputer />
+        </PcChatWrapper>
+      );
     } else if (this.state.menu === 2) {
       const profile = this.getMyProfile();
       content = (
@@ -308,11 +339,17 @@ export default class App extends Component<any, State> {
     return (
       <AnimateSharedLayout>
         <MediaQuery maxWidth={1024}>
-          <Navigator onClick={this.onNavigatorClick} active={this.state.menu} />
+          <Navigator
+            onClick={this.onNavigatorClick}
+            active={this.state.menu}
+            display={this.state.menu !== 1}
+          />
           {content}
         </MediaQuery>
         <MediaQuery minWidth={1024}>
-          <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
+          {this.state.menu !== 1 && (
+            <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
+          )}
           {pcContent}
         </MediaQuery>
       </AnimateSharedLayout>

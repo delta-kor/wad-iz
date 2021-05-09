@@ -48,3 +48,7 @@
   -webkit-tap-highlight-color: transparent;
   font-family: Product Sans, Noto Sans KR, sans-serif;
 }
+
+body::-webkit-scrollbar {
+  display: none;
+}
