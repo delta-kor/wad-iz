@@ -12,6 +12,7 @@ import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
+import { Color } from './styles/color';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
 
@@ -22,7 +23,7 @@ const CardStack = styled.div`
   row-gap: 24px;
 `;
 
-const PcCardStackLeft = styled.div`
+const PcCardStackLeft = styled(motion.div)`
   position: absolute;
   display: flex;
   top: 0;
@@ -68,6 +69,27 @@ const PcChatWrapper = styled(motion.div)`
   right: 0;
   top: 0;
   bottom: 0;
+`;
+
+const PcChatPanel = styled(motion.div)`
+  position: absolute;
+  width: 480px;
+  left: 0px;
+  top: 0px;
+  bottom: 0;
+  background: ${Color.WHITE};
+`;
+
+const PcChatCardStack = styled(motion.div)`
+  position: absolute;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: 69px;
+  width: 342px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px 0;
 `;
 
 interface User {
@@ -242,6 +264,7 @@ export default class App extends Component<any, State> {
         title={'직영'}
         label={this.state.directLastUpdate}
         amount={this.state.directAmount}
+        noShadow={this.state.menu === 1}
       />
     );
     const wadizCard = (
@@ -249,6 +272,7 @@ export default class App extends Component<any, State> {
         title={'wadiz'}
         label={Transform.toSupporterText(this.state.wadizSupporter)}
         amount={this.state.wadizAmount}
+        noShadow={this.state.menu === 1}
       />
     );
     const dayCard = (
@@ -282,7 +306,7 @@ export default class App extends Component<any, State> {
       );
       pcContent = (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <PcCardStackLeft>
+          <PcCardStackLeft layoutId={'card-stack'}>
             <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
             {directCard}
             {wadizCard}
@@ -305,14 +329,23 @@ export default class App extends Component<any, State> {
         </div>
       );
       pcContent = (
-        <PcChatWrapper>
-          <ChatTop
-            title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
-            viewers={this.state.users.length}
-            onBack={() => this.onNavigatorClick(0)}
-          />
-          <ChatInputer />
-        </PcChatWrapper>
+        <div>
+          <PcChatWrapper>
+            <ChatTop
+              title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
+              viewers={this.state.users.length}
+              onBack={() => this.onNavigatorClick(0)}
+            />
+            <ChatInputer />
+          </PcChatWrapper>
+          <PcChatPanel layoutId={'navigator'}>
+            <PcChatCardStack layoutId={'card-stack'}>
+              <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+              {directCard}
+              {wadizCard}
+            </PcChatCardStack>
+          </PcChatPanel>
+        </div>
       );
     } else if (this.state.menu === 2) {
       const profile = this.getMyProfile();

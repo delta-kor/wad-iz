@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import ChatIcon from '../../icon/chat-nav.svg';
@@ -7,7 +8,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import NavigatorItem from './NavigatorItem';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: fixed;
   display: flex;
   left: calc(50% - 108px / 2 - 422px);
@@ -32,7 +33,7 @@ interface Props {
 export default class NavigatorPc extends Component<Props, any> {
   render() {
     return (
-      <Layout>
+      <Layout layoutId={'navigator'}>
         <NavigatorItem
           onClick={() => this.props.onClick(0)}
           active={this.props.active === 0}

@@ -1,16 +1,17 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: relative;
   width: 56px;
   height: 56px;
   cursor: pointer;
 `;
 
-const ActiveLayout = styled.div`
+const ActiveLayout = styled(motion.div)`
   position: relative;
   width: 56px;
   height: 56px;
@@ -40,9 +41,22 @@ export default class NavigatorItem extends Component<Props, any> {
   render() {
     const content = <Icon src={this.props.src} active={this.props.active} />;
     if (this.props.active) {
-      return <ActiveLayout onClick={this.props.onClick}>{content}</ActiveLayout>;
+      return (
+        <ActiveLayout onClick={this.props.onClick} layoutId={'active-nav'}>
+          {content}
+        </ActiveLayout>
+      );
     } else {
-      return <Layout onClick={this.props.onClick}>{content}</Layout>;
+      return (
+        <Layout
+          onClick={this.props.onClick}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          {content}
+        </Layout>
+      );
     }
   }
 }

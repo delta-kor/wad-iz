@@ -4,11 +4,11 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div`
+const Layout = styled.div<any>`
   position: relative;
   height: 150px;
   background: ${Color.WHITE};
-  box-shadow: ${Shadow.DOWN};
+  box-shadow: ${props => (props.noShadow ? 'none' : Shadow.DOWN)};
   border-radius: 16px;
   z-index: 2;
 `;
@@ -70,12 +70,13 @@ interface Props {
   title: string;
   label: string;
   amount: number;
+  noShadow?: boolean;
 }
 
 export default class MoneyCard extends Component<Props, any> {
   render() {
     return (
-      <Layout>
+      <Layout noShadow={this.props.noShadow}>
         <Title>{this.props.title}</Title>
         <Label>{this.props.label}</Label>
         <Amount>{Transform.toCurrency(this.props.amount)}</Amount>
