@@ -10,6 +10,7 @@ const directLastUpdate = '05/07 17:00';
 
 export interface ChatMessage {
   userId: string;
+  role: number;
   nickname: string;
   profileImage: string;
   chat: Chat;
@@ -85,11 +86,12 @@ export default class App {
         const wadizUpdateChat: Chat = { type: 'wadiz-update', delta: amountDelta };
         for (const socket of this.sockets) {
           socket.sendWadizUpdate(amount, supporter, amountDelta, supporterDelta);
-          socket.sendChat('#', '#', '#', wadizUpdateChat);
+          socket.sendChat('#', '#', '#', wadizUpdateChat, 2);
         }
 
         this.chatList.push({
           userId: '#',
+          role: 2,
           nickname: '#',
           profileImage: '#',
           chat: wadizUpdateChat,
@@ -166,6 +168,7 @@ export default class App {
             user_id: socket.userId!,
             nickname: socket.nickname!,
             profile_image: socket.profileImage!,
+            role: socket.state - 1,
           });
         }
 
@@ -185,21 +188,33 @@ export default class App {
     }
   }
 
-  public onProfileUpdate(userId: string, nickname: string, profileImage: string): void {
+  public onProfileUpdate(
+    userId: string,
+    nickname: string,
+    profileImage: string,
+    role: number
+  ): void {
     this.chatList.forEach(chat => {
       if (chat.userId === userId) {
         chat.nickname = nickname;
         chat.profileImage = profileImage;
+        chat.role = role;
       }
     });
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
-      socket.sendProfileUpdate(userId, nickname, profileImage);
+      socket.sendProfileUpdate(userId, nickname, profileImage, role);
     }
   }
 
-  public onChatReceive(userId: string, nickname: string, profileImage: string, chat: Chat): any {
+  public onChatReceive(
+    userId: string,
+    nickname: string,
+    profileImage: string,
+    chat: Chat,
+    role: number
+  ): any {
     const chatTypes = ['text', 'emoticon'];
     if (!chatTypes.includes(chat.type)) {
       console.log('chat blocked : ' + chat.type);
@@ -211,12 +226,12 @@ export default class App {
       chat.content = chat.content.slice(0, 200);
     }
 
-    this.chatList.push({ userId, nickname, profileImage, chat });
+    this.chatList.push({ userId, nickname, profileImage, chat, role });
     if (this.chatList.length > 500) this.chatList.shift();
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
-      socket.sendChat(userId, nickname, profileImage, chat);
+      socket.sendChat(userId, nickname, profileImage, chat, role);
     }
   }
 }

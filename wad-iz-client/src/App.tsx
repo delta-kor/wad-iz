@@ -95,12 +95,14 @@ const PcChatCardStack = styled(motion.div)`
 
 interface User {
   userId: string;
+  role: number;
   nickname: string;
   profileImage: string;
 }
 
 export interface ChatMessage {
   userId: string;
+  role: number;
   nickname: string;
   profileImageUrl: string;
   chat: Chat;
@@ -156,6 +158,7 @@ export default class App extends Component<any, State> {
       const users = this.state.users;
       users.push({
         userId: packet.user_id,
+        role: packet.role,
         nickname: packet.nickname,
         profileImage: packet.profile_image,
       });
@@ -166,6 +169,7 @@ export default class App extends Component<any, State> {
       const users = this.state.users.filter(user => user.userId !== packet.user_id);
       users.push({
         userId: packet.user_id,
+        role: packet.role,
         nickname: packet.nickname,
         profileImage: packet.profile_image,
       });
@@ -180,6 +184,7 @@ export default class App extends Component<any, State> {
       for (const user of packet.users) {
         users.push({
           userId: user.user_id,
+          role: user.role,
           nickname: user.nickname,
           profileImage: user.profile_image,
         });
@@ -220,6 +225,7 @@ export default class App extends Component<any, State> {
       const users = this.state.users.filter(user => user.userId !== packet.user_id);
       users.push({
         userId: packet.user_id,
+        role: packet.role,
         nickname: packet.nickname,
         profileImage: packet.profile_image,
       });
@@ -228,6 +234,7 @@ export default class App extends Component<any, State> {
       const chats = this.state.chats;
       chats.forEach(chat => {
         if (chat.userId === packet.user_id) {
+          chat.role = packet.role;
           chat.nickname = packet.nickname;
           chat.profileImageUrl =
             this.profileImageMap.get(packet.profile_image) || falloutProfileImage;
@@ -240,6 +247,7 @@ export default class App extends Component<any, State> {
       const chats = this.state.chats;
       chats.push({
         userId: packet.user_id,
+        role: packet.role,
         nickname: packet.nickname,
         profileImageUrl: this.profileImageMap.get(packet.profile_image) || falloutProfileImage,
         chat: packet.chat,
@@ -252,6 +260,7 @@ export default class App extends Component<any, State> {
       for (const chat of packet.chats) {
         chats.push({
           userId: chat.user_id,
+          role: chat.role,
           nickname: chat.nickname,
           profileImageUrl: this.profileImageMap.get(chat.profile_image) || falloutProfileImage,
           chat: chat.chat,
@@ -273,7 +282,7 @@ export default class App extends Component<any, State> {
     for (const user of this.state.users) {
       if (user.userId === this.state.userId) return user;
     }
-    return { userId: this.state.userId, nickname: '', profileImage: '' };
+    return { userId: this.state.userId, nickname: '', profileImage: '', role: 0 };
   };
 
   onNavigatorClick = (index: number) => {

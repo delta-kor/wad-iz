@@ -8,6 +8,7 @@ import Emoticon from './emoticon';
 export enum SocketState {
   PENDING,
   DEFAULT,
+  STAFF,
   MASTER,
 }
 
@@ -62,6 +63,7 @@ export default class Socket {
           this.userId = decoded.user_id || null;
           this.nickname = decoded.nickname || null;
           this.profileImage = decoded.profile_image || null;
+          this.state = decoded.role + 1;
         });
       } else {
         const userId = crypto.randomBytes(8).toString('hex');
@@ -72,14 +74,19 @@ export default class Socket {
         this.userId = userId;
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.state = SocketState.DEFAULT;
         const token = jwt.sign(
-          { user_id: this.userId, nickname: this.nickname, profile_image: this.profileImage },
+          {
+            user_id: this.userId,
+            nickname: this.nickname,
+            profile_image: this.profileImage,
+            role: this.state - 1,
+          },
           process.env.SECRET!
         );
         this.sendToken(token);
       }
 
-      this.state = SocketState.DEFAULT;
       this.app.onSocketEstablished(this, packet.packet_id);
     }
 
@@ -93,10 +100,12 @@ export default class Socket {
       this.nickname = nickname;
       this.profileImage = profileImage;
 
-      this.app.onProfileUpdate(this.userId!, this.nickname, this.profileImage);
+      const role = this.state - 1;
+
+      this.app.onProfileUpdate(this.userId!, this.nickname, this.profileImage, role);
 
       const token = jwt.sign(
-        { user_id: this.userId, nickname: this.nickname, profile_image: this.profileImage },
+        { user_id: this.userId, nickname: this.nickname, profile_image: this.profileImage, role },
         process.env.SECRET!
       );
       this.sendToken(token);
@@ -104,7 +113,63 @@ export default class Socket {
 
     if (packet.type === 'chat') {
       if (this.state === SocketState.PENDING) return false;
-      this.app.onChatReceive(this.userId!, this.nickname!, this.profileImage!, packet.chat);
+
+      if (packet.chat.type === 'text') {
+        const message = packet.chat.content;
+        if (message.split(' ')[0] === '/인증') {
+          const key = message.split(' ')[1];
+          if (key === process.env.STAFF_KEY) {
+            this.sendChat(
+              'system',
+              'SYSTEM',
+              'SYSTEM',
+              {
+                type: 'text',
+                content: '관리자 인증 완료',
+              },
+              2
+            );
+
+            this.state = SocketState.STAFF;
+            this.app.onProfileUpdate(
+              this.userId!,
+              this.nickname!,
+              this.profileImage!,
+              this.state - 1
+            );
+            const token = jwt.sign(
+              {
+                user_id: this.userId,
+                nickname: this.nickname,
+                profile_image: this.profileImage,
+                role: this.state - 1,
+              },
+              process.env.SECRET!
+            );
+            this.sendToken(token);
+          } else {
+            this.sendChat(
+              'system',
+              'SYSTEM',
+              'SYSTEM',
+              {
+                type: 'text',
+                content: '인증 실패',
+              },
+              2
+            );
+          }
+          return true;
+        }
+      }
+
+      this.app.onChatReceive(
+        this.userId!,
+        this.nickname!,
+        this.profileImage!,
+        packet.chat,
+        this.state - 1
+      );
     }
   }
 
@@ -139,6 +204,7 @@ export default class Socket {
       type: 'ticket',
       packet_id: packetId,
       user_id: this.userId!,
+      role: this.state - 1,
       nickname: this.nickname!,
       profile_image: this.profileImage!,
     };
@@ -160,6 +226,7 @@ export default class Socket {
       type: 'connect',
       packet_id: null,
       user_id: userId,
+      role: this.state - 1,
       nickname: nickname,
       profile_image: profileImage,
     };
@@ -263,22 +330,35 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendProfileUpdate(userId: string, nickname: string, profileImage: string): void {
+  public sendProfileUpdate(
+    userId: string,
+    nickname: string,
+    profileImage: string,
+    role: number
+  ): void {
     const packet: ProfileUpdateServerPacket = {
       type: 'profile-update',
       packet_id: null,
       user_id: userId,
+      role: role,
       nickname: nickname,
       profile_image: profileImage,
     };
     this.sendPacket(packet);
   }
 
-  public sendChat(userId: string, nickname: string, profileImage: string, chat: Chat): void {
+  public sendChat(
+    userId: string,
+    nickname: string,
+    profileImage: string,
+    chat: Chat,
+    role: number
+  ): void {
     const packet: ChatServerPacket = {
       type: 'chat',
       packet_id: null,
       user_id: userId,
+      role: role,
       nickname: nickname,
       profile_image: profileImage,
       chat: chat,
@@ -291,6 +371,7 @@ export default class Socket {
     for (const message of this.app.chatList) {
       chats.push({
         user_id: message.userId,
+        role: message.role,
         nickname: message.nickname,
         profile_image: message.profileImage,
         chat: message.chat,

@@ -25,6 +25,7 @@ interface ChatServerPacket extends ServerPacketBase {
   type: 'chat';
   packet_id: null;
   user_id: string;
+  role: number;
   nickname: string;
   profile_image: string;
   chat: Chat;

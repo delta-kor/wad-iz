@@ -1,5 +1,6 @@
 interface IUser {
   user_id: string;
+  role: number;
   nickname: string;
   profile_image: string;
 }

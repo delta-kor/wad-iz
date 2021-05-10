@@ -9,6 +9,7 @@ interface ProfileUpdateServerPacket extends ServerPacketBase {
   type: 'profile-update';
   packet_id: null;
   user_id: string;
+  role: number;
   nickname: string;
   profile_image: string;
 }

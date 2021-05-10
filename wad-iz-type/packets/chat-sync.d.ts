@@ -3,6 +3,7 @@ interface ChatSyncServerPacket extends ServerPacketBase {
   packet_id: null;
   chats: {
     user_id: string;
+    role: number;
     nickname: string;
     profile_image: string;
     chat: Chat;

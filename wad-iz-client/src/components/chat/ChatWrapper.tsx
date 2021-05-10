@@ -22,6 +22,7 @@ const Layout = styled(motion.div)<any>`
 
 interface MessageItem {
   userId: string;
+  role: number;
   nickname: string;
   profileImageUrl: string;
   chats: Chat[];
@@ -71,6 +72,7 @@ export default class ChatWrapper extends Component<Props, State> {
         lastUserId = message.userId;
         messages.push({
           userId: message.userId,
+          role: message.role,
           nickname: message.nickname,
           profileImageUrl: message.profileImageUrl,
           chats: [],
@@ -112,13 +114,15 @@ export default class ChatWrapper extends Component<Props, State> {
         {messages.map((message, index) => {
           if (message.userId === '#') {
             return message.chats.map(
-              chat => chat.type === 'wadiz-update' && <WadizUpdateFeed delta={chat.delta} />
+              chat =>
+                chat.type === 'wadiz-update' && <WadizUpdateFeed delta={chat.delta} key={index} />
             );
           }
 
           return (
             <ChatSet
               key={index}
+              role={message.role}
               nickname={message.nickname}
               profileImageUrl={message.profileImageUrl}
               chats={message.chats}

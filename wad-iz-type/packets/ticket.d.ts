@@ -8,6 +8,7 @@ interface TicketServerPacket extends ServerPacketBase {
   type: 'ticket';
   packet_id: number;
   user_id: string;
+  role: number;
   nickname: string;
   profile_image: string;
 }
