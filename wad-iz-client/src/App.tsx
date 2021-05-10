@@ -488,11 +488,17 @@ export default class App extends Component<any, State> {
             emoticons={this.state.emoticons}
           />
           {this.state.isVideo && (
-            <Youtube
-              isPc={false}
-              videoState={this.state.videoState}
-              timeDelta={this.state.timeDelta}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Youtube
+                isPc={false}
+                videoState={this.state.videoState}
+                timeDelta={this.state.timeDelta}
+              />
+            </motion.div>
           )}
           <ChatInputer onTextSend={this.onChatSend} />
         </div>
@@ -515,11 +521,17 @@ export default class App extends Component<any, State> {
             <ChatInputer onTextSend={this.onChatSend} />
           </PcChatWrapper>
           {this.state.isVideo ? (
-            <Youtube
-              isPc={true}
-              videoState={this.state.videoState}
-              timeDelta={this.state.timeDelta}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Youtube
+                isPc={true}
+                videoState={this.state.videoState}
+                timeDelta={this.state.timeDelta}
+              />
+            </motion.div>
           ) : (
             <PcChatPanel layoutId={'navigator'}>
               <PcChatCardStack layoutId={'card-stack'}>

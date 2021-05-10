@@ -2,7 +2,7 @@ const Emoticon: Emoticon[] = [
   { key: '오', url: 'http://lt2.kr/image/con/5.gif' },
   { key: '^^7', url: 'http://lt2.kr/image/con/777.gif' },
   { key: '아', url: 'http://lt2.kr/image/con/ah.png' },
-  { key: '오', url: 'http://lt2.kr/image/con/dot.gif' },
+  { key: '...', url: 'http://lt2.kr/image/con/dot.gif' },
   { key: '엑', url: 'http://lt2.kr/image/con/eek.gif' },
   { key: '펀딩완료', url: 'http://lt2.kr/image/con/finish.gif' },
   { key: '입금완료', url: 'http://lt2.kr/image/con/finish2.gif' },

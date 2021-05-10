@@ -1,13 +1,11 @@
 import { Component } from 'react';
 import styled from 'styled-components';
-import { Shadow } from '../../styles/shadow';
 
 const Layout = styled.img`
   display: block;
   width: 100px;
   height: 100px;
   border-radius: 8px;
-  box-shadow: ${Shadow.DOWN};
   user-select: none;
 `;
 

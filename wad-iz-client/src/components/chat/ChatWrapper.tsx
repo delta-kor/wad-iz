@@ -59,9 +59,10 @@ export default class ChatWrapper extends Component<Props, State> {
     this.layoutRef = ref;
     if (!ref) return false;
     this.layoutRef.addEventListener('scroll', () => {
+      if (!this.layoutRef) return false;
       const delta =
         this.layoutRef.scrollHeight - this.layoutRef.scrollTop - this.layoutRef.clientHeight;
-      this.setState({ locked: delta === 0 });
+      this.setState({ locked: delta < 2 });
     });
     this.scrollToBottom();
   }

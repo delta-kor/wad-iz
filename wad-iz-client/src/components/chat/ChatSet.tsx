@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
-import { Shadow } from '../../styles/shadow';
 import EmoticonBubble from './EmoticonBubble';
 import TextBubble from './TextBubble';
 
@@ -13,7 +12,6 @@ const Layout = styled.div`
 const ProfileImage = styled.img<any>`
   width: 48px;
   height: 48px;
-  box-shadow: ${Shadow.DOWN};
   border: 3px solid
     ${({ role }) => (role === 0 ? 'transparent' : role === 1 ? Color.BLUE : Color.RED)};
   border-radius: 100px;

@@ -1,13 +1,11 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
-import { Shadow } from '../../styles/shadow';
 
 const Layout = styled.div`
   display: inline-block;
   padding: 14px 18px;
   background: ${Color.BLUE};
-  box-shadow: ${Shadow.BLUE};
   border-radius: 8px;
   font-style: normal;
   font-weight: normal;
