@@ -19,12 +19,14 @@ type ServerPacket =
   | DailyUpdateServerPacket
   | DirectSyncServerPacket
   | DisconnectServerPacket
+  | EmoticonSyncServerPacket
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket
   | TicketServerPacket
   | TokenServerPacket
   | UserSyncServerPacket
+  | VideoServerPacket
   | WadizSyncServerPacket
   | WadizUpdateServerPacket
   | WelcomeServerPacket;

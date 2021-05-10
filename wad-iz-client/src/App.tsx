@@ -11,6 +11,7 @@ import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
 import ChatWrapper from './components/chat/ChatWrapper';
+import Youtube from './components/chat/Youtube';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
 import { Color } from './styles/color';
@@ -64,9 +65,9 @@ const PcProfileWrapper = styled(motion.div)`
   top: calc(50% - 276px / 2);
 `;
 
-const PcChatWrapper = styled(motion.div)`
+const PcChatWrapper = styled(motion.div)<any>`
   position: fixed;
-  left: 480px;
+  left: ${({ isVideo }) => (isVideo ? 'calc(100% - 414px)' : '480px')};
   right: 0;
   top: 0;
   bottom: 0;
@@ -110,6 +111,9 @@ export interface ChatMessage {
 
 interface State {
   menu: number;
+  isVideo: boolean;
+  videoState: VideoState;
+
   directAmount: number;
   directLastUpdate: string;
   wadizAmount: number;
@@ -121,6 +125,8 @@ interface State {
   users: User[];
   chats: ChatMessage[];
   emoticons: Map<string, string>;
+
+  timeDelta: number;
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -133,6 +139,9 @@ export default class App extends Component<any, State> {
     super(props);
     this.state = {
       menu: 0,
+      isVideo: false,
+      videoState: { active: false },
+
       directAmount: 0,
       directLastUpdate: '',
       wadizAmount: 0,
@@ -143,6 +152,8 @@ export default class App extends Component<any, State> {
       users: [],
       chats: [],
       emoticons: new Map(),
+
+      timeDelta: 0,
     };
   }
 
@@ -151,6 +162,10 @@ export default class App extends Component<any, State> {
 
     this.socket.on('multiple-connect', () => {
       alert('다른 기기에서 접속하여 서버와의 연결을 끊었습니다');
+    });
+
+    this.socket.on('welcome', (packet: WelcomeServerPacket) => {
+      this.setState({ timeDelta: new Date().getTime() - packet.server_time });
     });
 
     this.socket.on('ticket', (packet: TicketServerPacket) => {
@@ -276,6 +291,22 @@ export default class App extends Component<any, State> {
       }
       this.setState({ emoticons });
     });
+
+    this.socket.on('video', (packet: VideoServerPacket) => {
+      if (packet.operation === 'stop') {
+        this.setState({ isVideo: false, videoState: { active: false } });
+      }
+      if (packet.operation === 'play') {
+        const videoState: VideoState = {
+          active: true,
+          service: packet.service,
+          id: packet.id,
+          isLive: packet.is_live,
+          time: packet.time,
+        };
+        this.setState({ isVideo: true, videoState });
+      }
+    });
   }
 
   getMyProfile = (): User => {
@@ -400,16 +431,24 @@ export default class App extends Component<any, State> {
           />
           <ChatWrapper
             isPc={false}
+            isVideo={this.state.isVideo}
             messages={this.state.chats}
             userId={this.state.userId}
             emoticons={this.state.emoticons}
           />
+          {this.state.isVideo && (
+            <Youtube
+              isPc={false}
+              videoState={this.state.videoState}
+              timeDelta={this.state.timeDelta}
+            />
+          )}
           <ChatInputer onTextSend={this.onChatSend} />
         </div>
       );
       pcContent = (
         <div>
-          <PcChatWrapper>
+          <PcChatWrapper isVideo={this.state.isVideo}>
             <ChatTop
               title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
               viewers={this.state.users.length}
@@ -417,19 +456,28 @@ export default class App extends Component<any, State> {
             />
             <ChatWrapper
               isPc={true}
+              isVideo={this.state.isVideo}
               messages={this.state.chats}
               userId={this.state.userId}
               emoticons={this.state.emoticons}
             />
             <ChatInputer onTextSend={this.onChatSend} />
           </PcChatWrapper>
-          <PcChatPanel layoutId={'navigator'}>
-            <PcChatCardStack layoutId={'card-stack'}>
-              <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
-              {directCard}
-              {wadizCard}
-            </PcChatCardStack>
-          </PcChatPanel>
+          {this.state.isVideo ? (
+            <Youtube
+              isPc={true}
+              videoState={this.state.videoState}
+              timeDelta={this.state.timeDelta}
+            />
+          ) : (
+            <PcChatPanel layoutId={'navigator'}>
+              <PcChatCardStack layoutId={'card-stack'}>
+                <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+                {directCard}
+                {wadizCard}
+              </PcChatCardStack>
+            </PcChatPanel>
+          )}
         </div>
       );
     } else if (this.state.menu === 2) {

@@ -13,7 +13,9 @@ const Layout = styled(motion.div)<any>`
   bottom: 76px;
   padding: 24px ${({ isPc }) => (isPc ? '56px' : '32px')};
   width: 100%;
-  height: calc(100% - 76px - 76px);
+  height: calc(
+    100% - 76px - 76px - ${({ isVideo }) => (isVideo ? 'min(280px, (100vw * (9 / 16)))' : '0px')}
+  );
   flex-direction: column;
   justify-content: left;
   gap: 24px 0;
@@ -30,6 +32,7 @@ interface MessageItem {
 
 interface Props {
   isPc: boolean;
+  isVideo: boolean;
   messages: ChatMessage[];
   userId: string;
   emoticons: Map<string, string>;
@@ -100,6 +103,7 @@ export default class ChatWrapper extends Component<Props, State> {
     return (
       <Layout
         isPc={this.props.isPc}
+        isVideo={this.props.isVideo && !this.props.isPc}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -114,14 +118,16 @@ export default class ChatWrapper extends Component<Props, State> {
         {messages.map((message, index) => {
           if (message.userId === '#') {
             return message.chats.map(
-              chat =>
-                chat.type === 'wadiz-update' && <WadizUpdateFeed delta={chat.delta} key={index} />
+              (chat, bIndex) =>
+                chat.type === 'wadiz-update' && (
+                  <WadizUpdateFeed delta={chat.delta} key={'f' + index + bIndex} />
+                )
             );
           }
 
           return (
             <ChatSet
-              key={index}
+              key={'c' + index}
               role={message.role}
               nickname={message.nickname}
               profileImageUrl={message.profileImageUrl}

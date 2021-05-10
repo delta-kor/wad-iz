@@ -119,16 +119,7 @@ export default class Socket {
         if (message.split(' ')[0] === '/인증') {
           const key = message.split(' ')[1];
           if (key === process.env.STAFF_KEY) {
-            this.sendChat(
-              'system',
-              'SYSTEM',
-              'SYSTEM',
-              {
-                type: 'text',
-                content: '관리자 인증 완료',
-              },
-              2
-            );
+            this.sendSystemMessage('관리자 인증 완료');
 
             this.state = SocketState.STAFF;
             this.app.onProfileUpdate(
@@ -137,6 +128,7 @@ export default class Socket {
               this.profileImage!,
               this.state - 1
             );
+
             const token = jwt.sign(
               {
                 user_id: this.userId,
@@ -148,18 +140,36 @@ export default class Socket {
             );
             this.sendToken(token);
           } else {
-            this.sendChat(
-              'system',
-              'SYSTEM',
-              'SYSTEM',
-              {
-                type: 'text',
-                content: '인증 실패',
-              },
-              2
-            );
+            this.sendSystemMessage('인증 실패');
           }
           return true;
+        }
+        if (message.split(' ')[0] === '/yt') {
+          if (this.state < SocketState.STAFF) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          const operation = message.split(' ')[1];
+          if (operation === 'stop') {
+            this.app.videoState = { active: false };
+            this.sendSystemMessage('유튜브 재생 중지');
+            this.app.onVideoUpdate();
+            return true;
+          }
+          if (operation === 'play') {
+            this.app.videoState = {
+              active: true,
+              service: 'youtube',
+              id: message.split(' ')[2],
+              isLive: false,
+              time: new Date().getTime(),
+            };
+            this.sendSystemMessage('재생 시작');
+            this.app.onVideoUpdate();
+            return true;
+          }
+          this.sendSystemMessage('stop / play / live 로 입력');
+          return false;
         }
       }
 
@@ -179,6 +189,19 @@ export default class Socket {
 
   private sendPacket(packet: ServerPacketBase): void {
     this.sendJson(packet);
+  }
+
+  public sendSystemMessage(message: string): void {
+    this.sendChat(
+      'system',
+      'SYSTEM',
+      'SYSTEM',
+      {
+        type: 'text',
+        content: message,
+      },
+      2
+    );
   }
 
   public sendWelcome(): void {
@@ -392,5 +415,28 @@ export default class Socket {
       emoticons: Emoticon,
     };
     this.sendPacket(packet);
+  }
+
+  public sendVideo(): void {
+    const videoState = this.app.videoState;
+    if (videoState.active) {
+      const packet: PlayVideoServerPacket = {
+        type: 'video',
+        packet_id: null,
+        operation: 'play',
+        service: videoState.service!,
+        id: videoState.id!,
+        is_live: videoState.isLive!,
+        time: videoState.time!,
+      };
+      this.sendPacket(packet);
+    } else {
+      const packet: StopVideoServerPacket = {
+        type: 'video',
+        packet_id: null,
+        operation: 'stop',
+      };
+      this.sendPacket(packet);
+    }
   }
 }

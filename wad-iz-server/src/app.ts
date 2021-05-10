@@ -26,6 +26,7 @@ export default class App {
   public dailyDown: number | null = null;
 
   public chatList: ChatMessage[] = [];
+  public videoState: VideoState = { active: false };
 
   constructor(port: number) {
     this.server = new Server({ port });
@@ -174,6 +175,7 @@ export default class App {
 
         socket.sendUserSync(users);
         socket.sendChatSync();
+        socket.sendVideo();
       } else if (socket.state !== SocketState.PENDING) {
         socket.sendConnect(ws.userId!, ws.nickname!, ws.profileImage!);
       }
@@ -232,6 +234,13 @@ export default class App {
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
       socket.sendChat(userId, nickname, profileImage, chat, role);
+    }
+  }
+
+  public onVideoUpdate(): void {
+    for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
+      socket.sendVideo();
     }
   }
 }
