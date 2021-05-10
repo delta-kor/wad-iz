@@ -5,7 +5,7 @@ interface TextChat {
 
 interface EmoticonChat {
   type: 'emoticon';
-  uuid: string;
+  key: string;
 }
 
 interface WadizUpdateChat {

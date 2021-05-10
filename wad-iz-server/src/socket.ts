@@ -1,8 +1,9 @@
 import WebSocket from 'ws';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import App, { ChatMessage } from './app';
+import App from './app';
 import ProfileImage from './profile-image';
+import Emoticon from './emoticon';
 
 export enum SocketState {
   PENDING,
@@ -299,6 +300,15 @@ export default class Socket {
       type: 'chat-sync',
       packet_id: null,
       chats,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendEmoticonSync(): void {
+    const packet: EmoticonSyncServerPacket = {
+      type: 'emoticon-sync',
+      packet_id: null,
+      emoticons: Emoticon,
     };
     this.sendPacket(packet);
   }

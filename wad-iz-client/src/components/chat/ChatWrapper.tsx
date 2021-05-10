@@ -30,6 +30,8 @@ interface MessageItem {
 interface Props {
   isPc: boolean;
   messages: ChatMessage[];
+  userId: string;
+  emoticons: Map<string, string>;
 }
 
 interface State {
@@ -120,6 +122,7 @@ export default class ChatWrapper extends Component<Props, State> {
               nickname={message.nickname}
               profileImageUrl={message.profileImageUrl}
               chats={message.chats}
+              emoticons={this.props.emoticons}
             />
           );
         })}

@@ -118,6 +118,7 @@ interface State {
   userId: string;
   users: User[];
   chats: ChatMessage[];
+  emoticons: Map<string, string>;
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -139,6 +140,7 @@ export default class App extends Component<any, State> {
       userId: '',
       users: [],
       chats: [],
+      emoticons: new Map(),
     };
   }
 
@@ -257,6 +259,14 @@ export default class App extends Component<any, State> {
       }
       this.setState({ chats });
     });
+
+    this.socket.on('emoticon-sync', (packet: EmoticonSyncServerPacket) => {
+      const emoticons = this.state.emoticons;
+      for (const emoticon of packet.emoticons) {
+        emoticons.set(emoticon.key, emoticon.url);
+      }
+      this.setState({ emoticons });
+    });
   }
 
   getMyProfile = (): User => {
@@ -304,8 +314,12 @@ export default class App extends Component<any, State> {
     }
   };
 
-  onTextChatSend = (text: string) => {
-    this.socket.sendTextChat(text);
+  onChatSend = (text: string) => {
+    if (this.state.emoticons.has(text)) {
+      this.socket.sendEmoticonChat(text);
+    } else {
+      this.socket.sendTextChat(text);
+    }
   };
 
   render() {
@@ -375,8 +389,13 @@ export default class App extends Component<any, State> {
             viewers={this.state.users.length}
             onBack={() => this.onNavigatorClick(0)}
           />
-          <ChatWrapper isPc={false} messages={this.state.chats} />
-          <ChatInputer onTextSend={this.onTextChatSend} />
+          <ChatWrapper
+            isPc={false}
+            messages={this.state.chats}
+            userId={this.state.userId}
+            emoticons={this.state.emoticons}
+          />
+          <ChatInputer onTextSend={this.onChatSend} />
         </div>
       );
       pcContent = (
@@ -387,8 +406,13 @@ export default class App extends Component<any, State> {
               viewers={this.state.users.length}
               onBack={() => this.onNavigatorClick(0)}
             />
-            <ChatWrapper isPc={true} messages={this.state.chats} />
-            <ChatInputer onTextSend={this.onTextChatSend} />
+            <ChatWrapper
+              isPc={true}
+              messages={this.state.chats}
+              userId={this.state.userId}
+              emoticons={this.state.emoticons}
+            />
+            <ChatInputer onTextSend={this.onChatSend} />
           </PcChatWrapper>
           <PcChatPanel layoutId={'navigator'}>
             <PcChatCardStack layoutId={'card-stack'}>

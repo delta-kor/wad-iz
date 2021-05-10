@@ -97,4 +97,17 @@ export default class Socket extends EventEmitter {
     this.sendPacket(packet);
     this.packetId++;
   }
+
+  public sendEmoticonChat(key: string): void {
+    const packet: ChatClientPacket = {
+      type: 'chat',
+      packet_id: this.packetId,
+      chat: {
+        type: 'emoticon',
+        key: key,
+      },
+    };
+    this.sendPacket(packet);
+    this.packetId++;
+  }
 }

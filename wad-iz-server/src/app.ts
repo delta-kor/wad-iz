@@ -47,6 +47,7 @@ export default class App {
       socket.sendDirectSync(directAmount, directLastUpdate);
       socket.sendDailySync();
       socket.sendProfileImage();
+      socket.sendEmoticonSync();
     });
   }
 
@@ -199,11 +200,16 @@ export default class App {
   }
 
   public onChatReceive(userId: string, nickname: string, profileImage: string, chat: Chat): any {
+    const chatTypes = ['text', 'emoticon'];
+    if (!chatTypes.includes(chat.type)) {
+      console.log('chat blocked : ' + chat.type);
+      return false;
+    }
+
     if (chat.type === 'text') {
       if (!chat.content || !chat.content.trim().length) return false;
       chat.content = chat.content.slice(0, 200);
     }
-    if (chat.type !== 'text') return false;
 
     this.chatList.push({ userId, nickname, profileImage, chat });
     if (this.chatList.length > 500) this.chatList.shift();
