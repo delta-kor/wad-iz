@@ -2,8 +2,10 @@ import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { ChatMessage } from '../../App';
+import { Transform } from '../../utils/transform';
 import ChatPopup from './ChatPopup';
 import ChatSet from './ChatSet';
+import WadizUpdateFeed from './WadizUpdateFeed';
 
 const Layout = styled(motion.div)<any>`
   position: absolute;
@@ -77,11 +79,18 @@ export default class ChatWrapper extends Component<Props, State> {
 
     let lastContent: string = '';
     const lastChat = this.props.messages.slice(-1)[0]?.chat;
-    if (lastChat && lastChat.type === 'text') {
-      lastContent = lastChat.content;
-    }
-    if (lastChat && lastChat.type === 'emoticon') {
-      lastContent = '이모티콘을 보냈습니다';
+    if (lastChat) {
+      if (lastChat.type === 'text') {
+        lastContent = lastChat.content;
+      }
+      if (lastChat.type === 'emoticon') {
+        lastContent = '이모티콘을 보냈습니다';
+      }
+      if (lastChat.type === 'wadiz-update') {
+        lastContent = `(wadiz) ${lastChat.delta < 0 ? '' : '+'} ${Transform.toCurrency(
+          lastChat.delta
+        )}`;
+      }
     }
 
     return (
@@ -99,6 +108,12 @@ export default class ChatWrapper extends Component<Props, State> {
           onClick={this.scrollToBottom}
         />
         {messages.map((message, index) => {
+          if (message.userId === '#') {
+            return message.chats.map(
+              chat => chat.type === 'wadiz-update' && <WadizUpdateFeed delta={chat.delta} />
+            );
+          }
+
           return (
             <ChatSet
               key={index}

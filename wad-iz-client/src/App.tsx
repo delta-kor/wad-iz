@@ -65,7 +65,7 @@ const PcProfileWrapper = styled(motion.div)`
 `;
 
 const PcChatWrapper = styled(motion.div)`
-  position: absolute;
+  position: fixed;
   left: 480px;
   right: 0;
   top: 0;

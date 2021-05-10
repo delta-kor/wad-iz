@@ -102,6 +102,7 @@ export default class Socket {
     }
 
     if (packet.type === 'chat') {
+      if (this.state === SocketState.PENDING) return false;
       this.app.onChatReceive(this.userId!, this.nickname!, this.profileImage!, packet.chat);
     }
   }

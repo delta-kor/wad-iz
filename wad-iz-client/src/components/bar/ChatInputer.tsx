@@ -7,7 +7,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 
 const Layout = styled(motion.div)`
-  position: absolute;
+  position: fixed;
   width: 100%;
   bottom: 0;
   height: 76px;

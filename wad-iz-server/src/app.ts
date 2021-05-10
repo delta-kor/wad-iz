@@ -80,9 +80,21 @@ export default class App {
       if (amount !== this.amount || supporter !== this.supporter) {
         const amountDelta = amount - this.amount;
         const supporterDelta = supporter - this.supporter;
+
+        const wadizUpdateChat: Chat = { type: 'wadiz-update', delta: amountDelta };
         for (const socket of this.sockets) {
           socket.sendWadizUpdate(amount, supporter, amountDelta, supporterDelta);
+          socket.sendChat('#', '#', '#', wadizUpdateChat);
         }
+
+        this.chatList.push({
+          userId: '#',
+          nickname: '#',
+          profileImage: '#',
+          chat: wadizUpdateChat,
+        });
+        if (this.chatList.length > 500) this.chatList.shift();
+
         this.amount = amount;
         this.supporter = supporter;
       }
