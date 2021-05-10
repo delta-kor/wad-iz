@@ -50,12 +50,14 @@ export default class ChatWrapper extends Component<Props, State> {
   };
 
   componentDidUpdate() {
-    if (this.state.locked) {
+    if (this.state.locked && this.layoutRef) {
       this.layoutRef.scrollTop = this.layoutRef.scrollHeight;
     }
   }
 
-  componentDidMount() {
+  setRef(ref: HTMLDivElement) {
+    this.layoutRef = ref;
+    if (!ref) return false;
     this.layoutRef.addEventListener('scroll', () => {
       const delta =
         this.layoutRef.scrollHeight - this.layoutRef.scrollTop - this.layoutRef.clientHeight;
@@ -108,7 +110,7 @@ export default class ChatWrapper extends Component<Props, State> {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        ref={(ref: HTMLDivElement) => (this.layoutRef = ref)}
+        ref={(ref: HTMLDivElement) => this.setRef(ref)}
       >
         <ChatPopup
           content={lastContent}
@@ -120,10 +122,11 @@ export default class ChatWrapper extends Component<Props, State> {
         {messages.map((message, index) => {
           if (message.userId === '#') {
             return message.chats.map((chat, index) => {
-              if (chat.type === 'feed') return <CustomFeed text={chat.content} />;
+              if (chat.type === 'feed') return <CustomFeed text={chat.content} key={'f' + index} />;
               if (chat.type === 'wadiz-update')
                 return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
-              if (chat.type === 'chat-clear') return <CustomFeed text={'채팅을 클리어 했습니다'} />;
+              if (chat.type === 'chat-clear')
+                return <CustomFeed text={'채팅을 클리어 했습니다'} key={'f' + index} />;
             });
           }
 

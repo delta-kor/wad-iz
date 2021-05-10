@@ -15,6 +15,7 @@ import Youtube from './components/chat/Youtube';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
 import { Color } from './styles/color';
+import playSfx from './utils/sfx';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
 
@@ -244,6 +245,17 @@ export default class App extends Component<any, State> {
       this.setState({ wadizAmount: packet.amount, wadizSupporter: packet.supporter });
     });
     this.socket.on('wadiz-update', (packet: WadizUpdateServerPacket) => {
+      if (packet.amount_delta > 0) {
+        if (packet.amount_delta > 10000) {
+          playSfx('fund_big');
+        } else {
+          playSfx('fund_small');
+        }
+      } else if (packet.amount_delta === 0) {
+        playSfx('fund_zero');
+      } else {
+        playSfx('fund_minus');
+      }
       this.setState({ wadizAmount: packet.amount, wadizSupporter: packet.supporter });
     });
     this.socket.on('daily-sync', (packet: DailySyncServerPacket) => {
@@ -312,6 +324,7 @@ export default class App extends Component<any, State> {
     });
 
     this.socket.on('chat-clear', (packet: ChatClearServerPacket) => {
+      playSfx('chat_clear');
       this.setState({ chats: [] });
     });
 
@@ -352,10 +365,12 @@ export default class App extends Component<any, State> {
   };
 
   onNavigatorClick = (index: number) => {
+    playSfx('navigator');
     this.setState({ menu: index });
   };
 
   onProfileInteract = (type: 'left' | 'right' | 'nickname') => {
+    playSfx('swipe');
     if (type === 'nickname') {
       const nickname = prompt('닉네임을 입력하세요');
       if (!nickname || !nickname.trim().length) {
@@ -390,6 +405,7 @@ export default class App extends Component<any, State> {
   };
 
   onChatSend = (text: string) => {
+    playSfx('chat_send');
     if (this.state.emoticons.has(text)) {
       this.socket.sendEmoticonChat(text);
     } else {

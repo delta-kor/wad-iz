@@ -60,6 +60,7 @@ export default class Socket {
           if (connectedUser) {
             connectedUser.closeForMultipleConnect();
           }
+          if (!decoded.role) decoded.role = 0;
           this.userId = decoded.user_id || null;
           this.nickname = decoded.nickname || null;
           this.profileImage = decoded.profile_image || null;
