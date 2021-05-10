@@ -8,6 +8,7 @@ const Layout = styled.img`
   height: 100px;
   border-radius: 8px;
   box-shadow: ${Shadow.DOWN};
+  user-select: none;
 `;
 
 interface Props {
