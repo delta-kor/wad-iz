@@ -243,4 +243,20 @@ export default class App {
       socket.sendVideo();
     }
   }
+
+  public onChatClear(): void {
+    this.chatList = [];
+    this.chatList.push({
+      userId: '#',
+      role: 2,
+      nickname: '#',
+      profileImage: '#',
+      chat: { type: 'chat-clear' },
+    });
+    for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
+      socket.sendChatClear();
+      socket.sendChat('#', '#', '#', { type: 'chat-clear' }, 2);
+    }
+  }
 }

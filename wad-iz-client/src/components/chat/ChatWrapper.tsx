@@ -5,6 +5,7 @@ import { ChatMessage } from '../../App';
 import { Transform } from '../../utils/transform';
 import ChatPopup from './ChatPopup';
 import ChatSet from './ChatSet';
+import CustomFeed from './CustomFeed';
 import WadizUpdateFeed from './WadizUpdateFeed';
 
 const Layout = styled(motion.div)<any>`
@@ -112,17 +113,17 @@ export default class ChatWrapper extends Component<Props, State> {
         <ChatPopup
           content={lastContent}
           isPc={this.props.isPc}
+          isVideo={this.props.isVideo && this.props.isPc}
           active={!this.state.locked}
           onClick={this.scrollToBottom}
         />
         {messages.map((message, index) => {
           if (message.userId === '#') {
-            return message.chats.map(
-              (chat, bIndex) =>
-                chat.type === 'wadiz-update' && (
-                  <WadizUpdateFeed delta={chat.delta} key={'f' + index + bIndex} />
-                )
-            );
+            return message.chats.map((chat, index) => {
+              if (chat.type === 'wadiz-update')
+                return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
+              if (chat.type === 'chat-clear') return <CustomFeed text={'채팅을 클리어 했습니다'} />;
+            });
           }
 
           return (

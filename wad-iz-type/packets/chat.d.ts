@@ -13,7 +13,11 @@ interface WadizUpdateChat {
   delta: number;
 }
 
-type Chat = TextChat | EmoticonChat | WadizUpdateChat;
+interface ChatClearChat {
+  type: 'chat-clear';
+}
+
+type Chat = TextChat | EmoticonChat | WadizUpdateChat | ChatClearChat;
 
 interface ChatClientPacket extends ClientPacketBase {
   type: 'chat';

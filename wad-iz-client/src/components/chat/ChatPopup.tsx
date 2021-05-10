@@ -7,7 +7,8 @@ import { Shadow } from '../../styles/shadow';
 
 const Layout = styled(motion.div)<any>`
   position: fixed;
-  left: ${({ isPc }) => (isPc ? '496px' : '16px')};
+  left: ${({ isPc, isVideo }) =>
+    isPc ? (isVideo ? 'calc(100% - 414px + 16px)' : '496px') : '16px'};
   right: 16px;
   bottom: 92px;
   height: 48px;
@@ -44,6 +45,7 @@ const Bottom = styled.img`
 
 interface Props {
   isPc: boolean;
+  isVideo: boolean;
   content: string;
   active: boolean;
   onClick(): void;
@@ -54,6 +56,7 @@ export default class ChatPopup extends Component<Props, any> {
     return (
       <Layout
         isPc={this.props.isPc}
+        isVideo={this.props.isVideo}
         variants={{ active: { bottom: 92 }, inactive: { bottom: -48 } }}
         initial={'inactive'}
         animate={this.props.active ? 'active' : 'inactive'}

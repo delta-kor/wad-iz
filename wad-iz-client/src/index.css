@@ -49,6 +49,6 @@
   font-family: Product Sans, Noto Sans KR, sans-serif;
 }
 
-body::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
 }

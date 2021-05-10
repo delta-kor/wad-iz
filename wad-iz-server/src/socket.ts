@@ -171,6 +171,10 @@ export default class Socket {
           this.sendSystemMessage('stop / play / live 로 입력');
           return false;
         }
+        if (message === '/clear') {
+          this.app.onChatClear();
+          return true;
+        }
       }
 
       this.app.onChatReceive(
@@ -438,5 +442,13 @@ export default class Socket {
       };
       this.sendPacket(packet);
     }
+  }
+
+  public sendChatClear(): void {
+    const packet: ChatClearServerPacket = {
+      type: 'chat-clear',
+      packet_id: null,
+    };
+    this.sendPacket(packet);
   }
 }

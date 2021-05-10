@@ -284,6 +284,10 @@ export default class App extends Component<any, State> {
       this.setState({ chats });
     });
 
+    this.socket.on('chat-clear', (packet: ChatClearServerPacket) => {
+      this.setState({ chats: [] });
+    });
+
     this.socket.on('emoticon-sync', (packet: EmoticonSyncServerPacket) => {
       const emoticons = this.state.emoticons;
       for (const emoticon of packet.emoticons) {

@@ -12,6 +12,7 @@ interface ServerPacketBase extends PacketBase {
 
 type ClientPacket = ChatClientPacket | ProfileUpdateClientPacket | TicketClientPacket;
 type ServerPacket =
+  | ChatClearServerPacket
   | ChatServerPacket
   | ChatSyncServerPacket
   | ConnectServerPacket
