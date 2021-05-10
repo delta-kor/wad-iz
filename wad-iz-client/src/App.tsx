@@ -160,8 +160,35 @@ export default class App extends Component<any, State> {
   componentDidMount() {
     this.socket = new Socket();
 
+    this.socket.on('#server-close', () => {
+      const chats = this.state.chats;
+      chats.push({
+        userId: '#',
+        role: 2,
+        nickname: '#',
+        profileImageUrl: '#',
+        chat: {
+          type: 'feed',
+          content: '서버와 연결이 끊겼습니다. 다시 연결하는 중...',
+        },
+      });
+      this.setState({ chats });
+      setTimeout(() => window.location.reload(), 10000);
+    });
+
     this.socket.on('multiple-connect', () => {
-      alert('다른 기기에서 접속하여 서버와의 연결을 끊었습니다');
+      const chats = this.state.chats;
+      chats.push({
+        userId: '#',
+        role: 2,
+        nickname: '#',
+        profileImageUrl: '#',
+        chat: {
+          type: 'feed',
+          content: '다른 기기에서 접속하여 연결을 끊었습니다.',
+        },
+      });
+      this.setState({ chats });
     });
 
     this.socket.on('welcome', (packet: WelcomeServerPacket) => {
@@ -310,6 +337,10 @@ export default class App extends Component<any, State> {
         };
         this.setState({ isVideo: true, videoState });
       }
+    });
+
+    this.socket.on('reload', (packet: ReloadServerPacket) => {
+      window.location.reload();
     });
   }
 

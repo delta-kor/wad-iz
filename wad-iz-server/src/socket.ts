@@ -139,6 +139,27 @@ export default class Socket {
               process.env.SECRET!
             );
             this.sendToken(token);
+          } else if (key === process.env.MASTER_KEY) {
+            this.sendSystemMessage('마스터 인증 완료');
+
+            this.state = SocketState.MASTER;
+            this.app.onProfileUpdate(
+              this.userId!,
+              this.nickname!,
+              this.profileImage!,
+              this.state - 1
+            );
+
+            const token = jwt.sign(
+              {
+                user_id: this.userId,
+                nickname: this.nickname,
+                profile_image: this.profileImage,
+                role: this.state - 1,
+              },
+              process.env.SECRET!
+            );
+            this.sendToken(token);
           } else {
             this.sendSystemMessage('인증 실패');
           }
@@ -172,7 +193,19 @@ export default class Socket {
           return false;
         }
         if (message === '/clear') {
+          if (this.state < SocketState.STAFF) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
           this.app.onChatClear();
+          return true;
+        }
+        if (message === '/reload') {
+          if (this.state < SocketState.MASTER) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          this.app.onReload();
           return true;
         }
       }
@@ -447,6 +480,14 @@ export default class Socket {
   public sendChatClear(): void {
     const packet: ChatClearServerPacket = {
       type: 'chat-clear',
+      packet_id: null,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendReload(): void {
+    const packet: ReloadServerPacket = {
+      type: 'reload',
       packet_id: null,
     };
     this.sendPacket(packet);

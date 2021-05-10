@@ -259,4 +259,10 @@ export default class App {
       socket.sendChat('#', '#', '#', { type: 'chat-clear' }, 2);
     }
   }
+
+  public onReload(): void {
+    for (const socket of this.sockets) {
+      socket.sendReload();
+    }
+  }
 }

@@ -47,6 +47,10 @@ export default class Socket extends EventEmitter {
 
       this.emit(data.type, data);
     });
+
+    this.ws.addEventListener('close', () => {
+      this.emit('#server-close');
+    });
   }
 
   private sendJson(json: any): void {

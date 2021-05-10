@@ -17,7 +17,12 @@ interface ChatClearChat {
   type: 'chat-clear';
 }
 
-type Chat = TextChat | EmoticonChat | WadizUpdateChat | ChatClearChat;
+interface FeedChat {
+  type: 'feed';
+  content: string;
+}
+
+type Chat = TextChat | EmoticonChat | WadizUpdateChat | ChatClearChat | FeedChat;
 
 interface ChatClientPacket extends ClientPacketBase {
   type: 'chat';

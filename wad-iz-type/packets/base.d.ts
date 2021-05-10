@@ -24,6 +24,7 @@ type ServerPacket =
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket
+  | ReloadServerPacket
   | TicketServerPacket
   | TokenServerPacket
   | UserSyncServerPacket

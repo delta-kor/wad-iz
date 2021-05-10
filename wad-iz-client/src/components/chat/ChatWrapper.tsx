@@ -120,6 +120,7 @@ export default class ChatWrapper extends Component<Props, State> {
         {messages.map((message, index) => {
           if (message.userId === '#') {
             return message.chats.map((chat, index) => {
+              if (chat.type === 'feed') return <CustomFeed text={chat.content} />;
               if (chat.type === 'wadiz-update')
                 return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
               if (chat.type === 'chat-clear') return <CustomFeed text={'채팅을 클리어 했습니다'} />;
