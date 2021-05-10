@@ -12,6 +12,7 @@ import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
 import ChatWrapper from './components/chat/ChatWrapper';
 import Youtube from './components/chat/Youtube';
+import Copyright from './components/Copyright';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
 import { Color } from './styles/color';
@@ -456,6 +457,7 @@ export default class App extends Component<any, State> {
             {wadizCard}
             {dayCard}
             {surveyCard}
+            <Copyright isPc={false} />
           </CardStack>
         </motion.div>
       );
@@ -470,6 +472,7 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
           </PcCardStackRight>
+          <Copyright isPc={true} />
         </motion.div>
       );
     } else if (this.state.menu === 1) {
@@ -556,6 +559,7 @@ export default class App extends Component<any, State> {
       );
       pcContent = (
         <PcProfileWrapper initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <Copyright isPc={true} />
           <Profile
             nickname={profile.nickname}
             profileImageUrl={this.profileImageMap.get(profile.profileImage) || falloutProfileImage}
