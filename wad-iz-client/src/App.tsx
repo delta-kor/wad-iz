@@ -10,6 +10,7 @@ import DayCard from './components/card/Day';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
+import WeeklyCard from './components/card/Weekly';
 import ChatWrapper from './components/chat/ChatWrapper';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
@@ -32,7 +33,19 @@ const PcCardStackLeft = styled(motion.div)`
   display: flex;
   top: 0;
   bottom: 0;
-  left: calc(50% - 342px / 2 - 69px);
+  left: calc(50% - 342px / 2 - 281px);
+  width: 342px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px 0;
+`;
+
+const PcCardStackCenter = styled.div`
+  position: absolute;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 342px / 2 + 93px);
   width: 342px;
   flex-direction: column;
   justify-content: center;
@@ -44,7 +57,7 @@ const PcCardStackRight = styled.div`
   display: flex;
   top: 0;
   bottom: 0;
-  left: calc(50% - 342px / 2 + 305px);
+  left: calc(50% - 342px / 2 + 467px);
   width: 342px;
   flex-direction: column;
   justify-content: center;
@@ -129,6 +142,8 @@ interface State {
   emoticons: Map<string, string>;
 
   timeDelta: number;
+
+  weeklyItems: WeeklyItem[];
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -156,6 +171,7 @@ export default class App extends Component<any, State> {
       emoticons: new Map(),
 
       timeDelta: 0,
+      weeklyItems: [],
     };
   }
 
@@ -264,6 +280,9 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('daily-update', (packet: DailyUpdateServerPacket) => {
       this.setState({ dailyUp: packet.up, dailyDown: packet.down });
+    });
+    this.socket.on('weekly-sync', (packet: WeeklySyncServerPacket) => {
+      this.setState({ weeklyItems: packet.items });
     });
 
     this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
@@ -450,6 +469,7 @@ export default class App extends Component<any, State> {
         delay={0.4}
       />
     );
+    const weeklyCard = <WeeklyCard items={this.state.weeklyItems} delay={0.5} />;
 
     let content, pcContent;
     if (this.state.menu === 0) {
@@ -461,6 +481,7 @@ export default class App extends Component<any, State> {
             {wadizCard}
             {dayCard}
             {surveyCard}
+            {weeklyCard}
             <Copyright isPc={false} />
           </CardStack>
         </div>
@@ -472,10 +493,11 @@ export default class App extends Component<any, State> {
             {directCard}
             {wadizCard}
           </PcCardStackLeft>
-          <PcCardStackRight>
+          <PcCardStackCenter>
             {dayCard}
             {surveyCard}
-          </PcCardStackRight>
+          </PcCardStackCenter>
+          <PcCardStackRight>{weeklyCard}</PcCardStackRight>
           <Copyright isPc={true} />
         </div>
       );

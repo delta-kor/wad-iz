@@ -50,4 +50,9 @@ export class Transform {
   public static toSupporterText(number: number): string {
     return `${Transform.addComma(number)} 명 참여`;
   }
+
+  public static toDayText(number: number): string {
+    if (number === -1) number = 6;
+    return ['일', '월', '화', '수', '목', '금', '토'][number];
+  }
 }

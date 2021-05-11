@@ -493,4 +493,13 @@ export default class Socket {
     };
     this.sendPacket(packet);
   }
+
+  public sendWeeklySync(items: WeeklyItem[]): void {
+    const packet: WeeklySyncServerPacket = {
+      type: 'weekly-sync',
+      packet_id: null,
+      items,
+    };
+    this.sendPacket(packet);
+  }
 }

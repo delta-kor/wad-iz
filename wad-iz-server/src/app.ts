@@ -28,6 +28,8 @@ export default class App {
   public chatList: ChatMessage[] = [];
   public videoState: VideoState = { active: false };
 
+  public weeklyItems: WeeklyItem[] = [];
+
   constructor(port: number) {
     this.server = new Server({ port });
     this.sockets = new Set();
@@ -50,6 +52,7 @@ export default class App {
       socket.sendDailySync();
       socket.sendProfileImage();
       socket.sendEmoticonSync();
+      if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
     });
   }
 
@@ -77,6 +80,7 @@ export default class App {
         for (const socket of this.sockets) {
           socket.sendWadizSync();
         }
+        this.updateWeeklySync();
         return true;
       }
 
@@ -101,6 +105,8 @@ export default class App {
 
         this.amount = amount;
         this.supporter = supporter;
+
+        this.updateWeeklySync();
 
         const fund = new Fund({ amount: this.amount + directAmount });
         fund.save();
@@ -267,5 +273,31 @@ export default class App {
     for (const socket of this.sockets) {
       socket.sendReload();
     }
+  }
+
+  public async updateWeeklySync() {
+    const result: WeeklyItem[] = [];
+    const dayM = 86400000;
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    today.setHours(0, 0, 0, 0);
+    const todayM = today.getTime();
+    for (let day = 0; day < 7; day++) {
+      const targetDay = new Date(todayM - dayM * day);
+      const lastFund = (
+        await Fund.find({ time: { $lt: targetDay } })
+          .sort({ time: -1 })
+          .limit(1)
+      )[0];
+      result.push({
+        day: targetDay.getDay(),
+        amount: lastFund.amount,
+        isToday: day === 0,
+      });
+    }
+    for (const socket of this.sockets) {
+      socket.sendWeeklySync(result);
+    }
+    this.weeklyItems = result;
   }
 }
