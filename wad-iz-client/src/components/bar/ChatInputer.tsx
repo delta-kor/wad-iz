@@ -5,6 +5,7 @@ import EmoticonIcon from '../../icon/emoticon.svg';
 import SendIcon from '../../icon/send.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
+import playSfx from '../../utils/sfx';
 
 const Layout = styled(motion.div)<any>`
   position: fixed;
@@ -116,6 +117,7 @@ export default class ChatInputer extends Component<Props, State> {
   };
 
   onEmoticonClick = () => {
+    playSfx(this.state.emoticon ? 'collapse' : 'expand');
     if (!this.state.emoticon) this.wrapper.scrollLeft = 0;
     this.setState({ emoticon: !this.state.emoticon });
   };

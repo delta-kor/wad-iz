@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import BottomIcon from '../../icon/bottom.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
+import playSfx from '../../utils/sfx';
 
 const Layout = styled(motion.div)<any>`
   position: fixed;
@@ -64,7 +65,10 @@ export default class ChatPopup extends Component<Props, any> {
         initial={'inactive'}
         transition={{ duration: 0.25 }}
         animate={this.props.active ? 'active' : 'inactive'}
-        onClick={this.props.onClick}
+        onClick={() => {
+          playSfx('chat_bottom');
+          this.props.onClick();
+        }}
       >
         <Text>{this.props.content}</Text>
         <Bottom src={BottomIcon} />

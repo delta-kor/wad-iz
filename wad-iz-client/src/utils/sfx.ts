@@ -1,6 +1,9 @@
 type Sfx =
+  | 'chat_bottom'
   | 'chat_clear'
   | 'chat_send'
+  | 'collapse'
+  | 'expand'
   | 'fund_big'
   | 'fund_minus'
   | 'fund_small'
