@@ -507,7 +507,7 @@ export default class App extends Component<any, State> {
               />
             </motion.div>
           )}
-          <ChatInputer onTextSend={this.onChatSend} />
+          <ChatInputer onTextSend={this.onChatSend} isPc={false} emoticons={this.state.emoticons} />
         </div>
       );
       pcContent = (
@@ -525,7 +525,12 @@ export default class App extends Component<any, State> {
               userId={this.state.userId}
               emoticons={this.state.emoticons}
             />
-            <ChatInputer onTextSend={this.onChatSend} />
+            <ChatInputer
+              onTextSend={this.onChatSend}
+              isPc={true}
+              isVideo={this.state.isVideo}
+              emoticons={this.state.emoticons}
+            />
           </PcChatWrapper>
           {this.state.isVideo ? (
             <motion.div

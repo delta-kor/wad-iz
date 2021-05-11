@@ -57,7 +57,10 @@ export default class ChatPopup extends Component<Props, any> {
       <Layout
         isPc={this.props.isPc}
         isVideo={this.props.isVideo}
-        variants={{ active: { bottom: 92 }, inactive: { bottom: 18 } }}
+        variants={{
+          active: { bottom: 92, opacity: 1 },
+          inactive: { bottom: 18, opacity: 0 },
+        }}
         initial={'inactive'}
         transition={{ duration: 0.25 }}
         animate={this.props.active ? 'active' : 'inactive'}
