@@ -9,7 +9,10 @@ const Layout = styled(YoutubeContent)`
   height: calc(100vw * (9 / 16));
   max-height: 280px;
   top: 76px;
-  background: ${Color.BLACK};
+
+  @media (max-height: 560px) {
+    opacity: 0;
+  }
 `;
 
 const PcLayout = styled(YoutubeContent)`

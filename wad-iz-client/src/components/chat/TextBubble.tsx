@@ -4,12 +4,12 @@ import { Color } from '../../styles/color';
 
 const Layout = styled.div`
   display: inline-block;
-  padding: 14px 18px;
+  padding: 10px 16px;
   background: ${Color.BLUE};
   border-radius: 8px;
   font-style: normal;
   font-weight: normal;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   color: ${Color.WHITE};
   word-break: break-all;

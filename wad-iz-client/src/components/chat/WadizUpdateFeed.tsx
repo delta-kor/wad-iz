@@ -11,7 +11,7 @@ const Layout = styled.div<any>`
   font-size: 18px;
   line-height: 24px;
   text-align: center;
-  color: ${({ delta }) => (delta < 0 ? Color.RED : Color.BLUE)};
+  color: ${({ delta }) => (delta > 0 ? Color.RED : Color.BLUE)};
 `;
 
 interface Props {

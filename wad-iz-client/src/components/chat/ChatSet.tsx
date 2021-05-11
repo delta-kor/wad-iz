@@ -21,7 +21,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px 0;
+  gap: 8px 0;
 `;
 
 const Nickname = styled.div<any>`

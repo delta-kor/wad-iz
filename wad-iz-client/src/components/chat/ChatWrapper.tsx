@@ -12,7 +12,7 @@ const Layout = styled(motion.div)<any>`
   position: absolute;
   display: flex;
   bottom: 76px;
-  padding: 24px ${({ isPc }) => (isPc ? '56px' : '32px')};
+  padding: 24px ${({ isPc }) => (isPc ? '36px' : '32px')};
   width: 100%;
   height: calc(
     100% - 76px - 76px - ${({ isVideo }) => (isVideo ? 'min(280px, (100vw * (9 / 16)))' : '0px')}
@@ -21,6 +21,10 @@ const Layout = styled(motion.div)<any>`
   justify-content: left;
   gap: 24px 0;
   overflow-y: scroll;
+
+  @media (max-height: 560px) {
+    height: calc(100% - 76px - 76px);
+  }
 `;
 
 interface MessageItem {

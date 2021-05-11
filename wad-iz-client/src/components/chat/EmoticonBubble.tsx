@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const Layout = styled.img`
   display: block;
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 8px;
   user-select: none;
 `;
