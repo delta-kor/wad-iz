@@ -24,12 +24,25 @@ const Content = styled.div`
   gap: 8px 0;
 `;
 
-const Nickname = styled.div<any>`
+const Nickname = styled.div`
+  display: flex;
+  gap: 0 8px;
+`;
+
+const NicknameRole = styled.div<any>`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 24px;
+  color: ${({ role }) => (role === 0 ? Color.BLACK : role === 1 ? Color.BLUE : Color.RED)};
+`;
+
+const NicknameContent = styled.div<any>`
   font-style: normal;
   font-weight: bold;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ role }) => (role === 0 ? Color.BLACK : role === 1 ? Color.BLUE : Color.RED)};
+  color: ${Color.BLACK};
 `;
 
 interface Props {
@@ -46,7 +59,14 @@ export default class ChatSet extends Component<Props, any> {
       <Layout>
         <ProfileImage src={this.props.profileImageUrl} role={this.props.role} />
         <Content>
-          <Nickname role={this.props.role}>{this.props.nickname}</Nickname>
+          <Nickname>
+            {this.props.role > 0 && (
+              <NicknameRole role={this.props.role}>
+                {this.props.role === 1 ? '부방장' : '방장'}
+              </NicknameRole>
+            )}
+            <NicknameContent>{this.props.nickname}</NicknameContent>
+          </Nickname>
           {this.props.chats.map((chat, index) => {
             if (chat.type === 'text') return <TextBubble chat={chat} key={index} />;
             if (chat.type === 'emoticon') {
