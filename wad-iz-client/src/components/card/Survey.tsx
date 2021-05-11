@@ -5,7 +5,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: relative;
   height: 239px;
   background: ${Color.WHITE};
@@ -164,6 +164,7 @@ interface Props {
   totalSupporter: number;
   kwizAmount: number;
   kwizSupporter: number;
+  delay?: number;
 }
 
 export default class SurveyCard extends Component<Props, any> {
@@ -171,7 +172,11 @@ export default class SurveyCard extends Component<Props, any> {
     const kwizAmountPercentage = (this.props.kwizAmount / this.props.totalAmount) * 100;
     const kwizSupporterPercentage = (this.props.kwizSupporter / this.props.totalSupporter) * 100;
     return (
-      <Layout>
+      <Layout
+        initial={{ zoom: 1, opacity: 0 }}
+        animate={{ zoom: 1, opacity: 1 }}
+        transition={{ delay: this.props.delay || 0 }}
+      >
         <Title>수요조사</Title>
         <GraphBlockWrapper>
           <GraphBlock>

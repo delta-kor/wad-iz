@@ -8,7 +8,7 @@ const Layout = styled.div<any>`
   left: 25px;
   font-style: normal;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   text-align: center;
   color: ${({ delta }) => (delta > 0 ? Color.RED : Color.BLUE)};

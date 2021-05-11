@@ -1,10 +1,11 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   position: relative;
   height: 150px;
   background: ${Color.WHITE};
@@ -71,12 +72,18 @@ interface Props {
   label: string;
   amount: number;
   noShadow?: boolean;
+  delay?: number;
 }
 
 export default class MoneyCard extends Component<Props, any> {
   render() {
     return (
-      <Layout noShadow={this.props.noShadow}>
+      <Layout
+        noShadow={this.props.noShadow}
+        initial={{ zoom: 0.5, opacity: 0 }}
+        animate={{ zoom: 1, opacity: 1 }}
+        transition={{ delay: this.props.delay || 0 }}
+      >
         <Title>{this.props.title}</Title>
         <Label>{this.props.label}</Label>
         <Amount>{Transform.toCurrency(this.props.amount)}</Amount>

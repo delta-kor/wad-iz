@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import GithubIcon from '../icon/github.svg';
 import { Color } from '../styles/color';
 
-const Layout = styled.div`
+const Layout = styled.a`
   position: fixed;
   display: fixed;
   bottom: 52px;
@@ -13,15 +13,17 @@ const Layout = styled.div`
   justify-content: center;
   gap: 0 8px;
   user-select: none;
+  text-decoration: none;
 `;
 
-const MobileLayout = styled.div`
+const MobileLayout = styled.a`
   display: fixed;
   bottom: 52px;
   align-items: center;
   justify-content: center;
   gap: 0 8px;
   user-select: none;
+  text-decoration: none;
 `;
 
 const Text = styled.div`
@@ -46,13 +48,11 @@ const Nickname = styled.div`
   align-items: center;
   text-align: center;
   color: ${Color.GRAY};
-  cursor: pointer;
 `;
 
 const Icon = styled.img`
   width: 18px;
   height: 18px;
-  cursor: pointer;
 `;
 
 interface Props {
@@ -60,24 +60,20 @@ interface Props {
 }
 
 export default class Copyright extends Component<Props, any> {
-  onClick = () => {
-    window.location.href = 'https://github.com/delta-kor/wad-iz';
-  };
-
   render() {
     if (this.props.isPc)
       return (
-        <Layout>
+        <Layout href={'https://github.com/delta-kor/wad-iz'} target={'_blank'}>
           <Text>©️ 2021</Text>
-          <Nickname onClick={this.onClick}>delta-kor</Nickname>
-          <Icon onClick={this.onClick} src={GithubIcon} />
+          <Nickname>delta-kor</Nickname>
+          <Icon src={GithubIcon} />
         </Layout>
       );
     return (
-      <MobileLayout>
+      <MobileLayout href={'https://github.com/delta-kor/wad-iz'} target={'_blank'}>
         <Text>©️ 2021</Text>
-        <Nickname onClick={this.onClick}>delta-kor</Nickname>
-        <Icon onClick={this.onClick} src={GithubIcon} />
+        <Nickname>delta-kor</Nickname>
+        <Icon src={GithubIcon} />
       </MobileLayout>
     );
   }

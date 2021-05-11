@@ -7,7 +7,7 @@ const Layout = styled.div`
   left: 25px;
   font-style: normal;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   text-align: center;
   color: ${Color.BLACK};

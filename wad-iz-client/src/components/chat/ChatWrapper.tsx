@@ -19,7 +19,7 @@ const Layout = styled(motion.div)<any>`
   );
   flex-direction: column;
   justify-content: left;
-  gap: 24px 0;
+  gap: 18px 0;
   overflow-y: scroll;
 
   @media (max-height: 560px) {

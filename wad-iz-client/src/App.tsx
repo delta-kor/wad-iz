@@ -421,6 +421,7 @@ export default class App extends Component<any, State> {
         label={this.state.directLastUpdate}
         amount={this.state.directAmount}
         noShadow={this.state.menu === 1}
+        delay={0.1}
       />
     );
     const wadizCard = (
@@ -429,6 +430,7 @@ export default class App extends Component<any, State> {
         label={Transform.toSupporterText(this.state.wadizSupporter)}
         amount={this.state.wadizAmount}
         noShadow={this.state.menu === 1}
+        delay={0.2}
       />
     );
     const dayCard = (
@@ -436,6 +438,7 @@ export default class App extends Component<any, State> {
         total={this.state.dailyUp - this.state.dailyDown}
         up={this.state.dailyUp}
         down={this.state.dailyDown}
+        delay={0.3}
       />
     );
     const surveyCard = (
@@ -444,13 +447,14 @@ export default class App extends Component<any, State> {
         totalSupporter={9846}
         kwizAmount={this.state.directAmount + this.state.wadizAmount}
         kwizSupporter={this.state.wadizSupporter}
+        delay={0.4}
       />
     );
 
     let content, pcContent;
     if (this.state.menu === 0) {
       content = (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <div>
           <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
           <CardStack>
             {directCard}
@@ -459,10 +463,10 @@ export default class App extends Component<any, State> {
             {surveyCard}
             <Copyright isPc={false} />
           </CardStack>
-        </motion.div>
+        </div>
       );
       pcContent = (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <div>
           <PcCardStackLeft layoutId={'card-stack'}>
             <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
             {directCard}
@@ -473,7 +477,7 @@ export default class App extends Component<any, State> {
             {surveyCard}
           </PcCardStackRight>
           <Copyright isPc={true} />
-        </motion.div>
+        </div>
       );
     } else if (this.state.menu === 1) {
       content = (

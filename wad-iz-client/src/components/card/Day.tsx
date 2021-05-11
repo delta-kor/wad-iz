@@ -5,7 +5,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: relative;
   height: 220px;
   background: ${Color.WHITE};
@@ -98,13 +98,18 @@ interface Props {
   total: number;
   up: number;
   down: number;
+  delay?: number;
 }
 
 export default class DayCard extends Component<Props, any> {
   render() {
     const upPercentage = (this.props.up / (this.props.up + this.props.down)) * 100;
     return (
-      <Layout>
+      <Layout
+        initial={{ zoom: 1, opacity: 0 }}
+        animate={{ zoom: 1, opacity: 1 }}
+        transition={{ delay: this.props.delay || 0 }}
+      >
         <Title>24시간</Title>
         <Total>{Transform.toCurrency(this.props.total)}</Total>
         <Up>+ {Transform.toCurrency(this.props.up)}</Up>
