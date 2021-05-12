@@ -110,12 +110,15 @@ export default class App {
         this.amount = amount;
         this.supporter = supporter;
 
-        this.updateWeeklySync();
-        this.updateHistorySync();
-
         if (process.env.NODE_ENV !== 'development') {
           const fund = new Fund({ amount: this.amount + directAmount });
-          fund.save();
+          fund.save().then(() => {
+            this.updateWeeklySync();
+            this.updateHistorySync();
+          });
+        } else {
+          this.updateWeeklySync();
+          this.updateHistorySync();
         }
       }
     };
