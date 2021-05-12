@@ -22,7 +22,7 @@ export default class WadizUpdateFeed extends Component<Props, any> {
   render() {
     return (
       <Layout delta={this.props.delta}>
-        (wadiz) {this.props.delta < 0 ? '' : '+'} {Transform.toCurrency(this.props.delta)}
+        (wadiz) {Transform.toCurrencyDelta(this.props.delta)}
       </Layout>
     );
   }

@@ -502,4 +502,13 @@ export default class Socket {
     };
     this.sendPacket(packet);
   }
+
+  public sendHistorySync(items: HistoryItem[]): void {
+    const packet: HistorySyncServerPacket = {
+      type: 'history-sync',
+      packet_id: null,
+      items,
+    };
+    this.sendPacket(packet);
+  }
 }

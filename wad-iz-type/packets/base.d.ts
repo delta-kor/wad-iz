@@ -21,6 +21,7 @@ type ServerPacket =
   | DirectSyncServerPacket
   | DisconnectServerPacket
   | EmoticonSyncServerPacket
+  | HistorySyncServerPacket
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket

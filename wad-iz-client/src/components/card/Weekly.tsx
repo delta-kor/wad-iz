@@ -77,7 +77,9 @@ interface Props {
 export default class WeeklyCard extends Component<Props, any> {
   onGraphClick = (day: number, amount: number, isToday: boolean) => {
     alert(
-      `${Transform.toDayText(day)}요일${isToday ? ' (오늘)' : ''}\n${Transform.toCurrency(amount)}`
+      `${Transform.toDayText(day)}요일${isToday ? ' (오늘)' : ''}\n종가 : ${Transform.toCurrency(
+        amount
+      )}`
     );
   };
 

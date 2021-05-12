@@ -29,6 +29,7 @@ export default class App {
   public videoState: VideoState = { active: false };
 
   public weeklyItems: WeeklyItem[] = [];
+  public historyItems: HistoryItem[] = [];
 
   constructor(port: number) {
     this.server = new Server({ port });
@@ -53,6 +54,7 @@ export default class App {
       socket.sendProfileImage();
       socket.sendEmoticonSync();
       if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
+      if (this.historyItems.length !== 0) socket.sendHistorySync(this.historyItems);
     });
   }
 
@@ -81,6 +83,8 @@ export default class App {
           socket.sendWadizSync();
         }
         this.updateWeeklySync();
+        this.updateHistorySync();
+
         return true;
       }
 
@@ -107,9 +111,12 @@ export default class App {
         this.supporter = supporter;
 
         this.updateWeeklySync();
+        this.updateHistorySync();
 
-        const fund = new Fund({ amount: this.amount + directAmount });
-        fund.save();
+        if (process.env.NODE_ENV !== 'development') {
+          const fund = new Fund({ amount: this.amount + directAmount });
+          fund.save();
+        }
       }
     };
 
@@ -275,7 +282,7 @@ export default class App {
     }
   }
 
-  public async updateWeeklySync() {
+  public async updateWeeklySync(): Promise<void> {
     const result: WeeklyItem[] = [];
     const dayM = 86400000;
 
@@ -301,5 +308,28 @@ export default class App {
       socket.sendWeeklySync(result);
     }
     this.weeklyItems = result;
+  }
+
+  public async updateHistorySync(): Promise<void> {
+    const funds = await Fund.find().sort({ time: -1 }).limit(100);
+    const result: HistoryItem[] = [];
+    let lastAmount = funds[0].amount;
+    let lastTime = funds[0].time;
+    for (const fund of funds.slice(1)) {
+      const delta = lastAmount - fund.amount;
+      if (!delta) {
+        lastAmount = fund.amount;
+        lastTime = fund.time;
+        continue;
+      }
+      result.push({ delta, time: lastTime.getTime() });
+      lastAmount = fund.amount;
+      lastTime = fund.time;
+      if (result.length === 5) break;
+    }
+    for (const socket of this.sockets) {
+      socket.sendHistorySync(result);
+    }
+    this.historyItems = result;
   }
 }

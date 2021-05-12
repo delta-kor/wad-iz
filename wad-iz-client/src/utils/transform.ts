@@ -43,6 +43,10 @@ export class Transform {
     return Transform.addComma(number) + ' ₩';
   }
 
+  public static toCurrencyDelta(delta: number): string {
+    return `${delta < 0 ? '-' : '+'} ${Transform.toCurrency(Math.abs(delta))}`;
+  }
+
   public static toCurrencyLocaleNumber(number: number): string {
     return Transform.toLocaleNumber(number) + ' 원';
   }
@@ -54,5 +58,12 @@ export class Transform {
   public static toDayText(number: number): string {
     if (number === -1) number = 6;
     return ['일', '월', '화', '수', '목', '금', '토'][number];
+  }
+
+  public static toTimeHistoryText(second: number): string {
+    second = Math.round(second);
+    if (second < 10) return '방금';
+    if (second < 3600) return Math.round(second / 60) + '분 전';
+    return Math.round(second / 3600) + '시간 전';
   }
 }

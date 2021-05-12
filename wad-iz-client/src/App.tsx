@@ -7,6 +7,7 @@ import ChatTop from './components/bar/ChatTop';
 import Navigator from './components/bar/Navigator';
 import NavigatorPc from './components/bar/NavigatorPc';
 import DayCard from './components/card/Day';
+import HistoryCard from './components/card/History';
 import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
@@ -144,6 +145,7 @@ interface State {
   timeDelta: number;
 
   weeklyItems: WeeklyItem[];
+  historyItems: HistoryItem[];
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -171,7 +173,9 @@ export default class App extends Component<any, State> {
       emoticons: new Map(),
 
       timeDelta: 0,
+
       weeklyItems: [],
+      historyItems: [],
     };
   }
 
@@ -283,6 +287,9 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('weekly-sync', (packet: WeeklySyncServerPacket) => {
       this.setState({ weeklyItems: packet.items });
+    });
+    this.socket.on('history-sync', (packet: HistorySyncServerPacket) => {
+      this.setState({ historyItems: packet.items });
     });
 
     this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
@@ -470,6 +477,7 @@ export default class App extends Component<any, State> {
       />
     );
     const weeklyCard = <WeeklyCard items={this.state.weeklyItems} delay={0.5} />;
+    const historyCard = <HistoryCard items={this.state.historyItems} delay={0.6} />;
 
     let content, pcContent;
     if (this.state.menu === 0) {
@@ -482,6 +490,7 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
             {weeklyCard}
+            {historyCard}
             <Copyright isPc={false} />
           </CardStack>
         </div>
@@ -497,7 +506,10 @@ export default class App extends Component<any, State> {
             {dayCard}
             {surveyCard}
           </PcCardStackCenter>
-          <PcCardStackRight>{weeklyCard}</PcCardStackRight>
+          <PcCardStackRight>
+            {weeklyCard}
+            {historyCard}
+          </PcCardStackRight>
           <Copyright isPc={true} />
         </div>
       );

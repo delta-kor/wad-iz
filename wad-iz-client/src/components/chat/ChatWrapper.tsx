@@ -102,9 +102,7 @@ export default class ChatWrapper extends Component<Props, State> {
         lastContent = '이모티콘을 보냈습니다';
       }
       if (lastChat.type === 'wadiz-update') {
-        lastContent = `(wadiz) ${lastChat.delta < 0 ? '' : '+'} ${Transform.toCurrency(
-          lastChat.delta
-        )}`;
+        lastContent = `(wadiz) ${Transform.toCurrencyDelta(lastChat.delta)}`;
       }
     }
 
