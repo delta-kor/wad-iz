@@ -75,6 +75,12 @@ interface Props {
 }
 
 export default class WeeklyCard extends Component<Props, any> {
+  onGraphClick = (day: number, amount: number, isToday: boolean) => {
+    alert(
+      `${Transform.toDayText(day)}요일${isToday ? ' (오늘)' : ''}\n${Transform.toCurrency(amount)}`
+    );
+  };
+
   render() {
     let max: any, min: any;
     for (const item of this.props.items) {
@@ -97,7 +103,10 @@ export default class WeeklyCard extends Component<Props, any> {
       if (target[0].isToday) target = target.reverse();
       for (const item of target) {
         items.push(
-          <GraphItem key={item.day}>
+          <GraphItem
+            key={item.day}
+            onClick={() => this.onGraphClick(item.day - 1, item.amount, item.isToday)}
+          >
             <GraphTop>
               <GraphIndicator
                 today={item.isToday}

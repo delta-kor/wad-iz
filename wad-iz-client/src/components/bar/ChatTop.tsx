@@ -23,12 +23,12 @@ const Back = styled.img`
   cursor: pointer;
 `;
 
-const Title = styled.div`
-  position: absolute;
+const Title = styled(motion.div)`
+  position: fixed;
   height: 18px;
   left: 0px;
   right: 0px;
-  top: calc(50% - 18px / 2);
+  top: 29px;
   font-style: normal;
   font-weight: bold;
   font-size: 18px;
@@ -72,7 +72,9 @@ export default class ChatTop extends Component<Props, any> {
   render() {
     return (
       <Layout initial={{ top: -76 }} animate={{ top: 0 }} transition={{ delay: 0.2 }}>
-        <Title>{this.props.title}</Title>
+        <Title initial={{ opacity: 1 }} layoutId={'total_amount'}>
+          {this.props.title}
+        </Title>
         <Viewers>{this.props.viewers}</Viewers>
         <ViewersIndicator />
         <Back src={BackIcon} onClick={this.props.onBack} />

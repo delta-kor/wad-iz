@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import PlanetIcon from '../icon/planet.svg';
@@ -35,7 +36,7 @@ const Icon = styled.img`
   height: 32px;
 `;
 
-const Amount = styled.div`
+const Amount = styled(motion.div)`
   position: absolute;
   height: 36px;
   left: 0;
@@ -76,7 +77,7 @@ export default class Cover extends Component<Props, any> {
           <Icon src={TwitterIcon} />
           <Icon src={YoutubeIcon} />
         </IconMenu>
-        <Amount>{Transform.toCurrency(this.props.amount)}</Amount>
+        <Amount layoutId={'total_amount'}>{Transform.toCurrency(this.props.amount)}</Amount>
         <Description>{Transform.toCurrencyLocaleNumber(this.props.amount)}</Description>
       </Layout>
     );
