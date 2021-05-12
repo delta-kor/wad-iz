@@ -278,15 +278,12 @@ export default class App {
   public async updateWeeklySync() {
     const result: WeeklyItem[] = [];
     const dayM = 86400000;
-    const localToday = new Date();
 
-    const utcTodayM = localToday.getTime() + localToday.getTimezoneOffset() * 60 * 1000;
-    const kstTimeDifferenceM = 9 * 60 * 60 * 1000;
-    const today = new Date(utcTodayM + kstTimeDifferenceM);
-
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
     today.setDate(today.getDate() + 1);
     today.setHours(0, 0, 0, 0);
     const todayM = today.getTime();
+
     for (let day = 0; day < 7; day++) {
       const targetDay = new Date(todayM - dayM * day);
       const lastFund = (
