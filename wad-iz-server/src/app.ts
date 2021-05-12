@@ -281,7 +281,7 @@ export default class App {
 
     const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
     today.setDate(today.getDate() + 1);
-    today.setHours(new Date().getTimezoneOffset() / 60 - 9, 0, 0, 0);
+    today.setHours(-(new Date().getTimezoneOffset() / 60 + 9), 0, 0, 0);
     const todayM = today.getTime();
 
     for (let day = 0; day < 7; day++) {
