@@ -56,7 +56,12 @@ export class Transform {
   }
 
   public static toDayText(number: number): string {
-    if (number === -1) number = 6;
+    if (number > 6) {
+      number = number % 7;
+    }
+    if (number < 0) {
+      number = 7 - (8 - (number & 7));
+    }
     return ['일', '월', '화', '수', '목', '금', '토'][number];
   }
 

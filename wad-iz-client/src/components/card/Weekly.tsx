@@ -103,11 +103,12 @@ export default class WeeklyCard extends Component<Props, any> {
     if (target.length) {
       let index = 0;
       if (target[0].isToday) target = target.reverse();
+      const today = new Date().getDay();
       for (const item of target) {
         items.push(
           <GraphItem
             key={item.day}
-            onClick={() => this.onGraphClick(item.day - 1, item.amount, item.isToday)}
+            onClick={() => this.onGraphClick(today - (6 - index), item.amount, item.isToday)}
           >
             <GraphTop>
               <GraphIndicator
@@ -117,7 +118,7 @@ export default class WeeklyCard extends Component<Props, any> {
                 transition={{ delay: (this.props.delay || 0) + index * 0.05 }}
               />
             </GraphTop>
-            <GraphLabel>{Transform.toDayText(item.day - 1)}</GraphLabel>
+            <GraphLabel>{Transform.toDayText(today - (6 - index))}</GraphLabel>
           </GraphItem>
         );
         index++;
