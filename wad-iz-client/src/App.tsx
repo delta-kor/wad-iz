@@ -539,6 +539,7 @@ export default class App extends Component<any, State> {
               title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
               viewers={this.state.users.length}
               onBack={() => this.onNavigatorClick(0)}
+              isPc={true}
             />
             <ChatWrapper
               isPc={true}
@@ -602,7 +603,7 @@ export default class App extends Component<any, State> {
 
     return (
       <AnimateSharedLayout>
-        <MediaQuery maxWidth={1024}>
+        <MediaQuery maxWidth={1340}>
           <Navigator
             onClick={this.onNavigatorClick}
             active={this.state.menu}
@@ -610,7 +611,7 @@ export default class App extends Component<any, State> {
           />
           {content}
         </MediaQuery>
-        <MediaQuery minWidth={1024}>
+        <MediaQuery minWidth={1341}>
           {this.state.menu !== 1 && (
             <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           )}

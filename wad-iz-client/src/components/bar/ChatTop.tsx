@@ -23,8 +23,8 @@ const Back = styled.img`
   cursor: pointer;
 `;
 
-const Title = styled(motion.div)`
-  position: fixed;
+const Title = styled(motion.div)<any>`
+  position: ${({ isPc }) => (isPc ? 'absolute' : 'fixed')};
   height: 18px;
   left: 0px;
   right: 0px;
@@ -63,6 +63,7 @@ const ViewersIndicator = styled.div`
 `;
 
 interface Props {
+  isPc?: boolean;
   title: string;
   viewers: number;
   onBack(): void;
@@ -72,7 +73,7 @@ export default class ChatTop extends Component<Props, any> {
   render() {
     return (
       <Layout initial={{ top: -76 }} animate={{ top: 0 }} transition={{ delay: 0.2 }}>
-        <Title initial={{ opacity: 1 }} layoutId={'total_amount'}>
+        <Title initial={{ opacity: 1 }} layoutId={'total_amount'} isPc={this.props.isPc || false}>
           {this.props.title}
         </Title>
         <Viewers>{this.props.viewers}</Viewers>
