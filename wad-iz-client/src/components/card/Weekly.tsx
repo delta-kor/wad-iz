@@ -76,8 +76,6 @@ interface Props {
 
 export default class WeeklyCard extends Component<Props, any> {
   render() {
-    const items = [];
-
     let max: any, min: any;
     for (const item of this.props.items) {
       if (!max || !min) {
@@ -91,22 +89,28 @@ export default class WeeklyCard extends Component<Props, any> {
 
     const delta = max - min;
 
-    let index = 0;
-    for (const item of this.props.items.reverse()) {
-      items.push(
-        <GraphItem key={item.day}>
-          <GraphTop>
-            <GraphIndicator
-              today={item.isToday}
-              initial={{ height: 0 }}
-              animate={{ height: Math.min(100, ((item.amount - min) / delta) * 100 + 20) + '%' }}
-              transition={{ delay: index * 0.05 }}
-            />
-          </GraphTop>
-          <GraphLabel>{Transform.toDayText(item.day - 1)}</GraphLabel>
-        </GraphItem>
-      );
-      index++;
+    const items = [];
+
+    let target = this.props.items;
+    if (target.length) {
+      let index = 0;
+      if (target[0].isToday) target = target.reverse();
+      for (const item of target) {
+        items.push(
+          <GraphItem key={item.day}>
+            <GraphTop>
+              <GraphIndicator
+                today={item.isToday}
+                initial={{ height: 0 }}
+                animate={{ height: Math.min(100, ((item.amount - min) / delta) * 100 + 20) + '%' }}
+                transition={{ delay: (this.props.delay || 0) + index * 0.05 }}
+              />
+            </GraphTop>
+            <GraphLabel>{Transform.toDayText(item.day - 1)}</GraphLabel>
+          </GraphItem>
+        );
+        index++;
+      }
     }
 
     return (

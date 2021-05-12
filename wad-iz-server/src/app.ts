@@ -279,6 +279,7 @@ export default class App {
     const result: WeeklyItem[] = [];
     const dayM = 86400000;
     const today = new Date();
+    today.setHours(today.getHours() + today.getTimezoneOffset() / 60 + 9);
     today.setDate(today.getDate() + 1);
     today.setHours(0, 0, 0, 0);
     const todayM = today.getTime();
