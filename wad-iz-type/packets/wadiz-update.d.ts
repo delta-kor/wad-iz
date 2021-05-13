@@ -5,4 +5,5 @@ interface WadizUpdateServerPacket extends ServerPacketBase {
   supporter: number;
   amount_delta: number;
   supporter_delta: number;
+  timestamp: number;
 }

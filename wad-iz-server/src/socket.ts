@@ -317,7 +317,8 @@ export default class Socket {
     amount: number,
     supporter: number,
     amountDelta: number,
-    supporterDelta: number
+    supporterDelta: number,
+    timestamp: number
   ): void {
     const packet: WadizUpdateServerPacket = {
       type: 'wadiz-update',
@@ -326,6 +327,7 @@ export default class Socket {
       supporter,
       amount_delta: amountDelta,
       supporter_delta: supporterDelta,
+      timestamp,
     };
     this.sendPacket(packet);
   }
@@ -518,6 +520,17 @@ export default class Socket {
       type: 'chart-meta',
       packet_id: null,
       meta: this.app.chartMeta,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendChart(): any {
+    if (!this.app.chartData.length || !this.app.chartDataTimestamp.length) return false;
+    const packet: ChartServerPacket = {
+      type: 'chart',
+      packet_id: null,
+      data: this.app.chartData,
+      timestamp: this.app.chartDataTimestamp,
     };
     this.sendPacket(packet);
   }

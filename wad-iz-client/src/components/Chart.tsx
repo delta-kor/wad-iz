@@ -29,8 +29,8 @@ const Layout = styled.div`
 `;
 
 interface Props {
-  data?: number[];
-  timestamp?: number[];
+  data: number[];
+  timestamp: number[];
 }
 
 interface State {
@@ -46,16 +46,12 @@ interface CandleData {
   timestamp: Date;
 }
 
-let dummyData = [1, 3, 5, 6, 8, 3, 6, 4, 9, 4, 10, 14, 15];
-for (let i = 0; i < 8; i++) dummyData = dummyData.concat(dummyData);
-
 const candleWidthWeight = 10;
-const candleGapWeight = 2;
+const candleGapWeight = 5;
+const headMargin = 36;
 
 export default class Chart extends Component<Props, State> {
   static defaultProps = {
-    data: dummyData,
-    timestamp: [],
     right: 0,
   };
 
@@ -100,7 +96,7 @@ export default class Chart extends Component<Props, State> {
     if (e.deltaY < 0) {
       nextZoom = Math.min(5, this.state.zoom + upWeight);
     } else {
-      nextZoom = Math.max(0.5, this.state.zoom - downWeight);
+      nextZoom = Math.max(0.2, this.state.zoom - downWeight);
     }
 
     const candleCount = this.state.right / (candleWidth + candleGap);
@@ -128,7 +124,7 @@ export default class Chart extends Component<Props, State> {
     if (!this.mouseDown || this.lastMouseX === null) return false;
     const x = e.clientX;
     const delta = this.lastMouseX - x;
-    this.setState({ right: this.state.right + delta });
+    this.setState({ right: Math.min(500, this.state.right + delta) });
     this.lastMouseX = x;
   };
 
@@ -144,14 +140,25 @@ export default class Chart extends Component<Props, State> {
     const content = [];
 
     let min: any, max: any;
-    for (const amount of this.props.data!) {
+
+    let preIndex = 0;
+    for (const item of data.reverse()) {
+      const right = (preIndex + 1) * candleWidth + preIndex * candleGap + this.state.right;
+      const left = stageWidth - right;
+
+      const top = item.delta > 0 ? item.to : item.from;
+      const bottom = item.delta < 0 ? item.to : item.from;
+
       if (!min || !max) {
-        min = amount;
-        max = amount;
+        min = bottom;
+        max = top;
         continue;
       }
-      min = Math.min(min, amount);
-      max = Math.max(max, amount);
+
+      min = Math.min(min, bottom);
+      max = Math.max(max, top);
+
+      preIndex++;
     }
 
     const peekDelta = max - min;
@@ -179,6 +186,7 @@ export default class Chart extends Component<Props, State> {
           width={candleWidth}
           height={height}
           fill={item.delta > 0 ? Color.RED : Color.BLUE}
+          cornerRadius={4}
           key={index}
         />
       );

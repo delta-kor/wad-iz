@@ -32,11 +32,15 @@ export default class App {
   public weeklyItems: WeeklyItem[] = [];
   public historyItems: HistoryItem[] = [];
 
+  public chartData: number[] = [];
+  public chartDataTimestamp: number[] = [];
+
   constructor(port: number) {
     this.server = new Server({ port });
     this.sockets = new Set();
     this.mountEventListeners();
     this.mountWatchers();
+    this.loadChartData();
   }
 
   private mountEventListeners(): void {
@@ -57,6 +61,7 @@ export default class App {
       socket.sendEmoticonSync();
       if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
       if (this.historyItems.length !== 0) socket.sendHistorySync(this.historyItems);
+      if (this.chartData.length !== 0) socket.sendChart();
     });
   }
 
@@ -95,8 +100,9 @@ export default class App {
         const supporterDelta = supporter - this.supporter;
 
         const wadizUpdateChat: Chat = { type: 'wadiz-update', delta: amountDelta };
+        const timestamp = new Date().getTime();
         for (const socket of this.sockets) {
-          socket.sendWadizUpdate(amount, supporter, amountDelta, supporterDelta);
+          socket.sendWadizUpdate(amount, supporter, amountDelta, supporterDelta, timestamp);
           socket.sendChat('#', '#', '#', wadizUpdateChat, 2);
         }
 
@@ -112,8 +118,8 @@ export default class App {
         this.amount = amount;
         this.supporter = supporter;
 
+        const fund = new Fund({ amount: this.amount + directAmount });
         if (process.env.NODE_ENV !== 'development') {
-          const fund = new Fund({ amount: this.amount + directAmount });
           fund.save().then(() => {
             this.updateWeeklySync();
             this.updateHistorySync();
@@ -122,6 +128,9 @@ export default class App {
           this.updateWeeklySync();
           this.updateHistorySync();
         }
+
+        this.chartData.push(fund.amount);
+        this.chartDataTimestamp.push(fund.time.getTime());
       }
     };
 
@@ -202,6 +211,21 @@ export default class App {
       wadizWatcher();
       dailyWatcher();
     }, 3000);
+  }
+
+  public async loadChartData(): Promise<void> {
+    const amounts: number[] = [];
+    const timestamps: number[] = [];
+    const funds = await Fund.find().sort({ time: -1 }).limit(1000);
+    for (const fund of funds) {
+      amounts.push(fund.amount);
+      timestamps.push(fund.time.getTime());
+    }
+    this.chartData = [...amounts, ...this.chartData];
+    this.chartDataTimestamp = [...timestamps, ...this.chartDataTimestamp];
+    for (const socket of this.sockets) {
+      socket.sendChart();
+    }
   }
 
   public getUserId(userId: string): null | Socket {

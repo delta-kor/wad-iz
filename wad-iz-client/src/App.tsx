@@ -176,6 +176,9 @@ interface State {
 
   weeklyItems: WeeklyItem[];
   historyItems: HistoryItem[];
+
+  chartData: number[];
+  chartTimestamp: number[];
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -208,6 +211,9 @@ export default class App extends Component<any, State> {
 
       weeklyItems: [],
       historyItems: [],
+
+      chartData: [],
+      chartTimestamp: [],
     };
   }
 
@@ -309,7 +315,12 @@ export default class App extends Component<any, State> {
       } else {
         playSfx('fund_minus');
       }
-      this.setState({ wadizAmount: packet.amount, wadizSupporter: packet.supporter });
+      this.setState({
+        wadizAmount: packet.amount,
+        wadizSupporter: packet.supporter,
+        chartData: [packet.amount, ...this.state.chartData],
+        chartTimestamp: [packet.timestamp, ...this.state.chartData],
+      });
     });
     this.socket.on('daily-sync', (packet: DailySyncServerPacket) => {
       this.setState({ dailyUp: packet.up, dailyDown: packet.down });
@@ -325,6 +336,9 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('chart-meta', (packet: ChartMetaServerPacket) => {
       this.setState({ chartMeta: packet.meta });
+    });
+    this.socket.on('chart', (packet: ChartServerPacket) => {
+      this.setState({ chartData: packet.data, chartTimestamp: packet.timestamp });
     });
 
     this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
@@ -663,7 +677,10 @@ export default class App extends Component<any, State> {
             <ChartTitle onBack={onBack} isPc={true} />
             <ChartHeading meta={this.state.chartMeta} />
             <ChartPcWrapper>
-              <Chart />
+              <Chart
+                data={this.state.chartData.reverse()}
+                timestamp={this.state.chartTimestamp.reverse()}
+              />
             </ChartPcWrapper>
             <StatisticsPcWrapper>
               <Statistics meta={this.state.chartMeta} />
