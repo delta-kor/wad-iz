@@ -2,6 +2,8 @@ import { AnimateSharedLayout, motion } from 'framer-motion';
 import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
+import ChartHeading from './components/bar/ChartHeading';
+import ChartTitle from './components/bar/ChartTitle';
 import ChatInputer from './components/bar/ChatInputer';
 import ChatTop from './components/bar/ChatTop';
 import Navigator from './components/bar/Navigator';
@@ -17,6 +19,7 @@ import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
 import Cover from './components/Cover';
 import Profile from './components/Profile';
+import Statistics from './components/Statistics';
 import { Color } from './styles/color';
 import playSfx from './utils/sfx';
 import Socket from './utils/socket';
@@ -110,6 +113,23 @@ const PcChatCardStack = styled(motion.div)`
   gap: 32px 0;
 `;
 
+const ChartBackground = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: ${Color.WHITE};
+`;
+
+const StatisticsPcWrapper = styled.div`
+  position: fixed;
+  width: 328px;
+  top: 272px;
+  bottom: 64px;
+  right: 64px;
+`;
+
 interface User {
   userId: string;
   role: number;
@@ -136,6 +156,7 @@ interface State {
   wadizSupporter: number;
   dailyUp: number;
   dailyDown: number;
+  chartMeta: ChartMeta | null;
 
   userId: string;
   users: User[];
@@ -167,6 +188,8 @@ export default class App extends Component<any, State> {
       wadizSupporter: 0,
       dailyUp: 1,
       dailyDown: 1,
+      chartMeta: null,
+
       userId: '',
       users: [],
       chats: [],
@@ -290,6 +313,9 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('history-sync', (packet: HistorySyncServerPacket) => {
       this.setState({ historyItems: packet.items });
+    });
+    this.socket.on('chart-meta', (packet: ChartMetaServerPacket) => {
+      this.setState({ chartMeta: packet.meta });
     });
 
     this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
@@ -611,6 +637,28 @@ export default class App extends Component<any, State> {
           />
         </PcProfileWrapper>
       );
+    } else if (this.state.menu === 3) {
+      const onBack = () => {
+        this.setState({ menu: 0 });
+      };
+      if (this.state.chartMeta) {
+        content = (
+          <ChartBackground layoutId={'navigator'}>
+            <ChartTitle onBack={onBack} />
+            <ChartHeading meta={this.state.chartMeta} />
+            <Statistics meta={this.state.chartMeta} />
+          </ChartBackground>
+        );
+        pcContent = (
+          <ChartBackground layoutId={'navigator'}>
+            <ChartTitle onBack={onBack} isPc={true} />
+            <ChartHeading meta={this.state.chartMeta} />
+            <StatisticsPcWrapper>
+              <Statistics meta={this.state.chartMeta} />
+            </StatisticsPcWrapper>
+          </ChartBackground>
+        );
+      }
     }
 
     return (
@@ -619,12 +667,12 @@ export default class App extends Component<any, State> {
           <Navigator
             onClick={this.onNavigatorClick}
             active={this.state.menu}
-            display={this.state.menu !== 1}
+            display={this.state.menu !== 1 && this.state.menu !== 3}
           />
           {content}
         </MediaQuery>
         <MediaQuery minWidth={1341}>
-          {this.state.menu !== 1 && (
+          {this.state.menu !== 1 && this.state.menu !== 3 && (
             <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           )}
           {pcContent}

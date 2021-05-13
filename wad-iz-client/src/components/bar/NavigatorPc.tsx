@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import ChatIcon from '../../icon/chat-nav.svg';
+import ListIcon from '../../icon/list.svg';
 import PlanetIcon from '../../icon/planet-nav.svg';
 import SettingsIcon from '../../icon/settings-nav.svg';
 import { Color } from '../../styles/color';
@@ -43,6 +44,11 @@ export default class NavigatorPc extends Component<Props, any> {
           onClick={() => this.props.onClick(1)}
           active={this.props.active === 1}
           src={ChatIcon}
+        />
+        <NavigatorItem
+          onClick={() => this.props.onClick(3)}
+          active={this.props.active === 3}
+          src={ListIcon}
         />
         <NavigatorItem
           onClick={() => this.props.onClick(2)}

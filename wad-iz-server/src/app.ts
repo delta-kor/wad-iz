@@ -5,8 +5,8 @@ import { JSDOM } from 'jsdom';
 import Fund from './models/fund';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
-const directAmount = 603368643;
-const directLastUpdate = '05/10 18:00';
+const directAmount = 603484000;
+const directLastUpdate = '05/13 11:00';
 
 export interface ChatMessage {
   userId: string;
@@ -52,6 +52,7 @@ export default class App {
       socket.sendWadizSync();
       socket.sendDirectSync(directAmount, directLastUpdate);
       socket.sendDailySync();
+      socket.sendChartMeta();
       socket.sendProfileImage();
       socket.sendEmoticonSync();
       if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
