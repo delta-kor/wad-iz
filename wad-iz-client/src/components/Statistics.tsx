@@ -12,6 +12,7 @@ const Layout = styled.div`
   border-radius: 16px;
   flex-direction: column;
   gap: 32px 0;
+  overflow-y: scroll;
 `;
 
 const Title = styled.div`

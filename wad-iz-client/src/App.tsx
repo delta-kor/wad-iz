@@ -14,6 +14,7 @@ import MoneyCard from './components/card/Money';
 import SurveyCard from './components/card/Survey';
 import TotalCard from './components/card/Total';
 import WeeklyCard from './components/card/Weekly';
+import Chart from './components/Chart';
 import ChatWrapper from './components/chat/ChatWrapper';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
@@ -120,6 +121,14 @@ const ChartBackground = styled(motion.div)`
   left: 0;
   right: 0;
   background: ${Color.WHITE};
+`;
+
+const ChartPcWrapper = styled.div`
+  position: fixed;
+  left: 64px;
+  right: calc(328px + 64px + 32px);
+  top: 272px;
+  bottom: 64px;
 `;
 
 const StatisticsPcWrapper = styled.div`
@@ -653,6 +662,9 @@ export default class App extends Component<any, State> {
           <ChartBackground layoutId={'navigator'}>
             <ChartTitle onBack={onBack} isPc={true} />
             <ChartHeading meta={this.state.chartMeta} />
+            <ChartPcWrapper>
+              <Chart />
+            </ChartPcWrapper>
             <StatisticsPcWrapper>
               <Statistics meta={this.state.chartMeta} />
             </StatisticsPcWrapper>
