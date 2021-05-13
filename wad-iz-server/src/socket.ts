@@ -511,4 +511,14 @@ export default class Socket {
     };
     this.sendPacket(packet);
   }
+
+  public sendChartMeta(): any {
+    if (!this.app.chartMeta) return false;
+    const packet: ChartMetaServerPacket = {
+      type: 'chart-meta',
+      packet_id: null,
+      meta: this.app.chartMeta,
+    };
+    this.sendPacket(packet);
+  }
 }

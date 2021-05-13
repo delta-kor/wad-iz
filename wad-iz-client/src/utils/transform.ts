@@ -68,6 +68,7 @@ export class Transform {
   public static toTimeHistoryText(second: number): string {
     second = Math.round(second);
     if (second < 10) return '방금';
+    if (second < 60) return second + '초 전';
     if (second < 3600) return Math.round(second / 60) + '분 전';
     return Math.round(second / 3600) + '시간 전';
   }

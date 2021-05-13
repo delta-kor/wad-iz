@@ -24,6 +24,7 @@ export default class App {
   public supporter: number | null = null;
   public dailyUp: number | null = null;
   public dailyDown: number | null = null;
+  public chartMeta: ChartMeta | null = null;
 
   public chatList: ChatMessage[] = [];
   public videoState: VideoState = { active: false };
@@ -132,20 +133,53 @@ export default class App {
 
       let up = 0;
       let down = 0;
+      let upCount = 0;
+      let downCount = 0;
+
+      let highest: any, lowest: any;
+
       let lastAmount = fundList[0].amount;
       for (const item of fundList) {
+        if (!highest || !lowest) {
+          highest = item.amount;
+          lowest = item.amount;
+        }
+
+        highest = Math.max(highest, item.amount);
+        lowest = Math.min(lowest, item.amount);
+
         const delta = item.amount - lastAmount;
+
         if (delta === 0) continue;
-        if (delta > 0) up += delta;
-        if (delta < 0) down -= delta;
+        if (delta > 0) {
+          up += delta;
+          upCount++;
+        }
+        if (delta < 0) {
+          down -= delta;
+          downCount++;
+        }
+
         lastAmount = item.amount;
       }
+
+      this.chartMeta = {
+        total: lastAmount,
+        delta: up - down,
+        delta_percent: ((up - down) / lastAmount) * 100,
+        highest: highest,
+        lowest: lowest,
+        volume: upCount + downCount,
+        order: upCount,
+        cancel: downCount,
+      };
 
       if (this.dailyUp === null || this.dailyDown === null) {
         this.dailyUp = up;
         this.dailyDown = down;
         for (const socket of this.sockets) {
           socket.sendDailySync();
+          socket.sendChartMeta();
         }
         return true;
       }
@@ -153,6 +187,7 @@ export default class App {
       if (this.dailyUp !== up || this.dailyDown !== down) {
         for (const socket of this.sockets) {
           socket.sendDailyUpdate(up, down);
+          socket.sendChartMeta();
         }
         this.dailyUp = up;
         this.dailyDown = down;
