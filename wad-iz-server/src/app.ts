@@ -221,8 +221,8 @@ export default class App {
       amounts.push(fund.amount);
       timestamps.push(fund.time.getTime());
     }
-    this.chartData = [...amounts, ...this.chartData];
-    this.chartDataTimestamp = [...timestamps, ...this.chartDataTimestamp];
+    this.chartData = amounts;
+    this.chartDataTimestamp = timestamps;
     for (const socket of this.sockets) {
       socket.sendChart();
     }

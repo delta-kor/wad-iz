@@ -11,9 +11,9 @@ function parseCandleData(data: number[], timestamp: number[]): CandleData[] {
   let index = 0;
   for (const item of data.slice(1)) {
     result.push({
-      from: lastAmount,
-      to: item,
-      delta: item - lastAmount,
+      to: lastAmount,
+      from: item,
+      delta: lastAmount - item,
       timestamp: new Date(timestamp[index]),
     });
     lastAmount = item;
@@ -40,8 +40,8 @@ interface State {
 }
 
 interface CandleData {
-  from: number;
   to: number;
+  from: number;
   delta: number;
   timestamp: Date;
 }
@@ -135,36 +135,41 @@ export default class Chart extends Component<Props, State> {
     const candleWidth = this.state.zoom * candleWidthWeight;
     const candleGap = this.state.zoom * candleGapWeight;
 
-    const data = parseCandleData(this.props.data!, this.props.timestamp!);
+    const data = parseCandleData(this.props.data, this.props.timestamp);
 
-    const content = [];
-
-    let min: any, max: any;
-
+    let max: any, min: any;
     let preIndex = 0;
-    for (const item of data.reverse()) {
+    for (const item of data) {
       const right = (preIndex + 1) * candleWidth + preIndex * candleGap + this.state.right;
       const left = stageWidth - right;
 
-      const top = item.delta > 0 ? item.to : item.from;
-      const bottom = item.delta < 0 ? item.to : item.from;
-
-      if (!min || !max) {
-        min = bottom;
-        max = top;
+      if (left + candleWidth < 0) break;
+      if (left > stageWidth) {
+        preIndex++;
         continue;
       }
 
-      min = Math.min(min, bottom);
+      const top = Math.max(item.to, item.from);
+      const bottom = Math.min(item.to, item.from);
+
+      if (!max || !min) {
+        max = top;
+        min = bottom;
+        preIndex++;
+        continue;
+      }
+
       max = Math.max(max, top);
+      min = Math.min(min, bottom);
 
       preIndex++;
     }
 
     const peekDelta = max - min;
 
+    const content = [];
     let index = 0;
-    for (const item of data.reverse()) {
+    for (const item of data) {
       const right = (index + 1) * candleWidth + index * candleGap + this.state.right;
       const left = stageWidth - right;
 
@@ -174,7 +179,7 @@ export default class Chart extends Component<Props, State> {
         continue;
       }
 
-      const topValue = item.delta > 0 ? item.to : item.from;
+      const topValue = item.delta < 0 ? item.from : item.to;
       const topDelta = max - topValue;
       const top = topDelta * (stageHeight / peekDelta);
 

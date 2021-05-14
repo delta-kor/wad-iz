@@ -318,7 +318,7 @@ export default class App extends Component<any, State> {
       this.setState({
         wadizAmount: packet.amount,
         wadizSupporter: packet.supporter,
-        chartData: [packet.amount, ...this.state.chartData],
+        chartData: [packet.amount + this.state.directAmount, ...this.state.chartData],
         chartTimestamp: [packet.timestamp, ...this.state.chartData],
       });
     });
