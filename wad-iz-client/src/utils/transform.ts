@@ -40,7 +40,8 @@ export class Transform {
   }
 
   public static toCurrency(number: number): string {
-    return Transform.addComma(number) + ' ₩';
+    if (number >= 0) return '₩ ' + Transform.addComma(number);
+    else return '- ₩ ' + Transform.addComma(Math.abs(number));
   }
 
   public static toCurrencyDelta(delta: number): string {

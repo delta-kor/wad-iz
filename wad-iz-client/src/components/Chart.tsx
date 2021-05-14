@@ -150,7 +150,10 @@ export default class Chart extends Component<Props, State> {
     const candleWidth = this.state.zoom * candleWidthWeight;
     const candleGap = this.state.zoom * candleGapWeight;
 
-    const data = parseCandleData(this.props.data, this.props.timestamp);
+    let data;
+    if (this.props.timestamp[0] > this.props.timestamp.slice(-1)[0])
+      data = parseCandleData(this.props.data, this.props.timestamp);
+    else data = parseCandleData(this.props.data.reverse(), this.props.timestamp.reverse());
 
     let max: any, min: any, lastAmount: any;
     let preIndex = 0;
