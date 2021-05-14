@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import ChatIcon from '../../icon/chat-nav.svg';
-import ListIcon from '../../icon/list.svg';
 import PlanetIcon from '../../icon/planet-nav.svg';
 import SettingsIcon from '../../icon/settings-nav.svg';
 import { Color } from '../../styles/color';
@@ -18,8 +17,8 @@ const Layout = styled(motion.div)`
   height: 108px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.UP};
-  grid-template-columns: repeat(4, 56px);
-  column-gap: 36px;
+  grid-template-columns: repeat(3, 56px);
+  column-gap: 48px;
   justify-content: center;
   align-items: center;
   z-index: 3;
@@ -53,11 +52,11 @@ export default class Navigator extends Component<Props, any> {
           active={this.props.active === 1}
           src={ChatIcon}
         />
-        <NavigatorItem
+        {/* <NavigatorItem
           onClick={() => this.props.onClick(3)}
           active={this.props.active === 3}
           src={ListIcon}
-        />
+        /> */}
         <NavigatorItem
           onClick={() => this.props.onClick(2)}
           active={this.props.active === 2}

@@ -1,7 +1,8 @@
 import React, { Component, MouseEvent, WheelEvent } from 'react';
-import { Layer, Rect, Stage } from 'react-konva';
+import { Layer, Line, Rect, Stage, Text } from 'react-konva';
 import styled from 'styled-components';
 import { Color } from '../styles/color';
+import { Transform } from '../utils/transform';
 
 function parseCandleData(data: number[], timestamp: number[]): CandleData[] {
   const result: CandleData[] = [];
@@ -10,6 +11,10 @@ function parseCandleData(data: number[], timestamp: number[]): CandleData[] {
 
   let index = 0;
   for (const item of data.slice(1)) {
+    if (lastAmount - item === 0) {
+      index++;
+      continue;
+    }
     result.push({
       to: lastAmount,
       from: item,
@@ -26,6 +31,11 @@ function parseCandleData(data: number[], timestamp: number[]): CandleData[] {
 const Layout = styled.div`
   width: 100%;
   height: 100%;
+  cursor: grab;
+
+  :active {
+    cursor: grabbing;
+  }
 `;
 
 interface Props {
@@ -37,6 +47,7 @@ interface State {
   stageSize: [number, number];
   zoom: number;
   right: number;
+  mouseY: number;
 }
 
 interface CandleData {
@@ -49,12 +60,13 @@ interface CandleData {
 const candleWidthWeight = 10;
 const candleGapWeight = 5;
 const headMargin = 36;
+const rightMargin = 116;
+
+const squareWidth = 104;
+const squareHeight = 24;
+const textSize = 12;
 
 export default class Chart extends Component<Props, State> {
-  static defaultProps = {
-    right: 0,
-  };
-
   container!: HTMLDivElement;
   mouseDown: boolean = false;
   lastMouseX: number | null = null;
@@ -64,7 +76,8 @@ export default class Chart extends Component<Props, State> {
     this.state = {
       stageSize: [100, 100],
       zoom: 1,
-      right: 0,
+      right: 500,
+      mouseY: 0,
     };
   }
 
@@ -121,6 +134,8 @@ export default class Chart extends Component<Props, State> {
   };
 
   onMouseMove = (e: MouseEvent) => {
+    const mouseY = e.clientY - 272;
+    this.setState({ mouseY });
     if (!this.mouseDown || this.lastMouseX === null) return false;
     const x = e.clientX;
     const delta = this.lastMouseX - x;
@@ -137,17 +152,19 @@ export default class Chart extends Component<Props, State> {
 
     const data = parseCandleData(this.props.data, this.props.timestamp);
 
-    let max: any, min: any;
+    let max: any, min: any, lastAmount: any;
     let preIndex = 0;
     for (const item of data) {
       const right = (preIndex + 1) * candleWidth + preIndex * candleGap + this.state.right;
       const left = stageWidth - right;
 
       if (left + candleWidth < 0) break;
-      if (left > stageWidth) {
+      if (left + candleWidth > stageWidth - rightMargin) {
         preIndex++;
         continue;
       }
+
+      if (typeof lastAmount === 'undefined') lastAmount = item.to;
 
       const top = Math.max(item.to, item.from);
       const bottom = Math.min(item.to, item.from);
@@ -174,16 +191,16 @@ export default class Chart extends Component<Props, State> {
       const left = stageWidth - right;
 
       if (left + candleWidth < 0) break;
-      if (left > stageWidth) {
+      if (left + candleWidth > stageWidth - rightMargin) {
         index++;
         continue;
       }
 
       const topValue = item.delta < 0 ? item.from : item.to;
       const topDelta = max - topValue;
-      const top = topDelta * (stageHeight / peekDelta);
+      const top = topDelta * ((stageHeight - headMargin) / peekDelta) + headMargin / 2;
 
-      const height = Math.abs((item.delta / peekDelta) * stageHeight);
+      const height = Math.abs((item.delta / peekDelta) * (stageHeight - headMargin));
       content.push(
         <Rect
           x={left}
@@ -198,6 +215,96 @@ export default class Chart extends Component<Props, State> {
       index++;
     }
 
+    const lines = [];
+    let interval: number = Infinity;
+    if (peekDelta > 10_000_000) {
+      interval = 2_000_000;
+    } else if (peekDelta > 5_000_000) {
+      interval = 1_000_000;
+    } else if (peekDelta > 1_000_000) {
+      interval = 500_000;
+    } else if (peekDelta > 500_000) {
+      interval = 100_000;
+    } else if (peekDelta > 100_000) {
+      interval = 50_000;
+    } else {
+      interval = 5_000;
+    }
+
+    for (let piece = interval; piece < max; piece = piece + interval) {
+      if (piece < min) continue;
+      const line = (
+        <Line
+          points={[
+            0,
+            ((max - piece) * (stageHeight - headMargin)) / peekDelta + headMargin / 2,
+            stageWidth - rightMargin,
+            ((max - piece) * (stageHeight - headMargin)) / peekDelta + headMargin / 2,
+          ]}
+          stroke={Color.LIGHT_GRAY}
+          strokeWidth={1}
+          key={piece + 'l'}
+        />
+      );
+      const text = (
+        <Text
+          x={stageWidth - squareWidth}
+          y={
+            ((max - piece) * (stageHeight - headMargin)) / peekDelta +
+            headMargin / 2 -
+            squareHeight / 2 +
+            (squareHeight - textSize) / 2
+          }
+          width={squareWidth}
+          height={squareHeight}
+          fontSize={textSize}
+          text={Transform.addComma(piece || 0)}
+          fontFamily={'Product Sans, sans-serif'}
+          fill={Color.GRAY}
+          align={'center'}
+          key={piece + 't'}
+        />
+      );
+      lines.push(line, text);
+    }
+
+    const mouseAmount = Transform.round(
+      max - ((this.state.mouseY - headMargin / 2) / (stageHeight - headMargin)) * peekDelta,
+      0
+    );
+    const mouseLine = (
+      <Line
+        points={[0, this.state.mouseY, stageWidth - rightMargin, this.state.mouseY]}
+        stroke={Color.ORGANGE}
+        strokeWidth={2}
+        dash={[4, 4]}
+      />
+    );
+    const mouseSquare = (
+      <Rect
+        x={stageWidth - squareWidth}
+        y={this.state.mouseY - squareHeight / 2}
+        width={squareWidth}
+        height={squareHeight}
+        fill={Color.ORGANGE}
+        cornerRadius={8}
+      />
+    );
+    const mouseText = (
+      <Text
+        x={stageWidth - squareWidth}
+        y={this.state.mouseY - (squareHeight - textSize) / 2}
+        width={squareWidth}
+        height={squareHeight}
+        fontSize={textSize}
+        text={Transform.addComma(parseInt(mouseAmount))}
+        fontFamily={'Product Sans, sans-serif'}
+        fontStyle={'700'}
+        fill={Color.WHITE}
+        align={'center'}
+      />
+    );
+
     return (
       <Layout
         ref={ref => ref && (this.container = ref)}
@@ -208,7 +315,129 @@ export default class Chart extends Component<Props, State> {
         onMouseMove={this.onMouseMove}
       >
         <Stage width={stageWidth} height={stageHeight}>
-          <Layer>{content}</Layer>
+          <Layer>
+            <Line
+              points={[1, 1, stageWidth - rightMargin, 1]}
+              stroke={Color.LIGHT_GRAY}
+              strokeWidth={2}
+            />
+            <Line points={[1, 0, 1, stageHeight]} stroke={Color.LIGHT_GRAY} strokeWidth={2} />
+            <Line
+              points={[0, stageHeight - 1, stageWidth - rightMargin, stageHeight - 1]}
+              stroke={Color.LIGHT_GRAY}
+              strokeWidth={2}
+            />
+            <Line
+              points={[stageWidth - rightMargin, stageHeight, stageWidth - rightMargin, 0]}
+              stroke={Color.LIGHT_GRAY}
+              strokeWidth={2}
+            />
+            <Line
+              points={[0, headMargin / 2, stageWidth - rightMargin, headMargin / 2]}
+              stroke={Color.RED}
+              strokeWidth={2}
+              dash={[2, 2]}
+            />
+            <Line
+              points={[
+                0,
+                stageHeight - headMargin / 2,
+                stageWidth - rightMargin,
+                stageHeight - headMargin / 2,
+              ]}
+              stroke={Color.BLUE}
+              strokeWidth={2}
+              dash={[2, 2]}
+            />
+            {lines}
+
+            <Rect
+              x={stageWidth - squareWidth}
+              y={headMargin / 2 - squareHeight / 2}
+              width={squareWidth}
+              height={squareHeight}
+              fill={Color.RED}
+              cornerRadius={8}
+            />
+            <Text
+              x={stageWidth - squareWidth}
+              y={headMargin / 2 - squareHeight / 2 + (squareHeight - textSize) / 2}
+              width={squareWidth}
+              height={squareHeight}
+              fontSize={textSize}
+              text={Transform.addComma(max || 0)}
+              fontFamily={'Product Sans, sans-serif'}
+              fill={Color.WHITE}
+              align={'center'}
+            />
+
+            <Rect
+              x={stageWidth - squareWidth}
+              y={stageHeight - headMargin / 2 - squareHeight / 2}
+              width={squareWidth}
+              height={squareHeight}
+              fill={Color.BLUE}
+              cornerRadius={8}
+            />
+            <Text
+              x={stageWidth - squareWidth}
+              y={stageHeight - headMargin / 2 - squareHeight / 2 + (squareHeight - textSize) / 2}
+              width={squareWidth}
+              height={squareHeight}
+              fontSize={textSize}
+              text={Transform.addComma(min || 0)}
+              fontFamily={'Product Sans, sans-serif'}
+              fill={Color.WHITE}
+              align={'center'}
+            />
+
+            <Rect
+              x={stageWidth - squareWidth}
+              y={
+                ((max - lastAmount) * (stageHeight - headMargin)) / peekDelta +
+                headMargin / 2 -
+                squareHeight / 2
+              }
+              width={squareWidth}
+              height={squareHeight}
+              fill={Color.LIGHT_GRAY}
+              cornerRadius={8}
+            />
+            <Text
+              x={stageWidth - squareWidth}
+              y={
+                ((max - lastAmount) * (stageHeight - headMargin)) / peekDelta +
+                headMargin / 2 -
+                squareHeight / 2 +
+                (squareHeight - textSize) / 2
+              }
+              width={squareWidth}
+              height={squareHeight}
+              fontSize={textSize}
+              text={Transform.addComma(lastAmount || 0)}
+              fontFamily={'Product Sans, sans-serif'}
+              fontStyle={'700'}
+              fill={Color.BLACK}
+              align={'center'}
+            />
+            <Line
+              points={[
+                0,
+                ((max - lastAmount) * (stageHeight - headMargin)) / peekDelta + headMargin / 2,
+                stageWidth - rightMargin,
+                ((max - lastAmount) * (stageHeight - headMargin)) / peekDelta + headMargin / 2,
+              ]}
+              stroke={Color.GRAY}
+              strokeWidth={2}
+              dash={[2, 2]}
+            />
+
+            {mouseLine}
+            {mouseSquare}
+            {mouseText}
+
+            {content}
+          </Layer>
         </Stage>
       </Layout>
     );

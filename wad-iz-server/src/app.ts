@@ -118,6 +118,9 @@ export default class App {
         this.amount = amount;
         this.supporter = supporter;
 
+        this.chartData = [this.amount + directAmount, ...this.chartData];
+        this.chartDataTimestamp = [timestamp, ...this.chartDataTimestamp];
+
         const fund = new Fund({ amount: this.amount + directAmount });
         if (process.env.NODE_ENV !== 'development') {
           fund.save().then(() => {
@@ -128,9 +131,6 @@ export default class App {
           this.updateWeeklySync();
           this.updateHistorySync();
         }
-
-        this.chartData.push(fund.amount);
-        this.chartDataTimestamp.push(fund.time.getTime());
       }
     };
 
@@ -216,7 +216,7 @@ export default class App {
   public async loadChartData(): Promise<void> {
     const amounts: number[] = [];
     const timestamps: number[] = [];
-    const funds = await Fund.find().sort({ time: -1 }).limit(1000);
+    const funds = await Fund.find().sort({ time: -1 }).limit(10000);
     for (const fund of funds) {
       amounts.push(fund.amount);
       timestamps.push(fund.time.getTime());
