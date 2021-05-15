@@ -5,8 +5,8 @@ import { JSDOM } from 'jsdom';
 import Fund from './models/fund';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
-const directAmount = 603484000;
-const directLastUpdate = '05/13 11:00';
+const directAmount = 603649000;
+const directLastUpdate = '05/15 21:00';
 
 export interface ChatMessage {
   userId: string;
