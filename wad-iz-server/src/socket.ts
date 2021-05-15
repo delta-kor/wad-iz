@@ -190,6 +190,18 @@ export default class Socket {
             this.app.onVideoUpdate();
             return true;
           }
+          if (operation === 'live') {
+            this.app.videoState = {
+              active: true,
+              service: 'youtube',
+              id: message.split(' ')[2],
+              isLive: true,
+              time: new Date().getTime(),
+            };
+            this.sendSystemMessage('재생 시작');
+            this.app.onVideoUpdate();
+            return true;
+          }
           this.sendSystemMessage('stop / play / live 로 입력');
           return false;
         }

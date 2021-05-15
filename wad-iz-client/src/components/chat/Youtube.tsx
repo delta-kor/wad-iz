@@ -47,7 +47,7 @@ export default class Youtube extends Component<Props, any> {
       const youtubeTime = youtube.getCurrentTime();
       const delta = Math.abs(youtubeTime - time);
 
-      if (delta > 3) {
+      if (delta > 3 && !this.props.videoState.isLive) {
         youtube.seekTo(playTime / 1000);
       }
     }
