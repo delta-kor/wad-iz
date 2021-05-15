@@ -38,7 +38,7 @@ const PcCardStackLeft = styled(motion.div)`
   display: flex;
   top: 0;
   bottom: 0;
-  left: calc(50% - 342px / 2 - 281px);
+  left: calc(50% - 342px / 2 - 304px);
   width: 342px;
   flex-direction: column;
   justify-content: center;
@@ -50,7 +50,7 @@ const PcCardStackCenter = styled.div`
   display: flex;
   top: 0;
   bottom: 0;
-  left: calc(50% - 342px / 2 + 93px);
+  left: calc(50% - 342px / 2 + 70px);
   width: 342px;
   flex-direction: column;
   justify-content: center;
@@ -62,7 +62,7 @@ const PcCardStackRight = styled.div`
   display: flex;
   top: 0;
   bottom: 0;
-  left: calc(50% - 342px / 2 + 467px);
+  left: calc(50% - 342px / 2 + 444px);
   width: 342px;
   flex-direction: column;
   justify-content: center;
@@ -692,7 +692,7 @@ export default class App extends Component<any, State> {
 
     return (
       <AnimateSharedLayout>
-        <MediaQuery maxWidth={1340}>
+        <MediaQuery maxWidth={1024}>
           <Navigator
             onClick={this.onNavigatorClick}
             active={this.state.menu}
@@ -700,7 +700,7 @@ export default class App extends Component<any, State> {
           />
           {content}
         </MediaQuery>
-        <MediaQuery minWidth={1341}>
+        <MediaQuery minWidth={1024}>
           {this.state.menu !== 1 && this.state.menu !== 3 && (
             <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           )}

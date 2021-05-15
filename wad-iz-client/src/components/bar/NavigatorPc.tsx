@@ -12,10 +12,10 @@ import NavigatorItem from './NavigatorItem';
 const Layout = styled(motion.div)`
   position: fixed;
   display: flex;
-  left: calc(50% - 108px / 2 - 584px);
-  top: calc(50% - 482px / 2);
+  left: calc(50% - 108px / 2 - 561px);
+  top: calc(50% - 490px / 2);
   width: 108px;
-  height: 482px;
+  height: 490px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 32px;

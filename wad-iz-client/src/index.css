@@ -52,3 +52,9 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+@media screen and (min-width: 1024px) and (max-width: 1296px) {
+  body {
+    zoom: 0.8;
+  }
+}

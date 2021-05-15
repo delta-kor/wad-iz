@@ -9,11 +9,9 @@ const Layout = styled.div`
   gap: 0 16px;
 `;
 
-const ProfileImage = styled.img<any>`
+const ProfileImage = styled.img`
   width: 48px;
   height: 48px;
-  border: 3px solid
-    ${({ role }) => (role === 0 ? 'transparent' : role === 1 ? Color.BLUE : Color.RED)};
   border-radius: 100px;
 `;
 
@@ -55,9 +53,13 @@ interface Props {
 
 export default class ChatSet extends Component<Props, any> {
   render() {
+    let profileImage = this.props.profileImageUrl;
+    if (this.props.role === 2) profileImage = 'http://lt2.kr/image/logo.iz.3.png';
+    if (this.props.role === 1) profileImage = 'http://lt2.kr/image/logo.iz.4.png';
+
     return (
       <Layout>
-        <ProfileImage src={this.props.profileImageUrl} role={this.props.role} />
+        <ProfileImage src={profileImage} />
         <Content>
           <Nickname>
             {this.props.role > 0 && (
