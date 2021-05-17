@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import App from './app';
 import ProfileImage from './profile-image';
 import Emoticon from './emoticon';
+import MultiVideo from './multi-video';
 
 export enum SocketState {
   PENDING,
@@ -202,7 +203,27 @@ export default class Socket {
             this.app.onVideoUpdate();
             return true;
           }
-          this.sendSystemMessage('stop / play / live 로 입력');
+          if (operation === 'multi') {
+            const concert = message.split(' ').slice(2).join(' ');
+            const video = MultiVideo.find(v => v.concert === concert);
+            if (!video) {
+              this.sendSystemMessage('해당 콘서트가 없습니다');
+              return false;
+            }
+            this.app.videoState = {
+              active: true,
+              service: 'youtube',
+              isMulti: true,
+              id: video.id,
+              name: video.name,
+              sync: video.sync,
+              time: new Date().getTime(),
+            };
+            this.sendSystemMessage('재생 시작');
+            this.app.onVideoUpdate();
+            return true;
+          }
+          this.sendSystemMessage('stop / play / live / multi 로 입력');
           return false;
         }
         if (message === '/clear') {
@@ -472,15 +493,29 @@ export default class Socket {
   public sendVideo(): void {
     const videoState = this.app.videoState;
     if (videoState.active) {
-      const packet: PlayVideoServerPacket = {
-        type: 'video',
-        packet_id: null,
-        operation: 'play',
-        service: videoState.service!,
-        id: videoState.id!,
-        is_live: videoState.isLive!,
-        time: videoState.time!,
-      };
+      let packet: MultiPlayVideoServerPacket | PlayVideoServerPacket;
+      if (videoState.isMulti) {
+        packet = {
+          type: 'video',
+          packet_id: null,
+          operation: 'multi-play',
+          service: videoState.service!,
+          id: videoState.id as string[],
+          name: videoState.name!,
+          sync: videoState.sync!,
+          time: videoState.time!,
+        };
+      } else {
+        packet = {
+          type: 'video',
+          packet_id: null,
+          operation: 'play',
+          service: videoState.service!,
+          id: videoState.id as string,
+          is_live: videoState.isLive!,
+          time: videoState.time!,
+        };
+      }
       this.sendPacket(packet);
     } else {
       const packet: StopVideoServerPacket = {

@@ -1,9 +1,12 @@
-type VideoServerPacket = StopVideoServerPacket | PlayVideoServerPacket;
+type VideoServerPacket = StopVideoServerPacket | PlayVideoServerPacket | MultiPlayVideoServerPacket;
 
 interface VideoState {
   active: boolean;
   service?: 'youtube';
-  id?: string;
+  isMulti?: boolean;
+  id?: string | string[];
+  name?: string[];
+  sync?: number[];
   isLive?: boolean;
   time?: number;
 }
@@ -21,5 +24,16 @@ interface PlayVideoServerPacket extends ServerPacketBase {
   service: 'youtube';
   id: string;
   is_live: boolean;
+  time: number;
+}
+
+interface MultiPlayVideoServerPacket extends ServerPacketBase {
+  type: 'video';
+  packet_id: null;
+  operation: 'multi-play';
+  service: 'youtube';
+  id: string[];
+  name: string[];
+  sync: number[];
   time: number;
 }

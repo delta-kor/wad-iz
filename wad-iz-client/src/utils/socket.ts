@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 
-const url = 'wss://w3.iz-one.kro.kr/';
-// const url = 'ws://localhost/';
+// const url = 'wss://w3.iz-one.kro.kr/';
+const url = 'ws://localhost/';
 
 interface PacketPromise {
   packetId: number;

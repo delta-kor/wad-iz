@@ -33,7 +33,11 @@ interface Props {
 export default class Youtube extends Component<Props, any> {
   onLoad = (e: any) => {
     const youtube = e.target;
-    youtube.loadVideoById(this.props.videoState.id);
+    const id =
+      typeof this.props.videoState.id === 'string'
+        ? this.props.videoState.id
+        : this.props.videoState.id![0];
+    youtube.loadVideoById(id);
     youtube.playVideo();
   };
 

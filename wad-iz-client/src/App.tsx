@@ -426,6 +426,18 @@ export default class App extends Component<any, State> {
         };
         this.setState({ isVideo: true, videoState });
       }
+      if (packet.operation === 'multi-play') {
+        const videoState: VideoState = {
+          active: true,
+          service: packet.service,
+          isMulti: true,
+          id: packet.id,
+          name: packet.name,
+          sync: packet.sync,
+          time: packet.time,
+        };
+        this.setState({ isVideo: true, videoState });
+      }
     });
 
     this.socket.on('reload', (packet: ReloadServerPacket) => {
