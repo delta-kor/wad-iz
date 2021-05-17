@@ -19,6 +19,8 @@ import ChatWrapper from './components/chat/ChatWrapper';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
 import Cover from './components/Cover';
+import MultiVideoSelector from './components/MultiVideoSelector';
+import MultiVideoSelectorPc from './components/MultiVideoSelectorPc';
 import Profile from './components/Profile';
 import Statistics from './components/Statistics';
 import { Color } from './styles/color';
@@ -157,6 +159,7 @@ export interface ChatMessage {
 interface State {
   menu: number;
   isVideo: boolean;
+  selectedVideo: number;
   videoState: VideoState;
 
   directAmount: number;
@@ -192,6 +195,7 @@ export default class App extends Component<any, State> {
     this.state = {
       menu: 0,
       isVideo: false,
+      selectedVideo: 0,
       videoState: { active: false },
 
       directAmount: 0,
@@ -436,7 +440,7 @@ export default class App extends Component<any, State> {
           sync: packet.sync,
           time: packet.time,
         };
-        this.setState({ isVideo: true, videoState });
+        this.setState({ isVideo: true, selectedVideo: 0, videoState });
       }
     });
 
@@ -595,9 +599,16 @@ export default class App extends Component<any, State> {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
+              <MultiVideoSelector
+                active={this.state.videoState.isMulti!}
+                name={this.state.videoState.name!}
+                selected={this.state.selectedVideo}
+                onSelect={index => this.setState({ selectedVideo: index })}
+              />
               <Youtube
                 isPc={false}
                 videoState={this.state.videoState}
+                selectedVideo={this.state.selectedVideo}
                 timeDelta={this.state.timeDelta}
               />
             </motion.div>
@@ -634,9 +645,16 @@ export default class App extends Component<any, State> {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
+              <MultiVideoSelectorPc
+                active={this.state.videoState.isMulti!}
+                name={this.state.videoState.name!}
+                selected={this.state.selectedVideo}
+                onSelect={index => this.setState({ selectedVideo: index })}
+              />
               <Youtube
                 isPc={true}
                 videoState={this.state.videoState}
+                selectedVideo={this.state.selectedVideo}
                 timeDelta={this.state.timeDelta}
               />
             </motion.div>

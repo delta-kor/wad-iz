@@ -27,18 +27,35 @@ const PcLayout = styled(YoutubeContent)`
 interface Props {
   isPc: boolean;
   videoState: VideoState;
+  selectedVideo?: number;
   timeDelta: number;
 }
 
 export default class Youtube extends Component<Props, any> {
+  youtube: any;
+
+  componentDidUpdate = (props: Props) => {
+    if (
+      this.props.selectedVideo !== props.selectedVideo ||
+      this.props.videoState !== props.videoState
+    ) {
+      this.updateYoutube();
+    }
+  };
+
   onLoad = (e: any) => {
-    const youtube = e.target;
+    this.youtube = e.target;
+    this.updateYoutube();
+  };
+
+  updateYoutube = () => {
+    if (!this.youtube) return false;
     const id =
       typeof this.props.videoState.id === 'string'
         ? this.props.videoState.id
-        : this.props.videoState.id![0];
-    youtube.loadVideoById(id);
-    youtube.playVideo();
+        : this.props.videoState.id![this.props.selectedVideo || 0];
+    this.youtube.loadVideoById(id);
+    this.youtube.playVideo();
   };
 
   onChange = (e: any) => {
