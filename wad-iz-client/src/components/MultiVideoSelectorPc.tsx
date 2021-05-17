@@ -10,7 +10,8 @@ const Layout = styled(motion.div)`
   display: flex;
   width: 28px;
   right: 386px;
-  top: calc(50% - 158px / 2);
+  top: 50%;
+  transform: translateY(-50%);
   padding: 16px 0;
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};
@@ -72,6 +73,9 @@ export default class MultiVideoSelectorPc extends Component<Props, State> {
 
   onPanelClick = (e: MouseEvent) => {
     e.stopPropagation();
+    if (!this.state.expanded) {
+      window.addEventListener('click', this.closeMenu, { once: true });
+    }
     this.setState({ expanded: !this.state.expanded });
   };
 
@@ -107,7 +111,7 @@ export default class MultiVideoSelectorPc extends Component<Props, State> {
               bold={index === this.props.selected}
               onClick={() => this.props.onSelect(index)}
             >
-              {name}
+              {index === this.props.selected ? `[ ${name} ]` : name}
             </Item>
           ))
         )}
