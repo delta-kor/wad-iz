@@ -180,12 +180,13 @@ export default class Socket {
             return true;
           }
           if (operation === 'play') {
+            const delta = parseInt(message.split(' ')[3]) || 0;
             this.app.videoState = {
               active: true,
               service: 'youtube',
               id: message.split(' ')[2],
               isLive: false,
-              time: new Date().getTime(),
+              time: new Date().getTime() - delta * 1000,
             };
             this.sendSystemMessage('재생 시작');
             this.app.onVideoUpdate();
