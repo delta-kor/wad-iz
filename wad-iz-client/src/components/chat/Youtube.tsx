@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import YoutubeContent from 'react-youtube';
 import styled from 'styled-components';
-import { Color } from '../../styles/color';
 
 const Layout = styled(YoutubeContent)`
   position: absolute;
@@ -21,7 +20,6 @@ const PcLayout = styled(YoutubeContent)`
   top: 0px;
   height: 100%;
   width: calc(100% - 414px);
-  background: ${Color.BLACK};
 `;
 
 interface Props {

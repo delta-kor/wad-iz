@@ -3,6 +3,7 @@ import Socket, { SocketState } from './socket';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import Fund from './models/fund';
+import Vimeo from './vimeo';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 const directAmount = 604737400;
@@ -19,6 +20,8 @@ export interface ChatMessage {
 export default class App {
   private readonly server: Server;
   private readonly sockets: Set<Socket>;
+
+  public readonly vimeo: Vimeo;
 
   public amount: number | null = null;
   public supporter: number | null = null;
@@ -38,6 +41,7 @@ export default class App {
   constructor(port: number) {
     this.server = new Server({ port });
     this.sockets = new Set();
+    this.vimeo = new Vimeo();
     this.mountEventListeners();
     this.mountWatchers();
     this.loadChartData();

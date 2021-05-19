@@ -227,6 +227,39 @@ export default class Socket {
           this.sendSystemMessage('stop / play / live / multi 로 입력');
           return false;
         }
+        if (message.split(' ')[0] === '/vm') {
+          if (this.state < SocketState.STAFF) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          const operation = message.split(' ')[1];
+          if (operation === 'stop') {
+            this.app.videoState = { active: false };
+            this.sendSystemMessage('재생 중지');
+            this.app.onVideoUpdate();
+            return true;
+          }
+          if (operation === 'play') {
+            const delta = parseInt(message.split(' ')[3]) || 0;
+            const url = await this.app.vimeo.getVideoUrl(message.split(' ')[2]);
+            if (!url) {
+              this.sendSystemMessage('오류 발생');
+              return false;
+            }
+
+            this.app.videoState = {
+              active: true,
+              service: 'url',
+              id: url,
+              isLive: false,
+              time: new Date().getTime() - delta * 1000,
+            };
+            this.sendSystemMessage('재생 시작');
+            this.app.onVideoUpdate();
+            return true;
+          }
+        }
+
         if (message === '/clear') {
           if (this.state < SocketState.STAFF) {
             this.sendSystemMessage('권한 부족');
@@ -235,6 +268,7 @@ export default class Socket {
           this.app.onChatClear();
           return true;
         }
+
         if (message === '/reload') {
           if (this.state < SocketState.MASTER) {
             this.sendSystemMessage('권한 부족');

@@ -92,9 +92,9 @@ export default class MultiVideoSelectorPc extends Component<Props, State> {
       <Layout
         initial={'inactive'}
         variants={{
-          inactive: { right: 386 + 32 },
-          active: { right: 386 },
-          expand: { width: 80, right: 386 - (80 - 28) },
+          inactive: { right: 386 + 32, opacity: 0 },
+          active: { right: 386, opacity: 1 },
+          expand: { width: 80, right: 386 - (80 - 28), opacity: 1 },
         }}
         animate={this.props.active ? (this.state.expanded ? 'expand' : 'active') : 'inactive'}
         onClick={this.onPanelClick}

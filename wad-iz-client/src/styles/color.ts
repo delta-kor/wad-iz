@@ -1,4 +1,5 @@
 export enum Color {
+  ULTRA_BLACK = '#000000',
   BLACK = '#1A191D',
   WHITE = '#FFFFFF',
   RED = '#FC5178',

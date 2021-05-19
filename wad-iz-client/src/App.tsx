@@ -16,6 +16,7 @@ import TotalCard from './components/card/Total';
 import WeeklyCard from './components/card/Weekly';
 import Chart from './components/Chart';
 import ChatWrapper from './components/chat/ChatWrapper';
+import Video from './components/chat/Video';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
 import Cover from './components/Cover';
@@ -593,7 +594,7 @@ export default class App extends Component<any, State> {
             userId={this.state.userId}
             emoticons={this.state.emoticons}
           />
-          {this.state.isVideo && (
+          {this.state.isVideo && this.state.videoState.service === 'youtube' && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -609,6 +610,19 @@ export default class App extends Component<any, State> {
                 isPc={false}
                 videoState={this.state.videoState}
                 selectedVideo={this.state.selectedVideo}
+                timeDelta={this.state.timeDelta}
+              />
+            </motion.div>
+          )}
+          {this.state.isVideo && this.state.videoState.service === 'url' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Video
+                isPc={false}
+                videoState={this.state.videoState}
                 timeDelta={this.state.timeDelta}
               />
             </motion.div>
@@ -640,24 +654,38 @@ export default class App extends Component<any, State> {
             />
           </PcChatWrapper>
           {this.state.isVideo ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <MultiVideoSelectorPc
-                active={this.state.videoState.isMulti!}
-                name={this.state.videoState.name!}
-                selected={this.state.selectedVideo}
-                onSelect={index => this.setState({ selectedVideo: index })}
-              />
-              <Youtube
-                isPc={true}
-                videoState={this.state.videoState}
-                selectedVideo={this.state.selectedVideo}
-                timeDelta={this.state.timeDelta}
-              />
-            </motion.div>
+            this.state.videoState.service === 'youtube' ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <MultiVideoSelectorPc
+                  active={this.state.videoState.isMulti!}
+                  name={this.state.videoState.name!}
+                  selected={this.state.selectedVideo}
+                  onSelect={index => this.setState({ selectedVideo: index })}
+                />
+                <Youtube
+                  isPc={true}
+                  videoState={this.state.videoState}
+                  selectedVideo={this.state.selectedVideo}
+                  timeDelta={this.state.timeDelta}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Video
+                  isPc={true}
+                  videoState={this.state.videoState}
+                  timeDelta={this.state.timeDelta}
+                />
+              </motion.div>
+            )
           ) : (
             <PcChatPanel layoutId={'navigator'}>
               <PcChatCardStack layoutId={'card-stack'}>
