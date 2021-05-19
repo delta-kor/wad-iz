@@ -10,7 +10,7 @@ interface VimeoVideoData {
   size: number;
 }
 
-const jwtSourceUrl = 'https://vimeo.com/551871286';
+const jwtSourceUrl = 'http://lt2.kr/vimeo.php';
 
 export default class Vimeo {
   private webToken: string | null;
@@ -54,7 +54,13 @@ export default class Vimeo {
   }
 
   private getLargestVideoUrl(videoData: VimeoVideoData[]): string {
-    const largestVideoData = videoData.reduce((prev, current) =>
+    const videos = [];
+    for (const video of videoData) {
+      if (video.link.includes('hls?')) continue;
+      videos.push(video);
+    }
+
+    const largestVideoData = videos.reduce((prev, current) =>
       prev.size > current.size ? prev : current
     );
     return largestVideoData.link;
