@@ -62,13 +62,17 @@ export default class Youtube extends Component<Props, any> {
     const youtube = e.target;
     if (e.data === 1) {
       const playStartTime = this.props.videoState.time! + this.props.timeDelta;
-      const playTime = new Date().getTime() - playStartTime;
+      let playTime = new Date().getTime() - playStartTime;
+      if (this.props.videoState.isMulti) {
+        playTime += this.props.videoState.sync![this.props.selectedVideo!];
+      }
 
       const time = playTime / 1000;
       const youtubeTime = youtube.getCurrentTime();
+
       const delta = Math.abs(youtubeTime - time);
 
-      if (delta > 3 && !this.props.videoState.isLive) {
+      if (delta > 1 && !this.props.videoState.isLive) {
         youtube.seekTo(playTime / 1000);
       }
     }
