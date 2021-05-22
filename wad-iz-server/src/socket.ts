@@ -6,6 +6,7 @@ import ProfileImage from './profile-image';
 import Emoticon from './emoticon';
 import MultiVideo from './multi-video';
 import Env from './models/env';
+import Lyrics from './lyrics';
 
 export enum SocketState {
   PENDING,
@@ -254,6 +255,7 @@ export default class Socket {
               id: url,
               isLive: false,
               time: new Date().getTime() - delta * 1000,
+              lyrics: Lyrics.get(message.split(' ')[2]),
             };
             this.sendSystemMessage('재생 시작');
             this.app.onVideoUpdate();
@@ -540,6 +542,7 @@ export default class Socket {
           id: videoState.id as string,
           is_live: videoState.isLive!,
           time: videoState.time!,
+          lyrics: videoState.lyrics,
         };
       }
       this.sendPacket(packet);

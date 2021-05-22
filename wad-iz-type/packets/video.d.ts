@@ -1,5 +1,9 @@
 type VideoServerPacket = StopVideoServerPacket | PlayVideoServerPacket | MultiPlayVideoServerPacket;
 
+interface Lyrics {
+  [key: number]: [string | null, string];
+}
+
 interface VideoState {
   active: boolean;
   service?: 'youtube' | 'url';
@@ -9,6 +13,7 @@ interface VideoState {
   sync?: number[];
   isLive?: boolean;
   time?: number;
+  lyrics?: Lyrics;
 }
 
 interface StopVideoServerPacket extends ServerPacketBase {
@@ -25,6 +30,7 @@ interface PlayVideoServerPacket extends ServerPacketBase {
   id: string;
   is_live: boolean;
   time: number;
+  lyrics?: Lyrics;
 }
 
 interface MultiPlayVideoServerPacket extends ServerPacketBase {

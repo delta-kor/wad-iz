@@ -19,11 +19,11 @@ export default class Socket extends EventEmitter {
     fetch('http://lt2.kr/ws')
       .then(res => res.text())
       .then(type => {
-        console.log(type);
         const wsUrls = ['wss://ws.iz-cdn.kro.kr', 'wss://w3.iz-one.kro.kr', 'ws://localhost'];
         let url: string = wsUrls[0];
         if (type === 'ws1') url = wsUrls[0];
         if (type === 'ws2') url = wsUrls[1];
+        if (window.location.hostname === 'localhost') url = wsUrls[2];
         this.ws = new WebSocket(url);
         this.resolves = [];
         this.packetId = 1;

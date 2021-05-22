@@ -412,6 +412,7 @@ export default class App extends Component<any, State> {
           id: packet.id,
           isLive: packet.is_live,
           time: packet.time,
+          lyrics: packet.lyrics,
         };
         this.setState({ isVideo: true, videoState });
       }

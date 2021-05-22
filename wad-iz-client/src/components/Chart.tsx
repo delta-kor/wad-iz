@@ -178,6 +178,13 @@ export default class Chart extends Component<Props, State> {
           fill={item.delta > 0 ? Color.RED : Color.BLUE}
           cornerRadius={4}
           key={index}
+          onClick={() =>
+            alert(
+              `${Transform.toCurrencyLocaleNumber(item.to)}\n${Transform.toCurrencyDelta(
+                item.delta
+              )}\n\n${item.timestamp.toLocaleString('ko-KR')}`
+            )
+          }
         />
       );
       index++;
