@@ -123,8 +123,8 @@ export default class DayCard extends Component<Props, State> {
       v => v.timestamp.getTime() >= this.state.currentTime - 86400000
     );
 
-    let up: number = 0;
-    let down: number = 0;
+    let up: number = 1;
+    let down: number = 1;
     for (const item of items) {
       if (item.delta > 0) up += item.delta;
       if (item.delta < 0) down -= item.delta;

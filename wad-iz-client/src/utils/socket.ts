@@ -1,17 +1,14 @@
 import EventEmitter from 'events';
 
-// const url = 'wss://w3.iz-one.kro.kr/';
-const url = 'ws://localhost/';
-
 interface PacketPromise {
   packetId: number;
   resolve: any;
 }
 
 export default class Socket extends EventEmitter {
-  private readonly ws: WebSocket;
-  private readonly resolves: PacketPromise[];
-  private packetId: number;
+  private ws!: WebSocket;
+  private resolves!: PacketPromise[];
+  private packetId!: number;
 
   public userId: string | null = null;
   public nickname: string | null = null;
@@ -19,10 +16,19 @@ export default class Socket extends EventEmitter {
 
   constructor() {
     super();
-    this.ws = new WebSocket(url);
-    this.resolves = [];
-    this.packetId = 1;
-    this.mountEventListeners();
+    fetch('http://lt2.kr/ws')
+      .then(res => res.text())
+      .then(type => {
+        console.log(type);
+        const wsUrls = ['wss://ws.iz-cdn.kro.kr', 'wss://w3.iz-one.kro.kr', 'ws://localhost'];
+        let url: string = wsUrls[0];
+        if (type === 'ws1') url = wsUrls[0];
+        if (type === 'ws2') url = wsUrls[1];
+        this.ws = new WebSocket(url);
+        this.resolves = [];
+        this.packetId = 1;
+        this.mountEventListeners();
+      });
   }
 
   private mountEventListeners(): void {
