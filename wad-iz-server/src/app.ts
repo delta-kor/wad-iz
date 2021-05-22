@@ -30,8 +30,6 @@ export default class App {
   public chatList: ChatMessage[] = [];
   public videoState: VideoState = { active: false };
 
-  public weeklyItems: WeeklyItem[] = [];
-
   public chartData: number[] = [];
   public chartDataTimestamp: number[] = [];
 
@@ -65,7 +63,6 @@ export default class App {
       socket.sendDirectSync(directAmount, directLastUpdate);
       socket.sendProfileImage();
       socket.sendEmoticonSync();
-      if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
       if (this.chartData.length !== 0) socket.sendChart();
     });
   }
@@ -94,7 +91,6 @@ export default class App {
         for (const socket of this.sockets) {
           socket.sendWadizSync();
         }
-        this.updateWeeklySync();
 
         return true;
       }
@@ -125,14 +121,7 @@ export default class App {
         this.chartData = [this.amount + directAmount, ...this.chartData];
         this.chartDataTimestamp = [timestamp, ...this.chartDataTimestamp];
 
-        const fund = new Fund({ amount: this.amount + directAmount });
-        if (process.env.NODE_ENV !== 'development') {
-          fund.save().then(() => {
-            this.updateWeeklySync();
-          });
-        } else {
-          this.updateWeeklySync();
-        }
+        new Fund({ amount: this.amount + directAmount });
       }
     };
 
@@ -273,33 +262,5 @@ export default class App {
     for (const socket of this.sockets) {
       socket.sendReload();
     }
-  }
-
-  public async updateWeeklySync(): Promise<void> {
-    const result: WeeklyItem[] = [];
-    const dayM = 86400000;
-
-    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-    today.setDate(today.getDate() + 1);
-    today.setHours(-(new Date().getTimezoneOffset() / 60 + 9), 0, 0, 0);
-    const todayM = today.getTime();
-
-    for (let day = 0; day < 7; day++) {
-      const targetDay = new Date(todayM - dayM * day);
-      const lastFund = (
-        await Fund.find({ time: { $lt: targetDay } })
-          .sort({ time: -1 })
-          .limit(1)
-      )[0];
-      result.push({
-        day: targetDay.getDay(),
-        amount: lastFund.amount,
-        isToday: day === 0,
-      });
-    }
-    for (const socket of this.sockets) {
-      socket.sendWeeklySync(result);
-    }
-    this.weeklyItems = result;
   }
 }

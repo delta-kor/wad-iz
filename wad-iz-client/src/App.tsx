@@ -160,6 +160,7 @@ export interface ChatMessage {
 
 interface State {
   menu: number;
+
   isVideo: boolean;
   selectedVideo: number;
   videoState: VideoState;
@@ -176,8 +177,6 @@ interface State {
 
   timeDelta: number;
 
-  weeklyItems: WeeklyItem[];
-
   candleData: CandleData[];
 }
 
@@ -191,6 +190,7 @@ export default class App extends Component<any, State> {
     super(props);
     this.state = {
       menu: 0,
+
       isVideo: false,
       selectedVideo: 0,
       videoState: { active: false },
@@ -206,8 +206,6 @@ export default class App extends Component<any, State> {
       emoticons: new Map(),
 
       timeDelta: 0,
-
-      weeklyItems: [],
 
       candleData: [],
     };
@@ -323,9 +321,6 @@ export default class App extends Component<any, State> {
         wadizSupporter: packet.supporter,
         candleData: [candle, ...candles],
       });
-    });
-    this.socket.on('weekly-sync', (packet: WeeklySyncServerPacket) => {
-      this.setState({ weeklyItems: packet.items });
     });
     this.socket.on('chart', (packet: ChartServerPacket) => {
       let data: CandleData[];
@@ -524,7 +519,7 @@ export default class App extends Component<any, State> {
         delay={0.4}
       />
     );
-    const weeklyCard = <WeeklyCard items={this.state.weeklyItems} delay={0.5} />;
+    const weeklyCard = <WeeklyCard data={this.state.candleData} delay={0.5} />;
     const historyCard = <HistoryCard items={this.state.candleData} delay={0.6} />;
 
     let content, pcContent;

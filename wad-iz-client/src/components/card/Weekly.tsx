@@ -69,9 +69,15 @@ const GraphLabel = styled.div`
   color: ${Color.GRAY};
 `;
 
+interface WeeklyItem {
+  day: number;
+  amount: number;
+  isToday: boolean;
+}
+
 interface Props {
   delay?: number;
-  items: WeeklyItem[];
+  data: CandleData[];
 }
 
 export default class WeeklyCard extends Component<Props, any> {
@@ -85,7 +91,27 @@ export default class WeeklyCard extends Component<Props, any> {
 
   render() {
     let max: any, min: any;
-    for (const item of this.props.items) {
+
+    const weeklyItems: WeeklyItem[] = [];
+
+    let currentAmount: number = 0;
+    let currentDate: Date = this.props.data[0]?.timestamp;
+    for (const item of this.props.data) {
+      if (item.timestamp.getDate() !== currentDate.getDate()) {
+        weeklyItems.unshift({
+          day: currentDate.getDay(),
+          amount: currentAmount,
+          isToday: currentDate.getDate() === new Date().getDate(),
+        });
+        currentAmount = item.to;
+        currentDate = item.timestamp;
+        if (weeklyItems.length === 7) break;
+      } else {
+        currentAmount = item.to;
+      }
+    }
+
+    for (const item of weeklyItems) {
       if (!max || !min) {
         max = item.amount;
         min = item.amount;
@@ -99,7 +125,7 @@ export default class WeeklyCard extends Component<Props, any> {
 
     const items = [];
 
-    let target = this.props.items;
+    let target = weeklyItems;
     if (target.length) {
       let index = 0;
       if (target[0].isToday) target = target.reverse();

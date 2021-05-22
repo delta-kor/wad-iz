@@ -569,15 +569,6 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendWeeklySync(items: WeeklyItem[]): void {
-    const packet: WeeklySyncServerPacket = {
-      type: 'weekly-sync',
-      packet_id: null,
-      items,
-    };
-    this.sendPacket(packet);
-  }
-
   public sendChart(): any {
     if (!this.app.chartData.length || !this.app.chartDataTimestamp.length) return false;
     const packet: ChartServerPacket = {
