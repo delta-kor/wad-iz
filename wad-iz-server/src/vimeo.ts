@@ -1,5 +1,6 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import Env from './models/env';
 
 interface VimeoVideoDataResponse {
   files: VimeoVideoData[];
@@ -9,8 +10,6 @@ interface VimeoVideoData {
   link: string;
   size: number;
 }
-
-const jwtSourceUrl = 'http://lt2.kr/vimeo.php';
 
 export default class Vimeo {
   private webToken: string | null;
@@ -36,10 +35,8 @@ export default class Vimeo {
   }
 
   private async fetchWebToken(): Promise<string> {
-    const response = await axios.get<string>(jwtSourceUrl);
-    const pageDataString = response.data.split('window.vimeo.clip_page_config = ')[1].split(';')[0];
-    const pageData = JSON.parse(pageDataString);
-    return pageData.jwt;
+    const env = await Env.getEnv<any>('jwt');
+    return env.value;
   }
 
   private async getVideoDatas(id: string): Promise<VimeoVideoData[]> {

@@ -31,9 +31,10 @@ const IconMenu = styled.div`
   column-gap: 28px;
 `;
 
-const Icon = styled.img`
+const Icon = styled.a<any>`
   width: 32px;
   height: 32px;
+  background: url(${({ src }) => src});
 `;
 
 const Amount = styled(motion.div)`
@@ -73,9 +74,13 @@ export default class Cover extends Component<Props, any> {
     return (
       <Layout>
         <IconMenu>
-          <Icon src={PlanetIcon} />
-          <Icon src={TwitterIcon} />
-          <Icon src={YoutubeIcon} />
+          <Icon src={PlanetIcon} href={'https://reboot-iz.one'} target={'_blank'} />
+          <Icon src={TwitterIcon} href={'https://twitter.com/IZ_PU_Project'} target={'_blank'} />
+          <Icon
+            src={YoutubeIcon}
+            href={'https://www.youtube.com/channel/UCggkfNlQFPdAKyE6FqNcFaA'}
+            target={'_blank'}
+          />
         </IconMenu>
         <Amount layoutId={'total_amount'}>{Transform.toCurrency(this.props.amount)}</Amount>
         <Description>{Transform.toCurrencyLocaleNumber(this.props.amount)}</Description>

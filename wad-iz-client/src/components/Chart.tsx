@@ -4,30 +4,6 @@ import styled from 'styled-components';
 import { Color } from '../styles/color';
 import { Transform } from '../utils/transform';
 
-function parseCandleData(data: number[], timestamp: number[]): CandleData[] {
-  const result: CandleData[] = [];
-
-  let lastAmount = data[0];
-
-  let index = 0;
-  for (const item of data.slice(1)) {
-    if (lastAmount - item === 0) {
-      index++;
-      continue;
-    }
-    result.push({
-      to: lastAmount,
-      from: item,
-      delta: lastAmount - item,
-      timestamp: new Date(timestamp[index]),
-    });
-    lastAmount = item;
-    index++;
-  }
-
-  return result;
-}
-
 const Layout = styled.div`
   width: 100%;
   height: 100%;
@@ -39,8 +15,7 @@ const Layout = styled.div`
 `;
 
 interface Props {
-  data: number[];
-  timestamp: number[];
+  data: CandleData[];
 }
 
 interface State {
@@ -48,13 +23,6 @@ interface State {
   zoom: number;
   right: number;
   mouseY: number;
-}
-
-interface CandleData {
-  to: number;
-  from: number;
-  delta: number;
-  timestamp: Date;
 }
 
 const candleWidthWeight = 10;
@@ -150,10 +118,7 @@ export default class Chart extends Component<Props, State> {
     const candleWidth = this.state.zoom * candleWidthWeight;
     const candleGap = this.state.zoom * candleGapWeight;
 
-    let data;
-    if (this.props.timestamp[0] > this.props.timestamp.slice(-1)[0])
-      data = parseCandleData(this.props.data, this.props.timestamp);
-    else data = parseCandleData(this.props.data.reverse(), this.props.timestamp.reverse());
+    const data = this.props.data;
 
     let max: any, min: any, lastAmount: any;
     let preIndex = 0;

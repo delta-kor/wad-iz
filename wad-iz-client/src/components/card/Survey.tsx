@@ -185,7 +185,7 @@ export default class SurveyCard extends Component<Props, any> {
             <GraphWrapper>
               <KwizGraph
                 animate={{ width: Math.min(100, kwizAmountPercentage) + '%' }}
-                transition={{ type: 'spring', damping: 30 }}
+                transition={{ type: 'spring', damping: 30, delay: this.props.delay || 0 }}
               />
               <EmptyGraph />
             </GraphWrapper>
@@ -196,7 +196,7 @@ export default class SurveyCard extends Component<Props, any> {
             <GraphWrapper>
               <KwizGraph
                 animate={{ width: Math.min(100, kwizSupporterPercentage) + '%' }}
-                transition={{ type: 'spring', damping: 30 }}
+                transition={{ type: 'spring', damping: 30, delay: (this.props.delay || 0) + 0.25 }}
               />
               <EmptyGraph />
             </GraphWrapper>

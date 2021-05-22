@@ -4,10 +4,11 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import Fund from './models/fund';
 import Vimeo from './vimeo';
+import Env from './models/env';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
-const directAmount = 604737400;
-const directLastUpdate = '05/17 17:00';
+
+let directAmount: number, directLastUpdate: string;
 
 export interface ChatMessage {
   userId: string;
@@ -18,33 +19,36 @@ export interface ChatMessage {
 }
 
 export default class App {
-  private readonly server: Server;
-  private readonly sockets: Set<Socket>;
+  private server!: Server;
+  private sockets!: Set<Socket>;
 
-  public readonly vimeo: Vimeo;
+  public vimeo!: Vimeo;
 
   public amount: number | null = null;
   public supporter: number | null = null;
-  public dailyUp: number | null = null;
-  public dailyDown: number | null = null;
-  public chartMeta: ChartMeta | null = null;
 
   public chatList: ChatMessage[] = [];
   public videoState: VideoState = { active: false };
 
   public weeklyItems: WeeklyItem[] = [];
-  public historyItems: HistoryItem[] = [];
 
   public chartData: number[] = [];
   public chartDataTimestamp: number[] = [];
 
   constructor(port: number) {
-    this.server = new Server({ port });
-    this.sockets = new Set();
-    this.vimeo = new Vimeo();
-    this.mountEventListeners();
-    this.mountWatchers();
-    this.loadChartData();
+    this.loadEnv().then(() => {
+      this.server = new Server({ port });
+      this.sockets = new Set();
+      this.vimeo = new Vimeo();
+      this.mountEventListeners();
+      this.mountWatchers();
+      this.loadChartData();
+    });
+  }
+
+  private async loadEnv(): Promise<void> {
+    directAmount = (await Env.getEnv<number>('direct_amount')).value;
+    directLastUpdate = (await Env.getEnv<string>('direct_last_update')).value;
   }
 
   private mountEventListeners(): void {
@@ -59,12 +63,9 @@ export default class App {
       socket.sendWelcome();
       socket.sendWadizSync();
       socket.sendDirectSync(directAmount, directLastUpdate);
-      socket.sendDailySync();
-      socket.sendChartMeta();
       socket.sendProfileImage();
       socket.sendEmoticonSync();
       if (this.weeklyItems.length !== 0) socket.sendWeeklySync(this.weeklyItems);
-      if (this.historyItems.length !== 0) socket.sendHistorySync(this.historyItems);
       if (this.chartData.length !== 0) socket.sendChart();
     });
   }
@@ -94,7 +95,6 @@ export default class App {
           socket.sendWadizSync();
         }
         this.updateWeeklySync();
-        this.updateHistorySync();
 
         return true;
       }
@@ -129,91 +129,17 @@ export default class App {
         if (process.env.NODE_ENV !== 'development') {
           fund.save().then(() => {
             this.updateWeeklySync();
-            this.updateHistorySync();
           });
         } else {
           this.updateWeeklySync();
-          this.updateHistorySync();
         }
-      }
-    };
-
-    const dailyWatcher = async () => {
-      const date = new Date();
-      date.setDate(new Date().getDate() - 1);
-      const fundList = await Fund.find({ time: { $gt: date } })
-        .sort({ time: 1 })
-        .exec();
-
-      let up = 0;
-      let down = 0;
-      let upCount = 0;
-      let downCount = 0;
-
-      let highest: any, lowest: any;
-
-      let lastAmount = fundList[0].amount;
-      for (const item of fundList) {
-        if (!highest || !lowest) {
-          highest = item.amount;
-          lowest = item.amount;
-        }
-
-        highest = Math.max(highest, item.amount);
-        lowest = Math.min(lowest, item.amount);
-
-        const delta = item.amount - lastAmount;
-
-        if (delta === 0) continue;
-        if (delta > 0) {
-          up += delta;
-          upCount++;
-        }
-        if (delta < 0) {
-          down -= delta;
-          downCount++;
-        }
-
-        lastAmount = item.amount;
-      }
-
-      this.chartMeta = {
-        total: lastAmount,
-        delta: up - down,
-        delta_percent: ((up - down) / lastAmount) * 100,
-        highest: highest,
-        lowest: lowest,
-        volume: upCount + downCount,
-        order: upCount,
-        cancel: downCount,
-      };
-
-      if (this.dailyUp === null || this.dailyDown === null) {
-        this.dailyUp = up;
-        this.dailyDown = down;
-        for (const socket of this.sockets) {
-          socket.sendDailySync();
-          socket.sendChartMeta();
-        }
-        return true;
-      }
-
-      if (this.dailyUp !== up || this.dailyDown !== down) {
-        for (const socket of this.sockets) {
-          socket.sendDailyUpdate(up, down);
-          socket.sendChartMeta();
-        }
-        this.dailyUp = up;
-        this.dailyDown = down;
       }
     };
 
     wadizWatcher();
-    dailyWatcher();
 
     setInterval(() => {
       wadizWatcher();
-      dailyWatcher();
     }, 3000);
   }
 
@@ -375,28 +301,5 @@ export default class App {
       socket.sendWeeklySync(result);
     }
     this.weeklyItems = result;
-  }
-
-  public async updateHistorySync(): Promise<void> {
-    const funds = await Fund.find().sort({ time: -1 }).limit(100);
-    const result: HistoryItem[] = [];
-    let lastAmount = funds[0].amount;
-    let lastTime = funds[0].time;
-    for (const fund of funds.slice(1)) {
-      const delta = lastAmount - fund.amount;
-      if (!delta) {
-        lastAmount = fund.amount;
-        lastTime = fund.time;
-        continue;
-      }
-      result.push({ delta, time: lastTime.getTime() });
-      lastAmount = fund.amount;
-      lastTime = fund.time;
-      if (result.length === 5) break;
-    }
-    for (const socket of this.sockets) {
-      socket.sendHistorySync(result);
-    }
-    this.historyItems = result;
   }
 }

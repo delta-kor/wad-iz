@@ -81,7 +81,7 @@ const HistoryTime = styled.div`
 
 interface Props {
   delay?: number;
-  items: HistoryItem[];
+  items: CandleData[];
 }
 
 interface State {
@@ -110,14 +110,14 @@ export default class HistoryCard extends Component<Props, State> {
   render() {
     const items = [];
     let index = 0;
-    for (const item of this.props.items) {
-      const timeDelta = (this.state.currentTime - item.time) / 1000;
+    for (const item of this.props.items.slice(0, 5)) {
+      const timeDelta = (this.state.currentTime - item.timestamp.getTime()) / 1000;
       items.push(
         <HistoryItem
           key={index}
           initial={{ zoom: 0, opacity: 0 }}
           animate={{ zoom: 1, opacity: 1 }}
-          transition={{ delay: (this.props.delay || 0) + index * 0.05 }}
+          transition={{ delay: (this.props.delay || 0) + index * 0.05 + 0.2 }}
         >
           <HistoryAmount delta={item.delta}>{Transform.toCurrencyDelta(item.delta)}</HistoryAmount>
           <HistoryTime>{Transform.toTimeHistoryText(timeDelta)}</HistoryTime>

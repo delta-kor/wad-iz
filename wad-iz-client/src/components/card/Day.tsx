@@ -95,15 +95,42 @@ const DownGraph = styled(motion.div)`
 `;
 
 interface Props {
-  total: number;
-  up: number;
-  down: number;
   delay?: number;
+  data: CandleData[];
 }
 
-export default class DayCard extends Component<Props, any> {
+interface State {
+  currentTime: number;
+}
+
+export default class DayCard extends Component<Props, State> {
+  interval: any;
+
+  state = {
+    currentTime: new Date().getTime(),
+  };
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.setState({ currentTime: new Date().getTime() }), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   render() {
-    const upPercentage = (this.props.up / (this.props.up + this.props.down)) * 100;
+    const items = this.props.data.filter(
+      v => v.timestamp.getTime() >= this.state.currentTime - 86400000
+    );
+
+    let up: number = 0;
+    let down: number = 0;
+    for (const item of items) {
+      if (item.delta > 0) up += item.delta;
+      if (item.delta < 0) down -= item.delta;
+    }
+
+    const upPercentage = (up / (up + down)) * 100;
     return (
       <Layout
         initial={{ zoom: 1, opacity: 0 }}
@@ -111,17 +138,22 @@ export default class DayCard extends Component<Props, any> {
         transition={{ delay: this.props.delay || 0 }}
       >
         <Title>24시간</Title>
-        <Total>{Transform.toCurrency(this.props.total)}</Total>
-        <Up>+ {Transform.toCurrency(this.props.up)}</Up>
-        <Down>- {Transform.toCurrency(this.props.down)}</Down>
+        <Total>{Transform.toCurrency(up - down)}</Total>
+        <Up>+ {Transform.toCurrency(up)}</Up>
+        <Down>- {Transform.toCurrency(down)}</Down>
         <GraphWrapper>
           <UpGraph
             animate={{ width: upPercentage + '%' }}
-            transition={{ type: 'spring', damping: 30 }}
+            transition={{ type: 'spring', damping: 30, delay: (this.props.delay || 0) + 0 }}
           />
           <DownGraph
             animate={{ width: `calc(100% - ${upPercentage}%)` }}
-            transition={{ delay: 0.25, type: 'spring', bounce: 0.7, damping: 30 }}
+            transition={{
+              type: 'spring',
+              bounce: 0.7,
+              damping: 30,
+              delay: (this.props.delay || 0) + 0.25,
+            }}
           />
         </GraphWrapper>
       </Layout>

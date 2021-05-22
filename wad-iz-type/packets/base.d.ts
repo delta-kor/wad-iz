@@ -16,12 +16,9 @@ type ServerPacket =
   | ChatServerPacket
   | ChatSyncServerPacket
   | ConnectServerPacket
-  | DailySyncServerPacket
-  | DailyUpdateServerPacket
   | DirectSyncServerPacket
   | DisconnectServerPacket
   | EmoticonSyncServerPacket
-  | HistorySyncServerPacket
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket

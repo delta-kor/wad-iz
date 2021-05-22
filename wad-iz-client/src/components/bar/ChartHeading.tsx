@@ -49,20 +49,42 @@ const DailyContent = styled.div<any>`
 `;
 
 interface Props {
-  meta: ChartMeta;
+  data: CandleData[];
 }
 
 export default class ChartHeading extends Component<Props, any> {
+  interval: any;
+
+  state = {
+    currentTime: new Date().getTime(),
+  };
+
+  componentDidMount() {
+    this.interval = setInterval(() => this.setState({ currentTime: new Date().getTime() }), 100);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
   render() {
+    const items = this.props.data.filter(
+      v => v.timestamp.getTime() >= this.state.currentTime - 86400000
+    );
+
+    let total: number = items[0].to,
+      delta: number = items[0].to - items.slice(-1)[0].from,
+      deltaPercent: number = (delta / items.slice(-1)[0].from) * 100;
+
     return (
       <Layout>
-        <Total delta={this.props.meta.delta}>{Transform.toCurrency(this.props.meta.total)}</Total>
+        <Total delta={delta}>{Transform.toCurrency(total)}</Total>
         <DailyTitle>24시간 대비</DailyTitle>
-        <DailyContent delta={this.props.meta.delta}>
-          {Transform.toCurrencyDelta(this.props.meta.delta)}
+        <DailyContent delta={delta}>
+          {Transform.toCurrencyDelta(delta)}
           {' ( ' +
-            (this.props.meta.delta > 0 ? '+ ' : '- ') +
-            (Transform.round(Math.abs(this.props.meta.delta_percent), 3) + ' % )')}
+            (delta > 0 ? '+ ' : '- ') +
+            (Transform.round(Math.abs(deltaPercent), 3) + ' % )')}
         </DailyContent>
       </Layout>
     );

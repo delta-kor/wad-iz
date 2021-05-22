@@ -5,6 +5,7 @@ import App from './app';
 import ProfileImage from './profile-image';
 import Emoticon from './emoticon';
 import MultiVideo from './multi-video';
+import Env from './models/env';
 
 export enum SocketState {
   PENDING,
@@ -259,6 +260,17 @@ export default class Socket {
             return true;
           }
         }
+        if (message.split(' ')[0] === '/env') {
+          if (this.state < SocketState.MASTER) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          const key = message.split(' ')[1];
+          const value = message.split(' ').slice(2).join(' ');
+          Env.setEnv(key, value);
+          this.sendSystemMessage('설정 완료');
+          return true;
+        }
 
         if (message === '/clear') {
           if (this.state < SocketState.STAFF) {
@@ -421,27 +433,6 @@ export default class Socket {
     this.sendPacket(packet);
   }
 
-  public sendDailyUpdate(up: number, down: number): any {
-    const packet: DailyUpdateServerPacket = {
-      type: 'daily-update',
-      packet_id: null,
-      up,
-      down,
-    };
-    this.sendPacket(packet);
-  }
-
-  public sendDailySync(): any {
-    if (this.app.dailyUp === null || this.app.dailyDown === null) return false;
-    const packet: DailySyncServerPacket = {
-      type: 'daily-sync',
-      packet_id: null,
-      up: this.app.dailyUp,
-      down: this.app.dailyDown,
-    };
-    this.sendPacket(packet);
-  }
-
   public sendProfileImage(): void {
     const images: IProfileImage[] = [];
     for (const top of Object.keys(ProfileImage)) {
@@ -583,25 +574,6 @@ export default class Socket {
       type: 'weekly-sync',
       packet_id: null,
       items,
-    };
-    this.sendPacket(packet);
-  }
-
-  public sendHistorySync(items: HistoryItem[]): void {
-    const packet: HistorySyncServerPacket = {
-      type: 'history-sync',
-      packet_id: null,
-      items,
-    };
-    this.sendPacket(packet);
-  }
-
-  public sendChartMeta(): any {
-    if (!this.app.chartMeta) return false;
-    const packet: ChartMetaServerPacket = {
-      type: 'chart-meta',
-      packet_id: null,
-      meta: this.app.chartMeta,
     };
     this.sendPacket(packet);
   }

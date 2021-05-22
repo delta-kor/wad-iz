@@ -116,7 +116,7 @@ export default class WeeklyCard extends Component<Props, any> {
                 today={item.isToday}
                 initial={{ height: 0 }}
                 animate={{ height: Math.min(100, ((item.amount - min) / delta) * 100 + 20) + '%' }}
-                transition={{ delay: (this.props.delay || 0) + index * 0.05 }}
+                transition={{ delay: (this.props.delay || 0) + index * 0.07 }}
               />
             </GraphTop>
             <GraphLabel>{Transform.toDayText(day)}</GraphLabel>

@@ -4,3 +4,10 @@ interface ChartServerPacket extends ServerPacketBase {
   data: number[];
   timestamp: number[];
 }
+
+interface CandleData {
+  to: number;
+  from: number;
+  delta: number;
+  timestamp: Date;
+}

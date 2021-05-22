@@ -25,6 +25,7 @@ import MultiVideoSelectorPc from './components/MultiVideoSelectorPc';
 import Profile from './components/Profile';
 import Statistics from './components/Statistics';
 import { Color } from './styles/color';
+import { parseCandleData } from './utils/candle';
 import playSfx from './utils/sfx';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
@@ -167,9 +168,6 @@ interface State {
   directLastUpdate: string;
   wadizAmount: number;
   wadizSupporter: number;
-  dailyUp: number;
-  dailyDown: number;
-  chartMeta: ChartMeta | null;
 
   userId: string;
   users: User[];
@@ -179,10 +177,8 @@ interface State {
   timeDelta: number;
 
   weeklyItems: WeeklyItem[];
-  historyItems: HistoryItem[];
 
-  chartData: number[];
-  chartTimestamp: number[];
+  candleData: CandleData[];
 }
 
 const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
@@ -203,9 +199,6 @@ export default class App extends Component<any, State> {
       directLastUpdate: '',
       wadizAmount: 0,
       wadizSupporter: 0,
-      dailyUp: 1,
-      dailyDown: 1,
-      chartMeta: null,
 
       userId: '',
       users: [],
@@ -215,10 +208,8 @@ export default class App extends Component<any, State> {
       timeDelta: 0,
 
       weeklyItems: [],
-      historyItems: [],
 
-      chartData: [],
-      chartTimestamp: [],
+      candleData: [],
     };
   }
 
@@ -320,30 +311,28 @@ export default class App extends Component<any, State> {
       } else {
         playSfx('fund_minus');
       }
+      const candles = this.state.candleData;
+      const candle: CandleData = {
+        from: candles[0].to,
+        to: packet.amount + this.state.directAmount,
+        delta: packet.amount_delta,
+        timestamp: new Date(packet.timestamp),
+      };
       this.setState({
         wadizAmount: packet.amount,
         wadizSupporter: packet.supporter,
-        chartData: [packet.amount + this.state.directAmount, ...this.state.chartData],
-        chartTimestamp: [packet.timestamp, ...this.state.chartData],
+        candleData: [candle, ...candles],
       });
-    });
-    this.socket.on('daily-sync', (packet: DailySyncServerPacket) => {
-      this.setState({ dailyUp: packet.up, dailyDown: packet.down });
-    });
-    this.socket.on('daily-update', (packet: DailyUpdateServerPacket) => {
-      this.setState({ dailyUp: packet.up, dailyDown: packet.down });
     });
     this.socket.on('weekly-sync', (packet: WeeklySyncServerPacket) => {
       this.setState({ weeklyItems: packet.items });
     });
-    this.socket.on('history-sync', (packet: HistorySyncServerPacket) => {
-      this.setState({ historyItems: packet.items });
-    });
-    this.socket.on('chart-meta', (packet: ChartMetaServerPacket) => {
-      this.setState({ chartMeta: packet.meta });
-    });
     this.socket.on('chart', (packet: ChartServerPacket) => {
-      this.setState({ chartData: packet.data, chartTimestamp: packet.timestamp });
+      let data: CandleData[];
+      if (packet.timestamp[0] > packet.timestamp.slice(-1)[0])
+        data = parseCandleData(packet.data, packet.timestamp);
+      else data = parseCandleData(packet.data.reverse(), packet.timestamp.reverse());
+      this.setState({ candleData: data });
     });
 
     this.socket.on('profile-image', (packet: ProfileImageServerPacket) => {
@@ -525,14 +514,7 @@ export default class App extends Component<any, State> {
         delay={0.2}
       />
     );
-    const dayCard = (
-      <DayCard
-        total={this.state.dailyUp - this.state.dailyDown}
-        up={this.state.dailyUp}
-        down={this.state.dailyDown}
-        delay={0.3}
-      />
-    );
+    const dayCard = <DayCard data={this.state.candleData} delay={0.3} />;
     const surveyCard = (
       <SurveyCard
         totalAmount={3341459287}
@@ -543,7 +525,7 @@ export default class App extends Component<any, State> {
       />
     );
     const weeklyCard = <WeeklyCard items={this.state.weeklyItems} delay={0.5} />;
-    const historyCard = <HistoryCard items={this.state.historyItems} delay={0.6} />;
+    const historyCard = <HistoryCard items={this.state.candleData} delay={0.6} />;
 
     let content, pcContent;
     if (this.state.menu === 0) {
@@ -722,30 +704,25 @@ export default class App extends Component<any, State> {
       const onBack = () => {
         this.setState({ menu: 0 });
       };
-      if (this.state.chartMeta) {
-        content = (
-          <ChartBackground layoutId={'navigator'}>
-            <ChartTitle onBack={onBack} />
-            <ChartHeading meta={this.state.chartMeta} />
-            <Statistics meta={this.state.chartMeta} />
-          </ChartBackground>
-        );
-        pcContent = (
-          <ChartBackground layoutId={'navigator'}>
-            <ChartTitle onBack={onBack} isPc={true} />
-            <ChartHeading meta={this.state.chartMeta} />
-            <ChartPcWrapper>
-              <Chart
-                data={this.state.chartData.reverse()}
-                timestamp={this.state.chartTimestamp.reverse()}
-              />
-            </ChartPcWrapper>
-            <StatisticsPcWrapper>
-              <Statistics meta={this.state.chartMeta} />
-            </StatisticsPcWrapper>
-          </ChartBackground>
-        );
-      }
+      content = (
+        <ChartBackground layoutId={'navigator'}>
+          <ChartTitle onBack={onBack} />
+          <ChartHeading data={this.state.candleData} />
+          <Statistics data={this.state.candleData} />
+        </ChartBackground>
+      );
+      pcContent = (
+        <ChartBackground layoutId={'navigator'}>
+          <ChartTitle onBack={onBack} isPc={true} />
+          <ChartHeading data={this.state.candleData} />
+          <ChartPcWrapper>
+            <Chart data={this.state.candleData} />
+          </ChartPcWrapper>
+          <StatisticsPcWrapper>
+            <Statistics data={this.state.candleData} />
+          </StatisticsPcWrapper>
+        </ChartBackground>
+      );
     }
 
     return (
