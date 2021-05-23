@@ -42,8 +42,8 @@ const Lyrics = styled.div`
   font-weight: normal;
   font-size: 24px;
   color: ${Color.WHITE};
-  text-shadow: ${Color.BLUE} 2px 2px, ${Color.BLUE} -2px 2px, ${Color.BLUE} 2px -2px,
-    ${Color.BLUE} -2px -2px;
+  text-shadow: ${Color.BLUE} 1px 1px, ${Color.BLUE} -1px 1px, ${Color.BLUE} 1px -1px,
+    ${Color.BLUE} -1px -1px;
 
   @media screen and (max-width: 1024px) {
     left: 12px;
@@ -61,6 +61,7 @@ const LyricsHeader = styled.div`
   font-size: 16px;
   color: ${Color.WHITE};
   background: ${Color.BLUE}a0;
+  text-shadow: none;
 
   @media screen and (max-width: 1024px) {
     font-size: 12px;
