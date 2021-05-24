@@ -5,6 +5,7 @@ import { JSDOM } from 'jsdom';
 import Fund from './models/fund';
 import Vimeo from './vimeo';
 import Env from './models/env';
+import Instagram from './instagram';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 
@@ -23,6 +24,7 @@ export default class App {
   private sockets!: Set<Socket>;
 
   public vimeo!: Vimeo;
+  public instagram!: Instagram;
 
   public amount: number | null = null;
   public supporter: number | null = null;
@@ -38,6 +40,7 @@ export default class App {
       this.server = new Server({ port });
       this.sockets = new Set();
       this.vimeo = new Vimeo();
+      this.instagram = new Instagram();
       this.mountEventListeners();
       this.mountWatchers();
       this.loadChartData();
@@ -64,6 +67,44 @@ export default class App {
       socket.sendProfileImage();
       socket.sendEmoticonSync();
       if (this.chartData.length !== 0) socket.sendChart();
+    });
+
+    this.instagram.on('photo-update', (username: string, profileImage: string) => {
+      const chat: InstagramPhotoUpdateChat = {
+        type: 'ig-photo-update',
+        username,
+        profile_image: profileImage,
+        url: `https://instagram.com/${username}/`,
+      };
+      this.chatList.push({
+        userId: '#',
+        role: 2,
+        nickname: '#',
+        profileImage: '#',
+        chat: chat,
+      });
+      for (const socket of this.sockets) {
+        socket.sendChat('#', '#', '#', chat, 2);
+      }
+    });
+
+    this.instagram.on('story-update', (username: string, profileImage: string) => {
+      const chat: InstagramStoryUpdateChat = {
+        type: 'ig-story-update',
+        username,
+        profile_image: profileImage,
+        url: `https://instagram.com/${username}/`,
+      };
+      this.chatList.push({
+        userId: '#',
+        role: 2,
+        nickname: '#',
+        profileImage: '#',
+        chat: chat,
+      });
+      for (const socket of this.sockets) {
+        socket.sendChat('#', '#', '#', chat, 2);
+      }
     });
   }
 
@@ -121,7 +162,8 @@ export default class App {
         this.chartData = [this.amount + directAmount, ...this.chartData];
         this.chartDataTimestamp = [timestamp, ...this.chartDataTimestamp];
 
-        new Fund({ amount: this.amount + directAmount });
+        if (process.env.NODE_ENV !== 'development')
+          new Fund({ amount: this.amount + directAmount }).save();
       }
     };
 

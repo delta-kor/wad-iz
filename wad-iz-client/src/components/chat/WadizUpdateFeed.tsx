@@ -5,7 +5,6 @@ import { Transform } from '../../utils/transform';
 
 const Layout = styled.div<any>`
   height: 24px;
-  left: 25px;
   font-style: normal;
   font-weight: bold;
   font-size: 16px;

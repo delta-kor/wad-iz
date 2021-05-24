@@ -22,7 +22,28 @@ interface FeedChat {
   content: string;
 }
 
-type Chat = TextChat | EmoticonChat | WadizUpdateChat | ChatClearChat | FeedChat;
+interface InstagramPhotoUpdateChat {
+  type: 'ig-photo-update';
+  username: string;
+  profile_image: string;
+  url: string;
+}
+
+interface InstagramStoryUpdateChat {
+  type: 'ig-story-update';
+  username: string;
+  profile_image: string;
+  url: string;
+}
+
+type Chat =
+  | TextChat
+  | EmoticonChat
+  | WadizUpdateChat
+  | ChatClearChat
+  | FeedChat
+  | InstagramPhotoUpdateChat
+  | InstagramStoryUpdateChat;
 
 interface ChatClientPacket extends ClientPacketBase {
   type: 'chat';

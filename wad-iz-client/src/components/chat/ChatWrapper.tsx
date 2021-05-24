@@ -6,6 +6,7 @@ import { Transform } from '../../utils/transform';
 import ChatPopup from './ChatPopup';
 import ChatSet from './ChatSet';
 import CustomFeed from './CustomFeed';
+import InstagramUpdateFeed from './InstagramUpdateFeed';
 import WadizUpdateFeed from './WadizUpdateFeed';
 
 const Layout = styled(motion.div)<any>`
@@ -104,6 +105,9 @@ export default class ChatWrapper extends Component<Props, State> {
       if (lastChat.type === 'wadiz-update') {
         lastContent = `(wadiz) ${Transform.toCurrencyDelta(lastChat.delta)}`;
       }
+      if (lastChat.type === 'ig-photo-update') {
+        lastContent = '인스타그램 업데이트';
+      }
     }
 
     return (
@@ -130,6 +134,24 @@ export default class ChatWrapper extends Component<Props, State> {
                 return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
               if (chat.type === 'chat-clear')
                 return <CustomFeed text={'채팅을 클리어 했습니다'} key={'f' + index} />;
+              if (chat.type === 'ig-photo-update')
+                return (
+                  <InstagramUpdateFeed
+                    type={'photo'}
+                    username={chat.username}
+                    profileImage={chat.profile_image}
+                    url={chat.url}
+                  />
+                );
+              if (chat.type === 'ig-story-update')
+                return (
+                  <InstagramUpdateFeed
+                    type={'story'}
+                    username={chat.username}
+                    profileImage={chat.profile_image}
+                    url={chat.url}
+                  />
+                );
             });
           }
 
