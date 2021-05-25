@@ -11,13 +11,13 @@ const Layout = styled(motion.div)`
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
+  z-index: 2;
 `;
 
 const Title = styled.div`
   position: absolute;
   height: 18px;
   left: 32px;
-  right: 234px;
   top: 32px;
   font-style: normal;
   font-weight: normal;
@@ -29,7 +29,6 @@ const Title = styled.div`
 const ViewChart = styled.div`
   position: absolute;
   height: 18px;
-  left: 234px;
   right: 32px;
   top: 32px;
   font-style: normal;
@@ -60,7 +59,6 @@ const HistoryItem = styled(motion.div)`
 `;
 
 const HistoryAmount = styled.div<any>`
-  width: 154px;
   height: 18px;
   font-style: normal;
   font-weight: bold;
@@ -81,6 +79,7 @@ const HistoryTime = styled.div`
 
 interface Props {
   delay?: number;
+  onChartClick?(): void;
   items: CandleData[];
 }
 
@@ -104,7 +103,8 @@ export default class HistoryCard extends Component<Props, State> {
   }
 
   onChartClick = () => {
-    alert('업데이트 중입니다');
+    if (this.props.onChartClick) this.props.onChartClick();
+    else alert('모바일은 지원하지 않습니다');
   };
 
   render() {

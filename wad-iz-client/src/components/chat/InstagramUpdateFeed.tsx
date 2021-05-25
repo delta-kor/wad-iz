@@ -4,6 +4,7 @@ import { Color } from '../../styles/color';
 
 const Layout = styled.div`
   display: flex;
+  margin: 16px 0;
   flex-direction: column;
   gap: 8px 0;
 `;

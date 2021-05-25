@@ -73,6 +73,7 @@ const GraphWrapper = styled.div`
   left: 32px;
   right: 32px;
   height: 12px;
+  gap: 0 6px;
 `;
 
 const UpGraph = styled(motion.div)`
@@ -87,7 +88,6 @@ const UpGraph = styled(motion.div)`
 const DownGraph = styled(motion.div)`
   display: inline-block;
   width: 0;
-  margin: 0 0 0 6px;
   height: 12px;
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};

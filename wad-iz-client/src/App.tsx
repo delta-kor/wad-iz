@@ -143,6 +143,10 @@ const StatisticsPcWrapper = styled.div`
   right: 64px;
 `;
 
+const ChartMobileText = styled.div`
+  text-align: center;
+`;
+
 interface User {
   userId: string;
   role: number;
@@ -521,7 +525,13 @@ export default class App extends Component<any, State> {
       />
     );
     const weeklyCard = <WeeklyCard data={this.state.candleData} delay={0.5} />;
-    const historyCard = <HistoryCard items={this.state.candleData} delay={0.6} />;
+    const historyCard = (
+      <HistoryCard
+        items={this.state.candleData}
+        delay={0.6}
+        onChartClick={() => this.onNavigatorClick(3)}
+      />
+    );
 
     let content, pcContent;
     if (this.state.menu === 0) {
@@ -703,8 +713,7 @@ export default class App extends Component<any, State> {
       content = (
         <ChartBackground layoutId={'navigator'}>
           <ChartTitle onBack={onBack} />
-          <ChartHeading data={this.state.candleData} />
-          <Statistics data={this.state.candleData} />
+          <ChartMobileText>PC 환경으로 접속해주세요</ChartMobileText>
         </ChartBackground>
       );
       pcContent = (

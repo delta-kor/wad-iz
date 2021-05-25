@@ -75,11 +75,11 @@ const GraphWrapper = styled.div`
   right: 0;
   height: 8px;
   display: flex;
+  gap: 0 6px;
 `;
 
 const KwizGraph = styled(motion.div)`
   display: inline-block;
-  margin: 0 6px 0 0;
   height: 8px;
   background: ${Color.BLUE};
   box-shadow: ${Shadow.BLUE};
@@ -187,7 +187,7 @@ export default class SurveyCard extends Component<Props, any> {
                 animate={{ width: Math.min(100, kwizAmountPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30, delay: this.props.delay || 0 }}
               />
-              <EmptyGraph />
+              {kwizAmountPercentage < 100 && <EmptyGraph />}
             </GraphWrapper>
           </GraphBlock>
           <GraphBlock>
@@ -198,7 +198,7 @@ export default class SurveyCard extends Component<Props, any> {
                 animate={{ width: Math.min(100, kwizSupporterPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30, delay: (this.props.delay || 0) + 0.25 }}
               />
-              <EmptyGraph />
+              {kwizSupporterPercentage < 100 && <EmptyGraph />}
             </GraphWrapper>
           </GraphBlock>
         </GraphBlockWrapper>

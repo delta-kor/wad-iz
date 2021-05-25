@@ -11,6 +11,7 @@ const Layout = styled(motion.div)`
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
+  z-index: 2;
 `;
 
 const Title = styled.div`
@@ -34,6 +35,7 @@ const GraphWrapper = styled.div`
   right: 32px;
   top: 66px;
   bottom: 32px;
+  cursor: pointer;
 `;
 
 const GraphItem = styled.div`

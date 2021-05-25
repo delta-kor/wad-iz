@@ -234,6 +234,9 @@ export default class Socket {
               isLive: false,
               time: new Date().getTime(),
             };
+            this.sendSystemMessage('재생 시작');
+            this.app.onVideoUpdate();
+            return true;
           }
           this.sendSystemMessage('stop / play / live / multi / replay 로 입력');
           return false;
