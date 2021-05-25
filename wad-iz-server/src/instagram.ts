@@ -4,8 +4,9 @@ const targetIds = [
   // 'official_izone',
   // 'azzo_ssi',
   // 'chaeri_chaeso',
-  // '_yujin_an',
   // 'k.minjoo_official',
+  '_yujin_an',
+  'for_everyoung10',
   'hyemhyemu',
   'yena.jigumina',
   '75_yabuki',
@@ -29,16 +30,20 @@ export default class Instagram extends EventEmitter {
     UserRepositorySearchResponseUsersItem,
     [UserFeedState, UserFeedState]
   >;
+  public interval: number = 60000;
+  public watchUpdate: boolean = true;
 
   constructor() {
     super();
     this.client = new IgApiClient();
     this.userMap = new Map();
-    if (process.env.NODE_ENV !== 'development' || true)
+    if (process.env.NODE_ENV !== 'development')
       this.login()
         .then(() => this.loadUsers())
         .then(() => {
-          setInterval(() => this.watch(), 3000);
+          setInterval(() => {
+            if (this.watchUpdate) this.watch();
+          }, this.interval);
         });
   }
 
@@ -75,28 +80,6 @@ export default class Instagram extends EventEmitter {
       if (lastPhotoId !== targetPhoto.id) {
         this.emit('photo-update', user.username, user.profile_pic_url);
         this.userMap.get(user)![0] = targetPhoto.id;
-      }
-    }
-
-    for (const user of this.userMap.keys()) {
-      const reelsFeed = await this.client.feed.reelsMedia({ userIds: [user.pk] });
-      const reelsItems = await reelsFeed.items();
-      if (reelsItems.length === 0) {
-        this.userMap.get(user)![1] === UserFeedStateItem.NONE;
-        continue;
-      }
-
-      const lastReelsId = this.userMap.get(user)![1];
-      const targetReels = reelsItems[0];
-
-      if (lastReelsId === UserFeedStateItem.UNKNOWN) {
-        this.userMap.get(user)![1] = targetReels.id;
-        continue;
-      }
-
-      if (lastReelsId !== targetReels.id) {
-        this.emit('story-update', user.username, user.profile_pic_url);
-        this.userMap.get(user)![1] = targetReels.id;
       }
     }
   }

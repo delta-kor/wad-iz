@@ -226,7 +226,16 @@ export default class Socket {
             this.app.onVideoUpdate();
             return true;
           }
-          this.sendSystemMessage('stop / play / live / multi 로 입력');
+          if (operation === 'replay') {
+            this.app.videoState = {
+              active: true,
+              service: 'youtube',
+              id: this.app.videoState.id,
+              isLive: false,
+              time: new Date().getTime(),
+            };
+          }
+          this.sendSystemMessage('stop / play / live / multi / replay 로 입력');
           return false;
         }
         if (message.split(' ')[0] === '/vm') {
@@ -262,15 +271,36 @@ export default class Socket {
             return true;
           }
         }
+
         if (message.split(' ')[0] === '/env') {
           if (this.state < SocketState.MASTER) {
             this.sendSystemMessage('권한 부족');
             return false;
           }
+
           const key = message.split(' ')[1];
           const value = message.split(' ').slice(2).join(' ');
+          if (key === 'igwatch') {
+            if (value === 'true') this.app.instagram.watchUpdate = true;
+            else this.app.instagram.watchUpdate = false;
+            this.sendSystemMessage(this.app.instagram.watchUpdate ? 'ON' : 'OFF');
+            return true;
+          }
+
           Env.setEnv(key, value);
           this.sendSystemMessage('설정 완료');
+          return true;
+        }
+
+        if (message.split(' ')[0] === '/packet') {
+          if (this.state < SocketState.MASTER) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          const packet = JSON.parse(message.split(' ').slice(1).join(' '));
+          for (const socket of this.app.sockets) {
+            socket.sendJson(packet);
+          }
           return true;
         }
 

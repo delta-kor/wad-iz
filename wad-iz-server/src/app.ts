@@ -6,22 +6,16 @@ import Fund from './models/fund';
 import Vimeo from './vimeo';
 import Env from './models/env';
 import Instagram from './instagram';
+import ChatModel from './models/chat';
+import { ChatMessage } from './models/chat';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 
 let directAmount: number, directLastUpdate: string;
 
-export interface ChatMessage {
-  userId: string;
-  role: number;
-  nickname: string;
-  profileImage: string;
-  chat: Chat;
-}
-
 export default class App {
   private server!: Server;
-  private sockets!: Set<Socket>;
+  public sockets!: Set<Socket>;
 
   public vimeo!: Vimeo;
   public instagram!: Instagram;
@@ -36,7 +30,13 @@ export default class App {
   public chartDataTimestamp: number[] = [];
 
   constructor(port: number) {
-    this.loadEnv().then(() => {
+    (async () => {
+      await this.loadEnv();
+      console.log('Loaded env');
+
+      await this.loadChat();
+      console.log('Loaded chat');
+
       this.server = new Server({ port });
       this.sockets = new Set();
       this.vimeo = new Vimeo();
@@ -44,7 +44,7 @@ export default class App {
       this.mountEventListeners();
       this.mountWatchers();
       this.loadChartData();
-    });
+    })();
   }
 
   private async loadEnv(): Promise<void> {
@@ -76,13 +76,7 @@ export default class App {
         profile_image: profileImage,
         url: `https://instagram.com/${username}/`,
       };
-      this.chatList.push({
-        userId: '#',
-        role: 2,
-        nickname: '#',
-        profileImage: '#',
-        chat: chat,
-      });
+      this.saveSystemChat(chat);
       for (const socket of this.sockets) {
         socket.sendChat('#', '#', '#', chat, 2);
       }
@@ -95,13 +89,7 @@ export default class App {
         profile_image: profileImage,
         url: `https://instagram.com/${username}/`,
       };
-      this.chatList.push({
-        userId: '#',
-        role: 2,
-        nickname: '#',
-        profileImage: '#',
-        chat: chat,
-      });
+      this.saveSystemChat(chat);
       for (const socket of this.sockets) {
         socket.sendChat('#', '#', '#', chat, 2);
       }
@@ -147,13 +135,7 @@ export default class App {
           socket.sendChat('#', '#', '#', wadizUpdateChat, 2);
         }
 
-        this.chatList.push({
-          userId: '#',
-          role: 2,
-          nickname: '#',
-          profileImage: '#',
-          chat: wadizUpdateChat,
-        });
+        this.saveSystemChat(wadizUpdateChat);
         if (this.chatList.length > 500) this.chatList.shift();
 
         this.amount = amount;
@@ -172,6 +154,32 @@ export default class App {
     setInterval(() => {
       wadizWatcher();
     }, 3000);
+  }
+
+  private async saveChat(
+    userId: string,
+    role: number,
+    nickname: string,
+    profileImage: string,
+    chat: Chat
+  ): Promise<void> {
+    this.chatList.push({
+      userId,
+      role,
+      nickname,
+      profileImage,
+      chat,
+    });
+    ChatModel.add(userId, role, nickname, profileImage, chat);
+  }
+
+  private async saveSystemChat(chat: Chat): Promise<void> {
+    await this.saveChat('#', 2, '#', '#', chat);
+  }
+
+  private async loadChat(): Promise<void> {
+    const chats = await ChatModel.load();
+    this.chatList = chats;
   }
 
   public async loadChartData(): Promise<void> {
@@ -243,6 +251,7 @@ export default class App {
         chat.role = role;
       }
     });
+    ChatModel.updateProfile(userId, nickname, profileImage, role);
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
@@ -268,8 +277,7 @@ export default class App {
       chat.content = chat.content.slice(0, 200);
     }
 
-    this.chatList.push({ userId, nickname, profileImage, chat, role });
-    if (this.chatList.length > 500) this.chatList.shift();
+    this.saveChat(userId, role, nickname, profileImage, chat);
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
@@ -286,13 +294,7 @@ export default class App {
 
   public onChatClear(): void {
     this.chatList = [];
-    this.chatList.push({
-      userId: '#',
-      role: 2,
-      nickname: '#',
-      profileImage: '#',
-      chat: { type: 'chat-clear' },
-    });
+    this.saveSystemChat({ type: 'chat-clear' });
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
       socket.sendChatClear();
