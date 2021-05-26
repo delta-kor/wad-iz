@@ -14,6 +14,7 @@ interface ChatDocument extends Document {
   timestamp: Date;
   server: string;
   userId: string;
+  ip: string;
   role: number;
   nickname: string;
   profileImage: string;
@@ -23,6 +24,7 @@ interface ChatDocument extends Document {
 interface ChatModel extends Model<ChatDocument> {
   add(
     userId: string,
+    ip: string,
     role: number,
     nickname: string,
     profileImage: string,
@@ -47,6 +49,7 @@ const ChatSchema = new Schema<ChatDocument>({
   timestamp: { type: Date, required: true, default: () => new Date() },
   server: { type: String, required: true },
   userId: { type: String, required: true },
+  ip: { type: String, required: true },
   role: { type: Number, required: true },
   nickname: { type: String, required: true },
   profileImage: { type: String, required: true },
@@ -57,6 +60,7 @@ ChatSchema.static(
   'add',
   async (
     userId: string,
+    ip: string,
     role: number,
     nickname: string,
     profileImage: string,
@@ -64,6 +68,7 @@ ChatSchema.static(
   ): Promise<ChatDocument> => {
     const model = new ChatModel({
       userId,
+      ip,
       role,
       nickname,
       profileImage,

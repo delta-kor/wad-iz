@@ -14,12 +14,16 @@ const targetIds = [
   'chaestival_',
   '10_hitomi_06',
   'silver_rain.__',
-  '4ever_iz1',
+  'lt2_watcher_01',
 ];
 
 enum UserFeedStateItem {
   NONE = 'none',
   UNKNOWN = 'unknown',
+}
+
+async function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 type UserFeedState = string | UserFeedStateItem;
@@ -30,7 +34,6 @@ export default class Instagram extends EventEmitter {
     UserRepositorySearchResponseUsersItem,
     [UserFeedState, UserFeedState]
   >;
-  public interval: number = 60000;
   public watchUpdate: boolean = true;
 
   constructor() {
@@ -40,11 +43,7 @@ export default class Instagram extends EventEmitter {
     if (process.env.NODE_ENV !== 'development')
       this.login()
         .then(() => this.loadUsers())
-        .then(() => {
-          setInterval(() => {
-            if (this.watchUpdate) this.watch();
-          }, this.interval);
-        });
+        .then(() => this.watch());
   }
 
   private async login(): Promise<void> {
@@ -62,8 +61,13 @@ export default class Instagram extends EventEmitter {
 
   private async watch(): Promise<void> {
     for (const user of this.userMap.keys()) {
+      if (!this.watchUpdate) continue;
+
+      await delay(7000 + Math.random() * 1000);
+
       const photoFeed = await this.client.feed.user(user.pk);
       const photoItems = await photoFeed.items();
+
       if (photoItems.length === 0) {
         this.userMap.get(user)![0] === UserFeedStateItem.NONE;
         continue;
@@ -82,5 +86,6 @@ export default class Instagram extends EventEmitter {
         this.userMap.get(user)![0] = targetPhoto.id;
       }
     }
+    await delay(7000 + Math.random() * 1000);
   }
 }

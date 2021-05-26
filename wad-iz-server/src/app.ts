@@ -158,6 +158,7 @@ export default class App {
 
   private async saveChat(
     userId: string,
+    ip: string,
     role: number,
     nickname: string,
     profileImage: string,
@@ -170,11 +171,11 @@ export default class App {
       profileImage,
       chat,
     });
-    ChatModel.add(userId, role, nickname, profileImage, chat);
+    ChatModel.add(userId, ip, role, nickname, profileImage, chat);
   }
 
   private async saveSystemChat(chat: Chat): Promise<void> {
-    await this.saveChat('#', 2, '#', '#', chat);
+    await this.saveChat('#', '#', 2, '#', '#', chat);
   }
 
   private async loadChat(): Promise<void> {
@@ -261,6 +262,7 @@ export default class App {
 
   public onChatReceive(
     userId: string,
+    ip: string,
     nickname: string,
     profileImage: string,
     chat: Chat,
@@ -277,7 +279,7 @@ export default class App {
       chat.content = chat.content.slice(0, 200);
     }
 
-    this.saveChat(userId, role, nickname, profileImage, chat);
+    this.saveChat(userId, ip, role, nickname, profileImage, chat);
 
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;

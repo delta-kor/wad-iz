@@ -328,6 +328,7 @@ export default class Socket {
 
       this.app.onChatReceive(
         this.userId!,
+        this.ip!,
         this.nickname!,
         this.profileImage!,
         packet.chat,
