@@ -18,18 +18,8 @@ export default class Socket extends EventEmitter {
     super();
     fetch('http://lt2.kr/ws?p=' + new Date().getTime())
       .then(res => res.text())
-      .then(type => {
-        const wsUrls = [
-          'wss://ws.iz-cdn.kro.kr',
-          'wss://w3.iz-one.kro.kr',
-          'wss://w4iz-onekrokr.izone.repl.co',
-          'ws://localhost',
-        ];
-        let url: string = wsUrls[0];
-        if (type === 'ws1') url = wsUrls[0];
-        if (type === 'ws2') url = wsUrls[1];
-        if (type === 'ws3') url = wsUrls[2];
-        if (window.location.hostname === 'localhost') url = wsUrls[3];
+      .then(url => {
+        if (window.location.hostname === 'localhost') url = 'ws://localhost/';
         this.ws = new WebSocket(url);
         this.resolves = [];
         this.packetId = 1;
