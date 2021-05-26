@@ -68,6 +68,8 @@ export default class Instagram extends EventEmitter {
       const photoFeed = await this.client.feed.user(user.pk);
       const photoItems = await photoFeed.items();
 
+      console.log(`Fetched ${user.username}`);
+
       if (photoItems.length === 0) {
         this.userMap.get(user)![0] === UserFeedStateItem.NONE;
         continue;
@@ -86,6 +88,6 @@ export default class Instagram extends EventEmitter {
         this.userMap.get(user)![0] = targetPhoto.id;
       }
     }
-    await delay(7000 + Math.random() * 1000);
+    this.watch();
   }
 }
