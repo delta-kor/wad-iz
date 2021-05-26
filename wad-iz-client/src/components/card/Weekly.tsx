@@ -136,7 +136,7 @@ export default class WeeklyCard extends Component<Props, any> {
         const day = today - (6 - index);
         items.push(
           <GraphItem
-            key={item.day}
+            key={item.amount}
             onClick={() => this.onGraphClick(day, item.amount, item.isToday)}
           >
             <GraphTop>

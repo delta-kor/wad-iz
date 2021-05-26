@@ -51,8 +51,16 @@ export default class Socket extends EventEmitter {
       this.emit(data.type, data);
     });
 
+    this.ws.addEventListener('open', () => {
+      this.emit('#server-open');
+    });
+
     this.ws.addEventListener('close', () => {
       this.emit('#server-close');
+    });
+
+    this.ws.addEventListener('error', () => {
+      this.emit('#server-error');
     });
   }
 

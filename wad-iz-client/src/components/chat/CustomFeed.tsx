@@ -4,7 +4,6 @@ import { Color } from '../../styles/color';
 
 const Layout = styled.div`
   height: 24px;
-  left: 25px;
   font-style: normal;
   font-weight: bold;
   font-size: 16px;

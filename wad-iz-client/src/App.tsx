@@ -20,6 +20,7 @@ import Video from './components/chat/Video';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
 import Cover from './components/Cover';
+import Loading from './components/Loading';
 import MultiVideoSelector from './components/MultiVideoSelector';
 import MultiVideoSelectorPc from './components/MultiVideoSelectorPc';
 import Profile from './components/Profile';
@@ -189,11 +190,12 @@ const falloutProfileImage = 'http://lt2.kr/image/logo.iz.1.png';
 export default class App extends Component<any, State> {
   private socket!: Socket;
   public profileImageMap: Map<string, string> = new Map();
+  private reloadTimeout: any;
 
   constructor(props: any) {
     super(props);
     this.state = {
-      menu: 0,
+      menu: 4,
 
       isVideo: false,
       selectedVideo: 0,
@@ -217,7 +219,10 @@ export default class App extends Component<any, State> {
 
   componentDidMount() {
     this.socket = new Socket();
+    this.mountSocketListeners();
+  }
 
+  mountSocketListeners = () => {
     this.socket.on('#server-close', () => {
       const chats = this.state.chats;
       chats.push({
@@ -231,7 +236,13 @@ export default class App extends Component<any, State> {
         },
       });
       this.setState({ chats });
-      setTimeout(() => window.location.reload(), 10000);
+      this.reloadTimeout = setTimeout(() => window.location.reload(), 10000);
+    });
+
+    this.socket.on('#server-error', () => {
+      clearTimeout(this.reloadTimeout);
+      this.socket = new Socket();
+      this.mountSocketListeners();
     });
 
     this.socket.on('multiple-connect', () => {
@@ -251,6 +262,7 @@ export default class App extends Component<any, State> {
 
     this.socket.on('welcome', (packet: WelcomeServerPacket) => {
       this.setState({ timeDelta: new Date().getTime() - packet.server_time });
+      this.setState({ menu: 0 }); 
     });
 
     this.socket.on('ticket', (packet: TicketServerPacket) => {
@@ -437,7 +449,7 @@ export default class App extends Component<any, State> {
     this.socket.on('reload', (packet: ReloadServerPacket) => {
       window.location.reload();
     });
-  }
+  };
 
   getMyProfile = (): User => {
     for (const user of this.state.users) {
@@ -728,6 +740,9 @@ export default class App extends Component<any, State> {
           </StatisticsPcWrapper>
         </ChartBackground>
       );
+    } else if (this.state.menu === 4) {
+      content = <Loading />;
+      pcContent = content;
     }
 
     return (
@@ -736,12 +751,12 @@ export default class App extends Component<any, State> {
           <Navigator
             onClick={this.onNavigatorClick}
             active={this.state.menu}
-            display={this.state.menu !== 1 && this.state.menu !== 3}
+            display={![1, 3, 4].includes(this.state.menu)}
           />
           {content}
         </MediaQuery>
         <MediaQuery minWidth={1024}>
-          {this.state.menu !== 1 && this.state.menu !== 3 && (
+          {![1, 3, 4].includes(this.state.menu) && (
             <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           )}
           {pcContent}
