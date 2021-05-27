@@ -35,7 +35,8 @@ import { Transform } from './utils/transform';
 
 const CardStack = styled.div`
   display: grid;
-  margin: -108px 0 0 0;
+  margin: -108px auto 0 auto;
+  max-width: 580px;
   padding: 0 36px 132px 36px;
   row-gap: 24px;
 `;
@@ -82,6 +83,12 @@ const PcCardSelector = styled.div`
   left: 50%;
   transform: translateX(-50%);
   height: 56px;
+`;
+
+const PcInstagramWrapper = styled.div`
+  position: absolute;
+  left: calc(50% - 716px / 2);
+  width: 716px;
 `;
 
 const ProfileWrapper = styled(motion.div)`
@@ -587,19 +594,31 @@ export default class App extends Component<any, State> {
       );
       pcContent = (
         <>
-          <PcCardStackLeft layoutId={'card-stack'}>
-            <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
-            {directCard}
-            {wadizCard}
-          </PcCardStackLeft>
-          <PcCardStackCenter>
-            {dayCard}
-            {surveyCard}
-          </PcCardStackCenter>
-          <PcCardStackRight>
-            {weeklyCard}
-            {historyCard}
-          </PcCardStackRight>
+          {this.state.dashboardMenu === 0 && (
+            <>
+              <PcCardStackLeft layoutId={'card-stack'}>
+                <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+                {directCard}
+                {wadizCard}
+              </PcCardStackLeft>
+              <PcCardStackCenter>
+                {dayCard}
+                {surveyCard}
+              </PcCardStackCenter>
+              <PcCardStackRight>
+                {weeklyCard}
+                {historyCard}
+              </PcCardStackRight>
+              <Copyright isPc={true} />
+            </>
+          )}
+          {this.state.dashboardMenu === 1 && (
+            <>
+              <PcInstagramWrapper>
+                <InstagramDashboard socket={this.socket} isPc={true} />
+              </PcInstagramWrapper>
+            </>
+          )}
           <PcCardSelector>
             <CardSelector
               isPc={true}
@@ -607,7 +626,6 @@ export default class App extends Component<any, State> {
               onChange={menu => this.setState({ dashboardMenu: menu })}
             />
           </PcCardSelector>
-          <Copyright isPc={true} />
         </>
       );
     } else if (this.state.menu === 1) {

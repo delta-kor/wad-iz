@@ -69,9 +69,12 @@ export class Transform {
   public static toTimeHistoryText(second: number): string {
     second = Math.round(second);
     if (second < 10) return '방금';
-    if (second < 60) return second + '초 전';
-    if (second < 3600) return Math.round(second / 60) + '분 전';
-    return Math.round(second / 3600) + '시간 전';
+    if (second < 59) return second + '초 전';
+    if (second < 3599) return Math.round(second / 60) + '분 전';
+    const hour = Math.round(second / 3600);
+    if (hour < 24) return hour + '시간 전';
+    if (hour < 24 * 30) return Math.round(hour / 24) + '일 전';
+    return '오래전';
   }
 
   public static imageProxy(url: string): string {

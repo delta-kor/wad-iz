@@ -4,9 +4,9 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div`
+const Layout = styled.div<any>`
   position: relative;
-  width: 100%;
+  width: ${({ width }) => width || '100%'};
   height: 174px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
@@ -66,12 +66,13 @@ interface Props {
   profiles: InstagramProfile[];
   selected: number;
   onSelect(index: number): void;
+  width?: string;
 }
 
 export default class InstagramSelectorCard extends Component<Props, any> {
   render() {
     return (
-      <Layout>
+      <Layout width={this.props.width}>
         <Title>프로필</Title>
         <ProfileItemWrapper>
           {this.props.profiles.map((profile, index) => (
@@ -80,7 +81,7 @@ export default class InstagramSelectorCard extends Component<Props, any> {
                 src={Transform.imageProxy(profile.profile_image)}
                 selected={index === this.props.selected}
               />
-              <Username selected={index === this.props.selected}>{profile.member_name}</Username>
+              <Username selected={index === this.props.selected}>@{profile.member_name}</Username>
             </ProfileItem>
           ))}
         </ProfileItemWrapper>

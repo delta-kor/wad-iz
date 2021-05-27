@@ -6,12 +6,23 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div`
+const Layout = styled.div<any>`
   position: relative;
+  width: ${({ width }) => width || '100%'};
   height: 248px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
+
+  ${({ width }) =>
+    width &&
+    `
+  :nth-child(2n + 1) {
+    order: 1;
+  }
+  :nth-child(2n) {
+    order: 2;
+  }`}
 `;
 
 const ProfileImage = styled.img`
@@ -90,12 +101,13 @@ const MetaValue = styled.div`
 
 interface Props {
   profile: InstagramProfile;
+  width?: string;
 }
 
 export default class InstagramProfileCard extends Component<Props, any> {
   render() {
     return (
-      <Layout>
+      <Layout width={this.props.width}>
         <ProfileImage src={Transform.imageProxy(this.props.profile.profile_image)} />
         <Username>@{this.props.profile.username}</Username>
         <MemberName>{this.props.profile.bio || this.props.profile.member_name}</MemberName>
