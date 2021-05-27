@@ -7,6 +7,7 @@ import Emoticon from './emoticon';
 import MultiVideo from './multi-video';
 import Env from './models/env';
 import Lyrics from './lyrics';
+import { Log } from './log';
 
 export enum SocketState {
   PENDING,
@@ -37,7 +38,7 @@ export default class Socket {
     this.ws.addEventListener('message', ({ data }) => {
       try {
         const json = JSON.parse(data);
-        this.onPacket(json).catch(e => console.error(e));
+        this.onPacket(json).catch(e => Log.error(e));
       } catch (e) {}
     });
   }

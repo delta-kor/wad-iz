@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import { IgApiClient, UserRepositorySearchResponseUsersItem } from 'instagram-private-api';
+import { Log } from './log';
 const targetIds = [
   // 'official_izone',
   // 'azzo_ssi',
@@ -40,7 +41,7 @@ export default class Instagram extends EventEmitter {
     super();
     this.client = new IgApiClient();
     this.userMap = new Map();
-    if (process.env.NODE_ENV !== 'development')
+    if (process.env.NODE_ENV !== 'development' || true)
       this.login()
         .then(() => this.loadUsers())
         .then(() => this.watch());
@@ -49,7 +50,7 @@ export default class Instagram extends EventEmitter {
   private async login(): Promise<void> {
     this.client.state.generateDevice(process.env.IG_USERNAME!);
     await this.client.account.login(process.env.IG_USERNAME!, process.env.IG_PASSWORD!);
-    console.log('Instagram login');
+    Log.info('Instagram login');
   }
 
   private async loadUsers(): Promise<void> {
@@ -65,29 +66,34 @@ export default class Instagram extends EventEmitter {
 
       await delay(7000 + Math.random() * 1000);
 
-      const photoFeed = await this.client.feed.user(user.pk);
-      const photoItems = await photoFeed.items();
+      try {
+        const photoFeed = await this.client.feed.user(user.pk);
+        const photoItems = await photoFeed.items();
 
-      console.log(`Fetched ${user.username}`);
+        console.log(`Fetched ${user.username}`);
 
-      if (photoItems.length === 0) {
-        this.userMap.get(user)![0] === UserFeedStateItem.NONE;
-        continue;
-      }
+        if (photoItems.length === 0) {
+          this.userMap.get(user)![0] === UserFeedStateItem.NONE;
+          continue;
+        }
 
-      const lastPhotoId = this.userMap.get(user)![0];
-      const targetPhoto = photoItems[0];
+        const lastPhotoId = this.userMap.get(user)![0];
+        const targetPhoto = photoItems[0];
 
-      if (lastPhotoId === UserFeedStateItem.UNKNOWN) {
-        this.userMap.get(user)![0] = targetPhoto.id;
-        continue;
-      }
+        if (lastPhotoId === UserFeedStateItem.UNKNOWN) {
+          this.userMap.get(user)![0] = targetPhoto.id;
+          continue;
+        }
 
-      if (lastPhotoId !== targetPhoto.id) {
-        this.emit('photo-update', user.username, user.profile_pic_url);
-        this.userMap.get(user)![0] = targetPhoto.id;
+        if (lastPhotoId !== targetPhoto.id) {
+          this.emit('photo-update', user.username, user.profile_pic_url);
+          this.userMap.get(user)![0] = targetPhoto.id;
+        }
+      } catch (e) {
+        Log.error(e);
       }
     }
+
     this.watch();
   }
 }

@@ -8,6 +8,7 @@ import Env from './models/env';
 import Instagram from './instagram';
 import ChatModel from './models/chat';
 import { ChatMessage } from './models/chat';
+import { Log } from './log';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 
@@ -32,10 +33,10 @@ export default class App {
   constructor(port: number) {
     (async () => {
       await this.loadEnv();
-      console.log('Loaded env');
+      Log.info('Loaded env');
 
       await this.loadChat();
-      console.log('Loaded chat');
+      Log.info('Loaded chat');
 
       this.server = new Server({ port });
       this.sockets = new Set();
@@ -54,7 +55,7 @@ export default class App {
 
   private mountEventListeners(): void {
     this.server.on('listening', () => {
-      console.log('Server started!');
+      Log.info('Server started');
     });
 
     this.server.on('connection', ws => {
@@ -100,7 +101,7 @@ export default class App {
     const wadizWatcher = async () => {
       const response = await axios.get(wadizUrl, { validateStatus: () => true });
       if (response.status !== 200) {
-        console.log(response.data);
+        Log.warn(response.data);
       }
       const document = new JSDOM(response.data).window.document;
       const amountElement = document.querySelector(
@@ -270,7 +271,7 @@ export default class App {
   ): any {
     const chatTypes = ['text', 'emoticon'];
     if (!chatTypes.includes(chat.type)) {
-      console.log('chat blocked : ' + chat.type);
+      Log.warn('chat blocked : ' + chat.type);
       return false;
     }
 
