@@ -23,7 +23,7 @@ interface State {
 
 export default class InstagramDashboard extends Component<Props, State> {
   state = {
-    profiles: [],
+    profiles: [] as InstagramProfile[],
     selected: 0,
   };
 
@@ -36,13 +36,20 @@ export default class InstagramDashboard extends Component<Props, State> {
     this.setState({ profiles: response.profiles });
   };
 
+  onProfileSelect = async (index: number) => {
+    this.setState({ selected: index });
+    const response = await this.props.socket.requestInstagramPosts(
+      this.state.profiles[index].username
+    );
+  };
+
   render() {
     return (
       <Layout>
         <InstagramSelectorCard
           profiles={this.state.profiles}
           selected={this.state.selected}
-          onSelect={index => this.setState({ selected: index })}
+          onSelect={this.onProfileSelect}
         />
         {this.state.profiles[this.state.selected] && (
           <InstagramProfileCard profile={this.state.profiles[this.state.selected]} />

@@ -22,7 +22,7 @@ interface FeedChat {
   content: string;
 }
 
-interface InstagramPhotoUpdateChat {
+interface InstagramPostUpdateChat {
   type: 'ig-photo-update';
   username: string;
   profile_image: string;
@@ -42,7 +42,7 @@ type Chat =
   | WadizUpdateChat
   | ChatClearChat
   | FeedChat
-  | InstagramPhotoUpdateChat
+  | InstagramPostUpdateChat
   | InstagramStoryUpdateChat;
 
 interface ChatClientPacket extends ClientPacketBase {

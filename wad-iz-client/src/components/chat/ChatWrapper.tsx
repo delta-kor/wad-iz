@@ -137,7 +137,7 @@ export default class ChatWrapper extends Component<Props, State> {
               if (chat.type === 'ig-photo-update')
                 return (
                   <InstagramUpdateFeed
-                    type={'photo'}
+                    type={'post'}
                     username={chat.username}
                     profileImage={chat.profile_image}
                     url={chat.url}

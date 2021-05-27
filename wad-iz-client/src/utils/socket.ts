@@ -130,4 +130,13 @@ export default class Socket extends EventEmitter {
     };
     return this.request<InstagramProfileServerPacket>(packet);
   }
+
+  public requestInstagramPosts(username: string): Promise<InstagramPostServerPacket> {
+    const packet: InstagramPostClientPacket = {
+      type: 'instagram-post',
+      packet_id: this.packetId,
+      username,
+    };
+    return this.request<InstagramPostServerPacket>(packet);
+  }
 }

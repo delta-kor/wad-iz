@@ -12,6 +12,7 @@ interface ServerPacketBase extends PacketBase {
 
 type ClientPacket =
   | ChatClientPacket
+  | InstagramPostClientPacket
   | InstagramProfileClientPacket
   | ProfileUpdateClientPacket
   | TicketClientPacket;
@@ -24,6 +25,7 @@ type ServerPacket =
   | DirectSyncServerPacket
   | DisconnectServerPacket
   | EmoticonSyncServerPacket
+  | InstagramPostServerPacket
   | InstagramProfileServerPacket
   | MultipleConnectServerPacket
   | ProfileImageServerPacket

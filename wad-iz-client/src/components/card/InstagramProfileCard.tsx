@@ -102,7 +102,7 @@ export default class InstagramProfileCard extends Component<Props, any> {
         <MetaWrapper>
           <MetaItem>
             <MetaIcon src={PhotoIcon} />
-            <MetaValue>{Transform.addComma(this.props.profile.photos)}</MetaValue>
+            <MetaValue>{Transform.addComma(this.props.profile.posts)}</MetaValue>
           </MetaItem>
           <MetaItem>
             <MetaIcon src={StarIcon} />

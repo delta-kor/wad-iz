@@ -7,7 +7,7 @@ interface InstagramProfile {
   profile_image: string;
   member_name: string;
   followers: number;
-  photos: number;
+  posts: number;
   bio: string;
 }
 

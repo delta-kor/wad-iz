@@ -70,8 +70,8 @@ export default class App {
       if (this.chartData.length !== 0) socket.sendChart();
     });
 
-    this.instagram.on('photo-update', (username: string, profileImage: string) => {
-      const chat: InstagramPhotoUpdateChat = {
+    this.instagram.on('post-update', (username: string, profileImage: string) => {
+      const chat: InstagramPostUpdateChat = {
         type: 'ig-photo-update',
         username,
         profile_image: profileImage,

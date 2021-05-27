@@ -340,6 +340,10 @@ export default class Socket {
     if (packet.type === 'instagram-profile') {
       return this.sendInstagramProfile(packet.packet_id);
     }
+
+    if (packet.type === 'instagram-post') {
+      return this.sendInstagramPost(packet.username, packet.packet_id);
+    }
   }
 
   private sendJson(json: any): void {
@@ -631,7 +635,7 @@ export default class Socket {
         profile_image: user.profile_pic_url,
         member_name: this.app.instagram.usernameToMemberName(user.username),
         followers: user.follower_count,
-        photos: user.media_count,
+        posts: user.media_count,
         bio: user.biography,
       });
     }
@@ -639,6 +643,45 @@ export default class Socket {
       type: 'instagram-profile',
       packet_id: packetId,
       profiles,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendInstagramPost(username: string, packetId: number): void {
+    const result: InstagramPost[] = [];
+    const posts = this.app.instagram.postMap.get(username) || [];
+    for (const post of posts) {
+      const photos: string[] = [];
+      let width: number = 0,
+        height: number = 0;
+
+      for (const photo of post.carousel_media || []) {
+        photos.push(photo.image_versions2.candidates[0].url);
+        if (!width || !height) {
+          width = photo.original_width;
+          height = photo.original_height;
+        }
+      }
+
+      if (photos.length === 0) {
+        photos.push(post.image_versions2.candidates[0].url);
+        width = post.image_versions2.candidates[0].width;
+        height = post.image_versions2.candidates[0].height;
+      }
+
+      result.push({
+        photos,
+        content: post.caption?.text,
+        likes: post.like_count,
+        timestamp: parseInt(post.device_timestamp as string),
+        width,
+        height,
+      });
+    }
+    const packet: InstagramPostServerPacket = {
+      type: 'instagram-post',
+      packet_id: packetId,
+      posts: result,
     };
     this.sendPacket(packet);
   }

@@ -59,7 +59,7 @@ const Button = styled.a`
 `;
 
 interface Props {
-  type: 'photo' | 'story';
+  type: 'post' | 'story';
   username: string;
   profileImage: string;
   url: string;
@@ -74,14 +74,14 @@ export default class InstagramUpdateFeed extends Component<Props, any> {
           <FeedContent>
             <Username>@{this.props.username}</Username>
             <FeedText>
-              {this.props.type === 'photo'
+              {this.props.type === 'post'
                 ? '게시물이 업데이트 되었습니다'
                 : '스토리가 업데이트 되었습니다'}
             </FeedText>
           </FeedContent>
         </ProfileContent>
         <Button href={this.props.url} target={'_blank'}>
-          {this.props.type === 'photo' ? '게시물 보기' : '스토리 보기'}
+          {this.props.type === 'post' ? '게시물 보기' : '스토리 보기'}
         </Button>
       </Layout>
     );

@@ -37,14 +37,14 @@ async function delay(ms: number) {
 export default class Instagram extends EventEmitter {
   private readonly client: IgApiClient;
   public readonly userMap: Map<string, UserRepositoryInfoResponseUser>;
-  public readonly photoMap: Map<string, UserFeedResponseItemsItem[]>;
+  public readonly postMap: Map<string, UserFeedResponseItemsItem[]>;
   public watchUpdate: boolean = true;
 
   constructor() {
     super();
     this.client = new IgApiClient();
     this.userMap = new Map();
-    this.photoMap = new Map();
+    this.postMap = new Map();
     if (process.env.NODE_ENV !== 'development')
       this.login()
         .then(() => this.loadUsers())
@@ -64,7 +64,7 @@ export default class Instagram extends EventEmitter {
 
       const userFeed = await this.client.feed.user(userId);
       const userFeedItems = await userFeed.items();
-      this.photoMap.set(user.username, userFeedItems);
+      this.postMap.set(user.username, userFeedItems);
     }
     Log.info('Loaded user data');
   }
@@ -82,12 +82,12 @@ export default class Instagram extends EventEmitter {
 
         if (updatedUser.media_count !== user.media_count) {
           Log.info(`Updated @${user.username}`);
-          this.emit('photo-update', user.username, updatedUser.profile_pic_url);
+          this.emit('post-update', user.username, updatedUser.profile_pic_url);
           this.userMap.set(user.username, updatedUser);
 
           const userFeed = await this.client.feed.user(userId);
           const userFeedItems = await userFeed.items();
-          this.photoMap.set(user.username, userFeedItems);
+          this.postMap.set(user.username, userFeedItems);
         }
       } catch (e) {
         Log.error(e);
