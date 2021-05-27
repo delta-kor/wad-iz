@@ -1,89 +1,114 @@
 import { Component } from 'react';
 import styled from 'styled-components';
+import PhotoIcon from '../../icon/photo.svg';
+import StarIcon from '../../icon/star.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
 const Layout = styled.div`
   position: relative;
-  width: 100%;
-  height: 174px;
+  height: 248px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
 `;
 
-const Title = styled.div`
+const ProfileImage = styled.img`
   position: absolute;
-  height: 18px;
+  width: 64px;
+  height: 64px;
+  left: calc(50% - 64px / 2);
+  top: 32px;
+  border-radius: 64px;
+`;
+
+const Username = styled.div`
+  position: absolute;
+  height: 24px;
   left: 32px;
   right: 32px;
-  top: 32px;
+  top: 112px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 24px;
+  text-align: center;
+  color: ${Color.BLACK};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const MemberName = styled.div`
+  position: absolute;
+  height: 24px;
+  left: 32px;
+  right: 32px;
+  top: 144px;
   font-style: normal;
   font-weight: normal;
   font-size: 18px;
   line-height: 24px;
+  text-align: center;
   color: ${Color.BLACK};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const ProfileItemWrapper = styled.div`
+const MetaWrapper = styled.div`
   position: absolute;
   display: flex;
   left: 0;
   right: 0;
-  top: 74px;
   bottom: 32px;
-  padding: 0 32px;
-  gap: 0 16px;
-  overflow-x: scroll;
+  height: 24px;
+  justify-content: center;
+  gap: 0 24px;
 `;
 
-const ProfileItem = styled.div`
+const MetaItem = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 8px 0;
-  width: 48px;
-  height: 68px;
+  height: 24px;
+  gap: 0 12px;
 `;
 
-const ProfileImage = styled.img<any>`
-  width: 48px;
-  height: 48px;
-  border-radius: 100%;
-  border: ${({ selected }) => (selected ? `3px solid ${Color.BLUE}` : 'none')};
+const MetaIcon = styled.img`
+  width: 24px;
+  height: 24px;
 `;
 
-const Username = styled.div<any>`
+const MetaValue = styled.div`
+  height: 24px;
   font-style: normal;
-  font-weight: ${({ selected }) => (selected ? 'bold' : 'normal')};
-  font-size: 12px;
-  line-height: 12px;
-  text-align: center;
-  color: ${Color.BLACK};
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  color: ${Color.BLUE};
 `;
 
 interface Props {
-  profiles: InstagramProfile[];
-  selected: number;
-  onSelect(index: number): void;
+  profile: InstagramProfile;
 }
 
 export default class InstagramProfileCard extends Component<Props, any> {
   render() {
     return (
       <Layout>
-        <Title>프로필</Title>
-        <ProfileItemWrapper>
-          {this.props.profiles.map((profile, index) => (
-            <ProfileItem key={profile.username} onClick={() => this.props.onSelect(index)}>
-              <ProfileImage
-                src={Transform.imageProxy(profile.profile_image)}
-                selected={index === this.props.selected}
-              />
-              <Username selected={index === this.props.selected}>{profile.member_name}</Username>
-            </ProfileItem>
-          ))}
-        </ProfileItemWrapper>
+        <ProfileImage src={Transform.imageProxy(this.props.profile.profile_image)} />
+        <Username>@{this.props.profile.username}</Username>
+        <MemberName>{this.props.profile.bio || this.props.profile.member_name}</MemberName>
+        <MetaWrapper>
+          <MetaItem>
+            <MetaIcon src={PhotoIcon} />
+            <MetaValue>{Transform.addComma(this.props.profile.photos)}</MetaValue>
+          </MetaItem>
+          <MetaItem>
+            <MetaIcon src={StarIcon} />
+            <MetaValue>{Transform.addComma(this.props.profile.followers)}</MetaValue>
+          </MetaItem>
+        </MetaWrapper>
       </Layout>
     );
   }

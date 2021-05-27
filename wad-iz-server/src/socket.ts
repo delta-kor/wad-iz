@@ -632,6 +632,7 @@ export default class Socket {
         member_name: this.app.instagram.usernameToMemberName(user.username),
         followers: user.follower_count,
         photos: user.media_count,
+        bio: user.biography,
       });
     }
     const packet: InstagramProfileServerPacket = {

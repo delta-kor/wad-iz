@@ -8,6 +8,7 @@ interface InstagramProfile {
   member_name: string;
   followers: number;
   photos: number;
+  bio: string;
 }
 
 interface InstagramProfileServerPacket extends ServerPacketBase {

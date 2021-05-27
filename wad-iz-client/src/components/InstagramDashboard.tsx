@@ -2,6 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import Socket from '../utils/socket';
 import InstagramProfileCard from './card/InstagramProfileCard';
+import InstagramSelectorCard from './card/InstagramSelectorCard';
 
 const Layout = styled.div`
   display: flex;
@@ -38,11 +39,14 @@ export default class InstagramDashboard extends Component<Props, State> {
   render() {
     return (
       <Layout>
-        <InstagramProfileCard
+        <InstagramSelectorCard
           profiles={this.state.profiles}
           selected={this.state.selected}
           onSelect={index => this.setState({ selected: index })}
         />
+        {this.state.profiles[this.state.selected] && (
+          <InstagramProfileCard profile={this.state.profiles[this.state.selected]} />
+        )}
       </Layout>
     );
   }
