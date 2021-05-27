@@ -70,11 +70,11 @@ export default class Socket extends EventEmitter {
 
   private sendPacket(packet: ServerPacketBase): void {
     this.sendJson(packet);
+    this.packetId++;
   }
 
   private request<T extends ServerPacket>(packet: ClientPacket): Promise<T> {
     this.sendPacket(packet);
-    this.packetId++;
     return new Promise(resolve => {
       this.resolves.push({
         packetId: packet.packet_id,
@@ -97,7 +97,6 @@ export default class Socket extends EventEmitter {
       profile_image: profileImage,
     };
     this.sendPacket(packet);
-    this.packetId++;
   }
 
   public sendTextChat(text: string): void {
@@ -110,7 +109,6 @@ export default class Socket extends EventEmitter {
       },
     };
     this.sendPacket(packet);
-    this.packetId++;
   }
 
   public sendEmoticonChat(key: string): void {
@@ -123,6 +121,5 @@ export default class Socket extends EventEmitter {
       },
     };
     this.sendPacket(packet);
-    this.packetId++;
   }
 }

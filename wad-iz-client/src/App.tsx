@@ -2,6 +2,7 @@ import { AnimateSharedLayout, motion } from 'framer-motion';
 import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
 import styled from 'styled-components';
+import CardSelector from './components/bar/CardSelector';
 import ChartHeading from './components/bar/ChartHeading';
 import ChartTitle from './components/bar/ChartTitle';
 import ChatInputer from './components/bar/ChatInputer';
@@ -33,7 +34,7 @@ import { Transform } from './utils/transform';
 
 const CardStack = styled.div`
   display: grid;
-  margin: -94px 0 0 0;
+  margin: -108px 0 0 0;
   padding: 0 36px 132px 36px;
   row-gap: 24px;
 `;
@@ -72,6 +73,14 @@ const PcCardStackRight = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 32px 0;
+`;
+
+const PcCardSelector = styled.div`
+  position: absolute;
+  top: 102px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 56px;
 `;
 
 const ProfileWrapper = styled(motion.div)`
@@ -165,6 +174,7 @@ export interface ChatMessage {
 
 interface State {
   menu: number;
+  dashboardMenu: number;
 
   isVideo: boolean;
   selectedVideo: number;
@@ -196,6 +206,7 @@ export default class App extends Component<any, State> {
     super(props);
     this.state = {
       menu: 4,
+      dashboardMenu: 0,
 
       isVideo: false,
       selectedVideo: 0,
@@ -262,7 +273,7 @@ export default class App extends Component<any, State> {
 
     this.socket.on('welcome', (packet: WelcomeServerPacket) => {
       this.setState({ timeDelta: new Date().getTime() - packet.server_time });
-      this.setState({ menu: 0 }); 
+      this.setState({ menu: 0 });
     });
 
     this.socket.on('ticket', (packet: TicketServerPacket) => {
@@ -551,18 +562,27 @@ export default class App extends Component<any, State> {
         <div>
           <Cover amount={this.state.directAmount + this.state.wadizAmount}></Cover>
           <CardStack>
-            {directCard}
-            {wadizCard}
-            {dayCard}
-            {surveyCard}
-            {weeklyCard}
-            {historyCard}
+            <CardSelector
+              isPc={false}
+              selected={this.state.dashboardMenu}
+              onChange={menu => this.setState({ dashboardMenu: menu })}
+            />
+            {this.state.dashboardMenu === 0 && (
+              <>
+                {directCard}
+                {wadizCard}
+                {dayCard}
+                {surveyCard}
+                {weeklyCard}
+                {historyCard}
+              </>
+            )}
             <Copyright isPc={false} />
           </CardStack>
         </div>
       );
       pcContent = (
-        <div>
+        <>
           <PcCardStackLeft layoutId={'card-stack'}>
             <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
             {directCard}
@@ -576,8 +596,15 @@ export default class App extends Component<any, State> {
             {weeklyCard}
             {historyCard}
           </PcCardStackRight>
+          <PcCardSelector>
+            <CardSelector
+              isPc={true}
+              selected={this.state.dashboardMenu}
+              onChange={menu => this.setState({ dashboardMenu: menu })}
+            />
+          </PcCardSelector>
           <Copyright isPc={true} />
-        </div>
+        </>
       );
     } else if (this.state.menu === 1) {
       content = (

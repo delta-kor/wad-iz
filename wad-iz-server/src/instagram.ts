@@ -1,47 +1,51 @@
 import EventEmitter from 'events';
-import { IgApiClient, UserRepositorySearchResponseUsersItem } from 'instagram-private-api';
+import {
+  IgApiClient,
+  UserFeedResponseItemsItem,
+  UserRepositoryInfoResponseUser,
+} from 'instagram-private-api';
 import { Log } from './log';
-const targetIds = [
-  // 'official_izone',
-  // 'azzo_ssi',
-  // 'chaeri_chaeso',
-  // 'k.minjoo_official',
-  '_yujin_an',
-  'for_everyoung10',
-  'hyemhyemu',
-  'yena.jigumina',
-  '75_yabuki',
-  '39saku_chan',
-  'chaestival_',
-  '10_hitomi_06',
-  'silver_rain.__',
-  'lt2_watcher_01',
+
+const targetUserIds = [
+  // '48088489578', // Watcher
+  '47636361181', // 권은비
+  '3720950457', // 사쿠라
+  '48034946360', // 강혜원
+  '47698915733', // 최예나
+  '47253291473', // 이채연
+  '6938463993', // 나코
+  '5753402370', // 히토미
+  '6777351116', // 안유진
+  '47598283663', // 장원영
 ];
 
-enum UserFeedStateItem {
-  NONE = 'none',
-  UNKNOWN = 'unknown',
-}
+const usernameMap = new Map<string, string>();
+usernameMap.set('silver_rain.__', '권은비');
+usernameMap.set('39saku_chan', '사쿠라');
+usernameMap.set('hyemhyemu', '강혜원');
+usernameMap.set('yena.jigumina', '최예나');
+usernameMap.set('chaestival_', '이채연');
+usernameMap.set('75_yabuki', '나코');
+usernameMap.set('10_hitomi_06', '히토미');
+usernameMap.set('_yujin_an', '안유진');
+usernameMap.set('for_everyoung10', '장원영');
 
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-type UserFeedState = string | UserFeedStateItem;
-
 export default class Instagram extends EventEmitter {
   private readonly client: IgApiClient;
-  private readonly userMap: Map<
-    UserRepositorySearchResponseUsersItem,
-    [UserFeedState, UserFeedState]
-  >;
+  public readonly userMap: Map<string, UserRepositoryInfoResponseUser>;
+  public readonly photoMap: Map<string, UserFeedResponseItemsItem[]>;
   public watchUpdate: boolean = true;
 
   constructor() {
     super();
     this.client = new IgApiClient();
     this.userMap = new Map();
-    if (process.env.NODE_ENV !== 'development' || true)
+    this.photoMap = new Map();
+    if (process.env.NODE_ENV !== 'development')
       this.login()
         .then(() => this.loadUsers())
         .then(() => this.watch());
@@ -54,40 +58,36 @@ export default class Instagram extends EventEmitter {
   }
 
   private async loadUsers(): Promise<void> {
-    for (const targetId of targetIds) {
-      const user = await this.client.user.searchExact(targetId);
-      this.userMap.set(user, [UserFeedStateItem.UNKNOWN, UserFeedStateItem.UNKNOWN]);
+    for (const userId of targetUserIds) {
+      const user = await this.client.user.info(userId);
+      this.userMap.set(user.username, user);
+
+      const userFeed = await this.client.feed.user(userId);
+      const userFeedItems = await userFeed.items();
+      this.photoMap.set(user.username, userFeedItems);
     }
+    Log.info('Loaded user data');
   }
 
   private async watch(): Promise<void> {
-    for (const user of this.userMap.keys()) {
+    for (const user of this.userMap.values()) {
+      await delay(7000 + Math.random() * 1000);
       if (!this.watchUpdate) continue;
 
-      await delay(7000 + Math.random() * 1000);
-
       try {
-        const photoFeed = await this.client.feed.user(user.pk);
-        const photoItems = await photoFeed.items();
+        const userId = user.pk;
+        const updatedUser = await this.client.user.info(userId);
 
         Log.info(`Fetched @${user.username}`);
 
-        if (photoItems.length === 0) {
-          this.userMap.get(user)![0] === UserFeedStateItem.NONE;
-          continue;
-        }
+        if (updatedUser.media_count !== user.media_count) {
+          Log.info(`Updated @${user.username}`);
+          this.emit('photo-update', user.username, updatedUser.profile_pic_url);
+          this.userMap.set(user.username, updatedUser);
 
-        const lastPhotoId = this.userMap.get(user)![0];
-        const targetPhoto = photoItems[0];
-
-        if (lastPhotoId === UserFeedStateItem.UNKNOWN) {
-          this.userMap.get(user)![0] = targetPhoto.id;
-          continue;
-        }
-
-        if (lastPhotoId !== targetPhoto.id) {
-          this.emit('photo-update', user.username, user.profile_pic_url);
-          this.userMap.get(user)![0] = targetPhoto.id;
+          const userFeed = await this.client.feed.user(userId);
+          const userFeedItems = await userFeed.items();
+          this.photoMap.set(user.username, userFeedItems);
         }
       } catch (e) {
         Log.error(e);
@@ -95,5 +95,9 @@ export default class Instagram extends EventEmitter {
     }
 
     this.watch();
+  }
+
+  public usernameToMemberName(username: string): string {
+    return usernameMap.get(username) || '#';
   }
 }

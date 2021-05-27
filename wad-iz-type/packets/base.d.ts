@@ -10,7 +10,11 @@ interface ServerPacketBase extends PacketBase {
   packet_id: number | null;
 }
 
-type ClientPacket = ChatClientPacket | ProfileUpdateClientPacket | TicketClientPacket;
+type ClientPacket =
+  | ChatClientPacket
+  | InstagramProfileClientPacket
+  | ProfileUpdateClientPacket
+  | TicketClientPacket;
 type ServerPacket =
   | ChatClearServerPacket
   | ChatServerPacket

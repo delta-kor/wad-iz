@@ -336,6 +336,10 @@ export default class Socket {
         this.state - 1
       );
     }
+
+    if (packet.type === 'instagram-profile') {
+      return this.sendInstagramProfile(packet.packet_id);
+    }
   }
 
   private sendJson(json: any): void {
@@ -614,6 +618,24 @@ export default class Socket {
       packet_id: null,
       data: this.app.chartData,
       timestamp: this.app.chartDataTimestamp,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendInstagramProfile(packetId: number): void {
+    const profiles: InstagramProfile[] = [];
+    const userMap = this.app.instagram.userMap;
+    for (const user of userMap.values()) {
+      profiles.push({
+        username: user.username,
+        profile_image: user.profile_pic_url,
+        member_name: this.app.instagram.usernameToMemberName(user.username),
+      });
+    }
+    const packet: InstagramProfileServerPacket = {
+      type: 'instagram-profile',
+      packet_id: packetId,
+      profiles,
     };
     this.sendPacket(packet);
   }
