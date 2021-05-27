@@ -15,6 +15,7 @@ type ClientPacket =
   | InstagramProfileClientPacket
   | ProfileUpdateClientPacket
   | TicketClientPacket;
+
 type ServerPacket =
   | ChatClearServerPacket
   | ChatServerPacket
@@ -23,6 +24,7 @@ type ServerPacket =
   | DirectSyncServerPacket
   | DisconnectServerPacket
   | EmoticonSyncServerPacket
+  | InstagramProfileServerPacket
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket

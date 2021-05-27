@@ -19,7 +19,7 @@ export default class Socket extends EventEmitter {
     fetch('http://lt2.kr/ws?p=' + new Date().getTime())
       .then(res => res.text())
       .then(url => {
-        if (window.location.hostname === 'localhost') url = 'ws://localhost/';
+        // if (window.location.hostname === 'localhost') url = 'ws://localhost/';
         this.ws = new WebSocket(url);
         this.resolves = [];
         this.packetId = 1;
@@ -121,5 +121,13 @@ export default class Socket extends EventEmitter {
       },
     };
     this.sendPacket(packet);
+  }
+
+  public requestInstagramProfiles(): Promise<InstagramProfileServerPacket> {
+    const packet: InstagramProfileClientPacket = {
+      type: 'instagram-profile',
+      packet_id: this.packetId,
+    };
+    return this.request<InstagramProfileServerPacket>(packet);
   }
 }

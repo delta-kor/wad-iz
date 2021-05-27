@@ -21,6 +21,7 @@ import Video from './components/chat/Video';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
 import Cover from './components/Cover';
+import InstagramDashboard from './components/InstagramDashboard';
 import Loading from './components/Loading';
 import MultiVideoSelector from './components/MultiVideoSelector';
 import MultiVideoSelectorPc from './components/MultiVideoSelectorPc';
@@ -576,6 +577,9 @@ export default class App extends Component<any, State> {
                 {weeklyCard}
                 {historyCard}
               </>
+            )}
+            {this.state.dashboardMenu === 1 && (
+              <InstagramDashboard socket={this.socket} isPc={false} />
             )}
             <Copyright isPc={false} />
           </CardStack>

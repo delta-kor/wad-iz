@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
+import { Transform } from '../../utils/transform';
 
 const Layout = styled.div`
   display: flex;
@@ -69,9 +70,7 @@ export default class InstagramUpdateFeed extends Component<Props, any> {
     return (
       <Layout>
         <ProfileContent>
-          <ProfileImage
-            src={`http://lt2.kr/image.php?q=${encodeURIComponent(this.props.profileImage)}`}
-          />
+          <ProfileImage src={Transform.imageProxy(this.props.profileImage)} />
           <FeedContent>
             <Username>@{this.props.username}</Username>
             <FeedText>

@@ -73,4 +73,8 @@ export class Transform {
     if (second < 3600) return Math.round(second / 60) + '분 전';
     return Math.round(second / 3600) + '시간 전';
   }
+
+  public static imageProxy(url: string): string {
+    return `http://lt2.kr/image.php?q=${encodeURIComponent(url)}`;
+  }
 }

@@ -17,7 +17,7 @@ const Item = styled.div<any>`
   width: ${({ isPc }) => (isPc ? '56px' : '42px')};
   height: ${({ isPc }) => (isPc ? '56px' : '42px')};
   border-radius: 100%;
-  background: ${Color.WHITE};
+  background: ${({ isPc }) => (isPc ? Color.WHITE : Color.BLUE_BRIGHT)};
   overflow: hidden;
   cursor: pointer;
   user-select: none;
@@ -40,8 +40,8 @@ const ItemIcon = styled.img<any>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
+  width: ${({ isPc }) => (isPc ? '24px' : '18px')};
+  height: ${({ isPc }) => (isPc ? '24px' : '18px')};
   filter: ${({ selected, isPc }) =>
     isPc
       ? !selected
