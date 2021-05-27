@@ -13,7 +13,7 @@ const targetUserIds = [
   '48034946360', // 강혜원
   '47698915733', // 최예나
   '47253291473', // 이채연
-  '48080370495', // 김채원
+  '47653240204', // 김채원
   '6938463993', // 나코
   '5753402370', // 히토미
   '6777351116', // 안유진
@@ -26,6 +26,7 @@ usernameMap.set('39saku_chan', '사쿠라');
 usernameMap.set('hyemhyemu', '강혜원');
 usernameMap.set('yena.jigumina', '최예나');
 usernameMap.set('chaestival_', '이채연');
+usernameMap.set('_chaechae_1', '김채원');
 usernameMap.set('75_yabuki', '나코');
 usernameMap.set('10_hitomi_06', '히토미');
 usernameMap.set('_yujin_an', '안유진');
@@ -72,7 +73,7 @@ export default class Instagram extends EventEmitter {
 
   private async watch(): Promise<void> {
     for (const user of this.userMap.values()) {
-      await delay(7000 + Math.random() * 1000);
+      await delay(60000 + Math.random() * 1000);
       if (!this.watchUpdate) continue;
 
       try {

@@ -69,24 +69,36 @@ export default class InstagramDashboard extends Component<Props, State> {
     if (this.props.isPc) globalProps.width = '342px;';
     return (
       <Layout isPc={this.props.isPc}>
-        {this.state.profiles[this.state.selected] && (
-          <InstagramProfileCard
-            profile={this.state.profiles[this.state.selected]}
-            {...globalProps}
-          />
-        )}
         {this.props.isPc ? (
-          <InstagramSelectorPcCard
-            profiles={this.state.profiles}
-            selected={this.state.selected}
-            onSelect={this.onProfileSelect}
-          />
+          <>
+            {this.state.profiles[this.state.selected] && (
+              <InstagramProfileCard
+                profile={this.state.profiles[this.state.selected]}
+                {...globalProps}
+              />
+            )}
+
+            <InstagramSelectorPcCard
+              profiles={this.state.profiles}
+              selected={this.state.selected}
+              onSelect={this.onProfileSelect}
+            />
+          </>
         ) : (
-          <InstagramSelectorCard
-            profiles={this.state.profiles}
-            selected={this.state.selected}
-            onSelect={this.onProfileSelect}
-          />
+          <>
+            <InstagramSelectorCard
+              profiles={this.state.profiles}
+              selected={this.state.selected}
+              onSelect={this.onProfileSelect}
+            />
+
+            {this.state.profiles[this.state.selected] && (
+              <InstagramProfileCard
+                profile={this.state.profiles[this.state.selected]}
+                {...globalProps}
+              />
+            )}
+          </>
         )}
         {this.state.posts.map((post, index) => (
           <InstagramPostCard key={index} post={post} {...globalProps} />

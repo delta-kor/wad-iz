@@ -81,7 +81,7 @@ export default class InstagramSelectorCard extends Component<Props, any> {
                 src={Transform.imageProxy(profile.profile_image)}
                 selected={index === this.props.selected}
               />
-              <Username selected={index === this.props.selected}>@{profile.member_name}</Username>
+              <Username selected={index === this.props.selected}>{profile.member_name}</Username>
             </ProfileItem>
           ))}
         </ProfileItemWrapper>
