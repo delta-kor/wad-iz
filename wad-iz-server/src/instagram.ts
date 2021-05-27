@@ -70,7 +70,7 @@ export default class Instagram extends EventEmitter {
         const photoFeed = await this.client.feed.user(user.pk);
         const photoItems = await photoFeed.items();
 
-        console.log(`Fetched ${user.username}`);
+        Log.info(`Fetched @${user.username}`);
 
         if (photoItems.length === 0) {
           this.userMap.get(user)![0] === UserFeedStateItem.NONE;
