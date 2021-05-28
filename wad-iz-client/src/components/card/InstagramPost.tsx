@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import HeartIcon from '../../icon/heart.svg';
@@ -7,7 +8,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   width: ${({ width }) => width || '100%'};
   padding: 0 0 16px 0;
   background: ${Color.WHITE};
@@ -16,13 +17,12 @@ const Layout = styled.div<any>`
   overflow: hidden;
 `;
 
-const Image = styled.div<any>`
+const ImageContent = styled.div<any>`
   position: relative;
   display: block;
   width: 100%;
-  background: url(${({ src }) => src});
-  background-size: contain;
-  object-fit: cover;
+  opacity: 0;
+  transition: opacity 200ms;
 `;
 
 const CarouselButton = styled.div<any>`
@@ -100,26 +100,57 @@ const LikeValue = styled.div`
 interface Props {
   post: InstagramPost;
   width?: string;
+  index: number;
 }
 
 interface State {
-  index: number;
+  imageIndex: number;
 }
 
 export default class InstagramPostCard extends Component<Props, State> {
   imageRef = React.createRef<HTMLDivElement>();
 
   state = {
-    index: 0,
+    imageIndex: 0,
   };
 
   componentDidMount = () => {
     this.resizeImage();
+    this.loadImage();
     window.addEventListener('resize', this.resizeImage);
   };
 
   componentWillUnmount = () => {
     window.removeEventListener('resize', this.resizeImage);
+  };
+
+  componentDidUpdate = (lastProps: Props, lastState: State) => {
+    if (lastProps.post !== this.props.post) {
+      this.loadImage();
+      this.resizeImage();
+    }
+    if (lastState.imageIndex !== this.state.imageIndex) {
+      this.loadImage();
+    }
+  };
+
+  loadImage = () => {
+    const element = this.imageRef.current!;
+    element.style.opacity = '0';
+
+    const url = element.getAttribute('src')!;
+    const image = new Image();
+    image.onload = () => {
+      element.style.backgroundImage = `url(${url})`;
+      element.style.backgroundRepeat = 'no-repeat';
+      element.style.backgroundPosition = 'center';
+      element.style.backgroundSize = 'contain';
+      element.style.opacity = '1';
+    };
+
+    setTimeout(() => {
+      image.src = url;
+    }, 200);
   };
 
   resizeImage = () => {
@@ -131,22 +162,22 @@ export default class InstagramPostCard extends Component<Props, State> {
   };
 
   onArrowClick = (type: string): void => {
-    let newIndex: number = this.state.index;
+    let newIndex: number = this.state.imageIndex;
     const photosLength = this.props.post.photos.length;
     if (type === 'right') {
-      if (this.state.index === photosLength - 1) {
+      if (this.state.imageIndex === photosLength - 1) {
         newIndex = 0;
       } else {
         newIndex++;
       }
     } else {
-      if (this.state.index === 0) {
+      if (this.state.imageIndex === 0) {
         newIndex = photosLength - 1;
       } else {
         newIndex--;
       }
     }
-    this.setState({ index: newIndex });
+    this.setState({ imageIndex: newIndex });
   };
 
   render() {
@@ -158,9 +189,15 @@ export default class InstagramPostCard extends Component<Props, State> {
       timestamp = timestamp * 100;
     }
     return (
-      <Layout width={this.props.width}>
-        <Image
-          src={Transform.imageProxy(this.props.post.photos[this.state.index])}
+      <Layout
+        width={this.props.width}
+        layoutId={`instagram-post-${this.props.index}`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ opacity: { delay: 0.2 } }}
+      >
+        <ImageContent
+          src={Transform.imageProxy(this.props.post.photos[this.state.imageIndex])}
           ref={this.imageRef}
         >
           {this.props.post.photos.length !== 1 && (
@@ -173,7 +210,7 @@ export default class InstagramPostCard extends Component<Props, State> {
               </CarouselButton>
             </>
           )}
-        </Image>
+        </ImageContent>
         {this.props.post.content && (
           <Content width={this.props.width}>{this.props.post.content}</Content>
         )}

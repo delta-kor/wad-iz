@@ -1,10 +1,11 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   position: relative;
   width: ${({ width }) => width || '100%'};
   height: 174px;
@@ -38,7 +39,7 @@ const ProfileItemWrapper = styled.div`
   overflow-x: scroll;
 `;
 
-const ProfileItem = styled.div`
+const ProfileItem = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 8px 0;
@@ -87,11 +88,17 @@ interface Props {
 export default class InstagramSelectorCard extends Component<Props, any> {
   render() {
     return (
-      <Layout width={this.props.width}>
+      <Layout width={this.props.width} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Title>프로필</Title>
         <ProfileItemWrapper>
           {this.props.profiles.map((profile, index) => (
-            <ProfileItem key={profile.username} onClick={() => this.props.onSelect(index)}>
+            <ProfileItem
+              key={profile.username}
+              onClick={() => this.props.onSelect(index)}
+              initial={{ zoom: 0, opacity: 0 }}
+              animate={{ zoom: 1, opacity: 1 }}
+              transition={{ delay: index * 0.05 + 0.2 }}
+            >
               <ProfileImageWrapper>
                 <ProfileImage src={Transform.imageProxy(profile.profile_image)} />
                 {index === this.props.selected && <ProfileImageBorder />}

@@ -545,21 +545,21 @@ export default class App extends Component<any, State> {
         delay={0.2}
       />
     );
-    const dayCard = <DayCard data={this.state.candleData} delay={0.3} />;
+    const dayCard = <DayCard data={this.state.candleData} delay={0} />;
     const surveyCard = (
       <SurveyCard
         totalAmount={3341459287}
         totalSupporter={9846}
         kwizAmount={this.state.directAmount + this.state.wadizAmount}
         kwizSupporter={this.state.wadizSupporter}
-        delay={0.4}
+        delay={0.1}
       />
     );
-    const weeklyCard = <WeeklyCard data={this.state.candleData} delay={0.5} />;
+    const weeklyCard = <WeeklyCard data={this.state.candleData} delay={0.2} />;
     const historyCard = (
       <HistoryCard
         items={this.state.candleData}
-        delay={0.6}
+        delay={0.3}
         onChartClick={() => this.onNavigatorClick(3)}
       />
     );

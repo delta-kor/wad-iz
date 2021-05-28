@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import PhotoIcon from '../../icon/photo.svg';
@@ -6,13 +7,14 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   position: relative;
   width: ${({ width }) => width || '100%'};
   height: 248px;
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
+  text-align: center;
 `;
 
 const ProfileImage = styled.img`
@@ -24,12 +26,10 @@ const ProfileImage = styled.img`
   border-radius: 64px;
 `;
 
-const Username = styled.div`
-  position: absolute;
+const Username = styled(motion.div)`
+  display: inline-block;
   height: 24px;
-  left: 32px;
-  right: 32px;
-  top: 112px;
+  margin: 112px auto 0 auto;
   font-style: normal;
   font-weight: bold;
   font-size: 24px;
@@ -97,9 +97,14 @@ interface Props {
 export default class InstagramProfileCard extends Component<Props, any> {
   render() {
     return (
-      <Layout width={this.props.width}>
+      <Layout
+        width={this.props.width}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
         <ProfileImage src={Transform.imageProxy(this.props.profile.profile_image)} />
-        <Username>@{this.props.profile.username}</Username>
+        <Username layoutId={'instagram-username'}>@{this.props.profile.username}</Username>
         <MemberName>{this.props.profile.bio || this.props.profile.member_name}</MemberName>
         <MetaWrapper>
           <MetaItem>

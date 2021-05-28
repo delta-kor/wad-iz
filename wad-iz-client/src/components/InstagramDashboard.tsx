@@ -50,11 +50,10 @@ export default class InstagramDashboard extends Component<Props, State> {
   };
 
   onProfileSelect = async (index: number) => {
-    this.setState({ selected: index, posts: [] });
     const response = await this.props.socket.requestInstagramPosts(
       this.state.profiles[index].username
     );
-    this.setState({ posts: response.posts });
+    this.setState({ selected: index, posts: response.posts });
   };
 
   render() {
@@ -81,7 +80,7 @@ export default class InstagramDashboard extends Component<Props, State> {
 
             <PcFlex>
               {this.state.posts.map((post, index) => (
-                <InstagramPostCard key={index} post={post} {...globalProps} />
+                <InstagramPostCard key={index} post={post} {...globalProps} index={index} />
               ))}
             </PcFlex>
           </>
@@ -101,7 +100,7 @@ export default class InstagramDashboard extends Component<Props, State> {
             )}
 
             {this.state.posts.map((post, index) => (
-              <InstagramPostCard key={index} post={post} {...globalProps} />
+              <InstagramPostCard key={index} post={post} {...globalProps} index={index} />
             ))}
           </>
         )}
