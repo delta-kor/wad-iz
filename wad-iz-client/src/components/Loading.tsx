@@ -38,11 +38,8 @@ const Text = styled.p`
   color: ${Color.BLACK};
 
   @media screen and (max-width: 1024px) {
-    zoom: 0.8;
-  }
-
-  @media screen and (max-width: 1024px) {
-    zoom: 0.6;
+    font-size: 18px;
+    bottom: 58px;
   }
 `;
 

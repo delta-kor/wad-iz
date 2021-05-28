@@ -60,7 +60,7 @@ const ProfileImage = styled.img`
   border-radius: 100px;
 `;
 
-const ProfileImageBorder = styled.div`
+const ProfileImageBorder = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
@@ -68,6 +68,7 @@ const ProfileImageBorder = styled.div`
   height: 56px;
   border-radius: 100px;
   box-shadow: inset 0 0 0 4px ${Color.BLUE};
+  z-index: 3;
 `;
 
 const UserWrapper = styled.div`
@@ -117,7 +118,9 @@ export default class InstagramSelectorPcCard extends Component<Props, any> {
             >
               <ProfileImageWrapper>
                 <ProfileImage src={Transform.imageProxy(profile.profile_image)} />
-                {index === this.props.selected && <ProfileImageBorder />}
+                {index === this.props.selected && (
+                  <ProfileImageBorder layoutId={'instagram-border'} />
+                )}
               </ProfileImageWrapper>
               <UserWrapper>
                 <Username>@{profile.username}</Username>

@@ -7,7 +7,8 @@ type Sfx =
   | 'fund_big'
   | 'fund_minus'
   | 'fund_small'
-  | 'fund_zero'
+  | 'fund_super_big'
+  | 'instagram'
   | 'navigator'
   | 'swipe';
 

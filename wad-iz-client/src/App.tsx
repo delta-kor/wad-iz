@@ -334,13 +334,13 @@ export default class App extends Component<any, State> {
     });
     this.socket.on('wadiz-update', (packet: WadizUpdateServerPacket) => {
       if (packet.amount_delta > 0) {
-        if (packet.amount_delta > 10000) {
+        if (packet.amount_delta > 100000) {
+          playSfx('fund_super_big');
+        } else if (packet.amount_delta > 10000) {
           playSfx('fund_big');
         } else {
           playSfx('fund_small');
         }
-      } else if (packet.amount_delta === 0) {
-        playSfx('fund_zero');
       } else {
         playSfx('fund_minus');
       }
@@ -398,6 +398,10 @@ export default class App extends Component<any, State> {
     });
 
     this.socket.on('chat', (packet: ChatServerPacket) => {
+      if (packet.chat.type === 'ig-photo-update') {
+        playSfx('instagram');
+      }
+
       const chats = this.state.chats;
       chats.push({
         userId: packet.user_id,
