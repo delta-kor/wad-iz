@@ -13,16 +13,6 @@ const Layout = styled.div<any>`
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
-
-  ${({ width }) =>
-    width &&
-    `
-  :nth-child(2n + 1) {
-    order: 1;
-  }
-  :nth-child(2n) {
-    order: 2;
-  }`}
 `;
 
 const ProfileImage = styled.img`

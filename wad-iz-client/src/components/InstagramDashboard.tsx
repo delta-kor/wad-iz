@@ -8,24 +8,17 @@ import InstagramSelectorPcCard from './card/InstagramSelectorPc';
 
 const Layout = styled.div<any>`
   display: flex;
+  flex-direction: ${({ isPc }) => (isPc ? 'row' : 'column')};
   padding: ${({ isPc }) => (isPc ? '262px 0 0 0' : '0')};
-  height: ${({ isPc }) => (isPc ? '5000px' : 'auto')};
-  gap: 32px 16px;
-  flex-flow: column wrap;
+  margin: 0 0 ${({ isPc }) => (isPc ? '32px' : '0')};
+  gap: 32px;
   z-index: 2;
+`;
 
-  ${({ isPc }) =>
-    isPc
-      ? `
-  align-content: space-between;
-  ::before,
-  ::after {
-    content: '';
-    flex-basis: 100%;
-    width: 0;
-    order: 2;
-  }`
-      : ''}
+const PcFlex = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px 0;
 `;
 
 interface Props {
@@ -71,18 +64,26 @@ export default class InstagramDashboard extends Component<Props, State> {
       <Layout isPc={this.props.isPc}>
         {this.props.isPc ? (
           <>
-            {this.state.profiles[this.state.selected] && (
-              <InstagramProfileCard
-                profile={this.state.profiles[this.state.selected]}
-                {...globalProps}
+            <PcFlex>
+              <InstagramSelectorPcCard
+                profiles={this.state.profiles}
+                selected={this.state.selected}
+                onSelect={this.onProfileSelect}
               />
-            )}
 
-            <InstagramSelectorPcCard
-              profiles={this.state.profiles}
-              selected={this.state.selected}
-              onSelect={this.onProfileSelect}
-            />
+              {this.state.profiles[this.state.selected] && (
+                <InstagramProfileCard
+                  profile={this.state.profiles[this.state.selected]}
+                  {...globalProps}
+                />
+              )}
+            </PcFlex>
+
+            <PcFlex>
+              {this.state.posts.map((post, index) => (
+                <InstagramPostCard key={index} post={post} {...globalProps} />
+              ))}
+            </PcFlex>
           </>
         ) : (
           <>
@@ -98,11 +99,12 @@ export default class InstagramDashboard extends Component<Props, State> {
                 {...globalProps}
               />
             )}
+
+            {this.state.posts.map((post, index) => (
+              <InstagramPostCard key={index} post={post} {...globalProps} />
+            ))}
           </>
         )}
-        {this.state.posts.map((post, index) => (
-          <InstagramPostCard key={index} post={post} {...globalProps} />
-        ))}
       </Layout>
     );
   }

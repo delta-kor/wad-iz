@@ -11,13 +11,6 @@ const Layout = styled.div<any>`
   background: ${Color.WHITE};
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
-
-  :nth-child(2n + 1) {
-    order: 1;
-  }
-  :nth-child(2n) {
-    order: 2;
-  }
 `;
 
 const Title = styled.div`
@@ -54,11 +47,26 @@ const ProfileItem = styled.div`
   user-select: none;
 `;
 
-const ProfileImage = styled.img<any>`
+const ProfileImageWrapper = styled.div`
+  position: relative;
   width: 56px;
   height: 56px;
-  border-radius: 100%;
-  border: ${({ selected }) => (selected ? `4px solid ${Color.BLUE}` : 'none')};
+`;
+
+const ProfileImage = styled.img`
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+`;
+
+const ProfileImageBorder = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 100px;
+  box-shadow: inset 0 0 0 4px ${Color.BLUE};
 `;
 
 const UserWrapper = styled.div`
@@ -100,10 +108,10 @@ export default class InstagramSelectorPcCard extends Component<Props, any> {
         <ProfileItemWrapper>
           {this.props.profiles.map((profile, index) => (
             <ProfileItem key={profile.username} onClick={() => this.props.onSelect(index)}>
-              <ProfileImage
-                src={Transform.imageProxy(profile.profile_image)}
-                selected={index === this.props.selected}
-              />
+              <ProfileImageWrapper>
+                <ProfileImage src={Transform.imageProxy(profile.profile_image)} />
+                {index === this.props.selected && <ProfileImageBorder />}
+              </ProfileImageWrapper>
               <UserWrapper>
                 <Username>@{profile.username}</Username>
                 <MemberName>{profile.member_name}</MemberName>

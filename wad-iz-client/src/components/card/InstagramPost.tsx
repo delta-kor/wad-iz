@@ -1,6 +1,8 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import HeartIcon from '../../icon/heart.svg';
+import LeftArrowIcon from '../../icon/image-arrow-left.svg';
+import RightArrowIcon from '../../icon/image-arrow-right.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
@@ -12,23 +14,37 @@ const Layout = styled.div<any>`
   box-shadow: ${Shadow.DOWN};
   border-radius: 16px;
   overflow: hidden;
-
-  ${({ width }) =>
-    width &&
-    `
-  :nth-child(2n + 1) {
-    order: 1;
-  }
-  :nth-child(2n) {
-    order: 2;
-  }`}
 `;
 
-const Image = styled.img<any>`
+const Image = styled.div<any>`
+  position: relative;
   display: block;
   width: 100%;
-  height: ${({ width }) => (width ? '280px' : 'auto')};
+  background: url(${({ src }) => src});
+  background-size: contain;
   object-fit: cover;
+`;
+
+const CarouselButton = styled.div<any>`
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top: 50%;
+  ${({ position }) => (position === 'left' ? 'left: 16px' : 'right: 16px')};
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 100px;
+  cursor: pointer;
+  user-select: none;
+`;
+
+const CarouselIcon = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
 `;
 
 const Content = styled.div<any>`
@@ -86,7 +102,53 @@ interface Props {
   width?: string;
 }
 
-export default class InstagramPostCard extends Component<Props, any> {
+interface State {
+  index: number;
+}
+
+export default class InstagramPostCard extends Component<Props, State> {
+  imageRef = React.createRef<HTMLDivElement>();
+
+  state = {
+    index: 0,
+  };
+
+  componentDidMount = () => {
+    this.resizeImage();
+    window.addEventListener('resize', this.resizeImage);
+  };
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.resizeImage);
+  };
+
+  resizeImage = () => {
+    const element = this.imageRef.current!;
+    const width = element.clientWidth;
+    const ratio = this.props.post.height / this.props.post.width;
+    const height = width * ratio;
+    element.style.height = `${height}px`;
+  };
+
+  onArrowClick = (type: string): void => {
+    let newIndex: number = this.state.index;
+    const photosLength = this.props.post.photos.length;
+    if (type === 'right') {
+      if (this.state.index === photosLength - 1) {
+        newIndex = 0;
+      } else {
+        newIndex++;
+      }
+    } else {
+      if (this.state.index === 0) {
+        newIndex = photosLength - 1;
+      } else {
+        newIndex--;
+      }
+    }
+    this.setState({ index: newIndex });
+  };
+
   render() {
     let timestamp = Math.round(this.props.post.timestamp / 1000);
     if (timestamp.toString().length === 12) {
@@ -97,8 +159,24 @@ export default class InstagramPostCard extends Component<Props, any> {
     }
     return (
       <Layout width={this.props.width}>
-        <Image src={Transform.imageProxy(this.props.post.photos[0])} width={this.props.width} />
-        <Content width={this.props.width}>{this.props.post.content}</Content>
+        <Image
+          src={Transform.imageProxy(this.props.post.photos[this.state.index])}
+          ref={this.imageRef}
+        >
+          {this.props.post.photos.length !== 1 && (
+            <>
+              <CarouselButton position={'left'} onClick={() => this.onArrowClick('left')}>
+                <CarouselIcon src={LeftArrowIcon} />
+              </CarouselButton>
+              <CarouselButton position={'right'}>
+                <CarouselIcon src={RightArrowIcon} onClick={() => this.onArrowClick('right')} />
+              </CarouselButton>
+            </>
+          )}
+        </Image>
+        {this.props.post.content && (
+          <Content width={this.props.width}>{this.props.post.content}</Content>
+        )}
         <MetaWrapper>
           <Timestamp>
             {Transform.toTimeHistoryText((new Date().getTime() - timestamp) / 1000)}
