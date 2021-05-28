@@ -82,10 +82,11 @@ export default class Instagram extends EventEmitter {
 
         Log.info(`Fetched @${user.username}`);
 
+        this.userMap.set(user.username, updatedUser);
+
         if (updatedUser.media_count !== user.media_count) {
           Log.info(`Updated @${user.username}`);
           this.emit('post-update', user.username, updatedUser.profile_pic_url);
-          this.userMap.set(user.username, updatedUser);
 
           const userFeed = await this.client.feed.user(userId);
           const userFeedItems = await userFeed.items();
