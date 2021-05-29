@@ -15,6 +15,15 @@ const Layout = styled.div<any>`
   z-index: 2;
 `;
 
+const PcStickyFlex = styled.div`
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  top: calc((100% - 770px) / 2);
+  gap: 32px 0;
+`;
+
 const PcFlex = styled.div`
   display: flex;
   flex-direction: column;
@@ -63,7 +72,7 @@ export default class InstagramDashboard extends Component<Props, State> {
       <Layout isPc={this.props.isPc}>
         {this.props.isPc ? (
           <>
-            <PcFlex>
+            <PcStickyFlex>
               <InstagramSelectorPcCard
                 profiles={this.state.profiles}
                 selected={this.state.selected}
@@ -76,7 +85,7 @@ export default class InstagramDashboard extends Component<Props, State> {
                   {...globalProps}
                 />
               )}
-            </PcFlex>
+            </PcStickyFlex>
 
             <PcFlex>
               {this.state.posts.map((post, index) => (
