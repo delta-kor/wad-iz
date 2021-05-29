@@ -77,11 +77,11 @@ export default class ChatWrapper extends Component<Props, State> {
     const messages: MessageItem[] = [];
     let lastUserId;
     for (const message of this.props.messages) {
+      if (message.chat.type === 'wadiz-update') message.userId = '#wadiz-feed';
       if (message.userId !== lastUserId) {
         lastUserId = message.userId;
-        if (message.chat.type === 'wadiz-update' && message.chat.delta === 0) continue;
         messages.push({
-          userId: message.chat.type === 'wadiz-update' ? '#wadiz-group' : message.userId,
+          userId: message.userId,
           role: message.role,
           nickname: message.nickname,
           profileImageUrl: message.profileImageUrl,

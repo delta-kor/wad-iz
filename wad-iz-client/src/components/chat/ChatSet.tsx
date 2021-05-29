@@ -93,8 +93,8 @@ export default class ChatSet extends Component<Props, any> {
       });
     }
 
-    if (this.props.userId === '#wadiz-group') {
-      if (this.props.chats.length > 3) {
+    if (this.props.userId === '#wadiz-feed') {
+      if (this.props.chats.length > 2) {
         return <WadizGroupFeed feeds={this.props.chats as WadizUpdateChat[]} />;
       } else {
         return this.props.chats.map((chat, index) => {
