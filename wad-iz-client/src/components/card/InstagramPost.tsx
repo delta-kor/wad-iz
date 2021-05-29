@@ -218,8 +218,8 @@ export default class InstagramPostCard extends Component<Props, State> {
               <CarouselButton position={'left'} onClick={() => this.onArrowClick('left')}>
                 <CarouselIcon src={LeftArrowIcon} />
               </CarouselButton>
-              <CarouselButton position={'right'}>
-                <CarouselIcon src={RightArrowIcon} onClick={() => this.onArrowClick('right')} />
+              <CarouselButton position={'right'} onClick={() => this.onArrowClick('right')}>
+                <CarouselIcon src={RightArrowIcon} />
               </CarouselButton>
             </>
           )}
