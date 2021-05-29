@@ -17,12 +17,21 @@ const Layout = styled(motion.div)<any>`
   overflow: hidden;
 `;
 
-const ImageContent = styled.div<any>`
+const ImageContent = styled.div`
   position: relative;
   display: block;
   width: 100%;
-  opacity: 0;
-  transition: opacity 200ms;
+`;
+
+const ImagePhoto = styled(motion.img)`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
 const CarouselButton = styled.div<any>`
@@ -105,13 +114,16 @@ interface Props {
 
 interface State {
   imageIndex: number;
+  imageOpacity: number;
 }
 
 export default class InstagramPostCard extends Component<Props, State> {
   imageRef = React.createRef<HTMLDivElement>();
+  imagePhotoRef = React.createRef<HTMLImageElement>();
 
   state = {
     imageIndex: 0,
+    imageOpacity: 0,
   };
 
   componentDidMount = () => {
@@ -126,6 +138,7 @@ export default class InstagramPostCard extends Component<Props, State> {
 
   componentDidUpdate = (lastProps: Props, lastState: State) => {
     if (lastProps.post !== this.props.post) {
+      this.setState({ imageIndex: 0 });
       this.loadImage();
       this.resizeImage();
     }
@@ -134,23 +147,19 @@ export default class InstagramPostCard extends Component<Props, State> {
     }
   };
 
-  loadImage = () => {
-    const element = this.imageRef.current!;
-    element.style.opacity = '0';
+  loadImage = async () => {
+    const element = this.imagePhotoRef.current!;
+    if (!element) return false;
 
-    const url = element.getAttribute('src')!;
+    this.setState({ imageOpacity: 0 });
+
+    const src = element.src;
+
     const image = new Image();
     image.onload = () => {
-      element.style.backgroundImage = `url(${url})`;
-      element.style.backgroundRepeat = 'no-repeat';
-      element.style.backgroundPosition = 'center';
-      element.style.backgroundSize = 'contain';
-      element.style.opacity = '1';
+      this.setState({ imageOpacity: 1 });
     };
-
-    setTimeout(() => {
-      image.src = url;
-    }, 200);
+    image.src = src;
   };
 
   resizeImage = () => {
@@ -188,6 +197,7 @@ export default class InstagramPostCard extends Component<Props, State> {
     if (timestamp.toString().length === 11) {
       timestamp = timestamp * 100;
     }
+
     return (
       <Layout
         width={this.props.width}
@@ -196,10 +206,13 @@ export default class InstagramPostCard extends Component<Props, State> {
         animate={{ opacity: 1 }}
         transition={{ opacity: { delay: 0.2 } }}
       >
-        <ImageContent
-          src={Transform.imageProxy(this.props.post.photos[this.state.imageIndex])}
-          ref={this.imageRef}
-        >
+        <ImageContent ref={this.imageRef}>
+          <ImagePhoto
+            src={Transform.imageProxy(this.props.post.photos[this.state.imageIndex])}
+            animate={{ opacity: this.state.imageOpacity }}
+            transition={{ duration: 0.2 }}
+            ref={this.imagePhotoRef}
+          />
           {this.props.post.photos.length !== 1 && (
             <>
               <CarouselButton position={'left'} onClick={() => this.onArrowClick('left')}>
