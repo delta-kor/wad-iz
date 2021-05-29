@@ -5,9 +5,6 @@ import { ChatMessage } from '../../App';
 import { Transform } from '../../utils/transform';
 import ChatPopup from './ChatPopup';
 import ChatSet from './ChatSet';
-import CustomFeed from './CustomFeed';
-import InstagramUpdateFeed from './InstagramUpdateFeed';
-import WadizUpdateFeed from './WadizUpdateFeed';
 
 const Layout = styled(motion.div)<any>`
   position: absolute;
@@ -83,7 +80,7 @@ export default class ChatWrapper extends Component<Props, State> {
       if (message.userId !== lastUserId) {
         lastUserId = message.userId;
         messages.push({
-          userId: message.userId,
+          userId: message.chat.type === 'wadiz-update' ? '#wadiz-group' : message.userId,
           role: message.role,
           nickname: message.nickname,
           profileImageUrl: message.profileImageUrl,
@@ -127,37 +124,10 @@ export default class ChatWrapper extends Component<Props, State> {
           onClick={this.scrollToBottom}
         />
         {messages.map((message, index) => {
-          if (message.userId === '#') {
-            return message.chats.map((chat, index) => {
-              if (chat.type === 'feed') return <CustomFeed text={chat.content} key={'f' + index} />;
-              if (chat.type === 'wadiz-update')
-                return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
-              if (chat.type === 'chat-clear')
-                return <CustomFeed text={'채팅을 클리어 했습니다'} key={'f' + index} />;
-              if (chat.type === 'ig-photo-update')
-                return (
-                  <InstagramUpdateFeed
-                    type={'post'}
-                    username={chat.username}
-                    profileImage={chat.profile_image}
-                    url={chat.url}
-                  />
-                );
-              if (chat.type === 'ig-story-update')
-                return (
-                  <InstagramUpdateFeed
-                    type={'story'}
-                    username={chat.username}
-                    profileImage={chat.profile_image}
-                    url={chat.url}
-                  />
-                );
-            });
-          }
-
           return (
             <ChatSet
               key={'c' + index}
+              userId={message.userId}
               role={message.role}
               nickname={message.nickname}
               profileImageUrl={message.profileImageUrl}

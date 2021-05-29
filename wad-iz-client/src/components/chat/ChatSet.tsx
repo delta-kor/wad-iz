@@ -1,8 +1,12 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
+import CustomFeed from './CustomFeed';
 import EmoticonBubble from './EmoticonBubble';
+import InstagramUpdateFeed from './InstagramUpdateFeed';
 import TextBubble from './TextBubble';
+import WadizGroupFeed from './WadizGroupFeed';
+import WadizUpdateFeed from './WadizUpdateFeed';
 
 const Layout = styled.div`
   display: flex;
@@ -45,6 +49,7 @@ const NicknameContent = styled.div<any>`
 
 interface Props {
   chats: Chat[];
+  userId: string;
   role: number;
   nickname: string;
   profileImageUrl: string;
@@ -56,6 +61,48 @@ export default class ChatSet extends Component<Props, any> {
     let profileImage = this.props.profileImageUrl;
     if (this.props.role === 2) profileImage = 'http://lt2.kr/image/logo.iz.3.png';
     if (this.props.role === 1) profileImage = 'http://lt2.kr/image/logo.iz.4.png';
+
+    if (this.props.userId === '#') {
+      return this.props.chats.map((chat, index) => {
+        if (chat.type === 'feed') return <CustomFeed text={chat.content} key={'f' + index} />;
+
+        if (chat.type === 'chat-clear')
+          return <CustomFeed text={'채팅을 클리어 했습니다'} key={'f' + index} />;
+
+        if (chat.type === 'ig-photo-update')
+          return (
+            <InstagramUpdateFeed
+              type={'post'}
+              username={chat.username}
+              profileImage={chat.profile_image}
+              url={chat.url}
+              key={'f' + index}
+            />
+          );
+
+        if (chat.type === 'ig-story-update')
+          return (
+            <InstagramUpdateFeed
+              type={'story'}
+              username={chat.username}
+              profileImage={chat.profile_image}
+              url={chat.url}
+              key={'f' + index}
+            />
+          );
+      });
+    }
+
+    if (this.props.userId === '#wadiz-group') {
+      if (this.props.chats.length > 3) {
+        return <WadizGroupFeed feeds={this.props.chats as WadizUpdateChat[]} />;
+      } else {
+        return this.props.chats.map((chat, index) => {
+          if (chat.type === 'wadiz-update')
+            return <WadizUpdateFeed delta={chat.delta} key={'f' + index} />;
+        });
+      }
+    }
 
     return (
       <Layout>
