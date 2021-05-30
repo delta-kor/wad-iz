@@ -47,7 +47,7 @@
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
   font-family: Product Sans, Noto Sans KR, sans-serif;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-y: none;
 }
 
 ::-webkit-scrollbar {
