@@ -67,24 +67,8 @@ export default class InstagramDashboard extends Component<Props, State> {
 
   onProfileSelect = async (index: number) => {
     const username = this.state.profiles[index].username;
-
-    let totalCache: any;
-    const cache = localStorage.getItem('instagram_post_cache');
-    if (cache) {
-      const cacheData = JSON.parse(cache);
-      if (cacheData[username]) {
-        this.setState({ selected: index, posts: cacheData[username] });
-      }
-      totalCache = cacheData;
-    } else {
-      totalCache = {};
-    }
-
     const response = await this.props.socket.requestInstagramPosts(username);
     this.setState({ selected: index, posts: response.posts });
-
-    totalCache[username] = response.posts;
-    localStorage.setItem('instagram_post_cache', JSON.stringify(totalCache));
   };
 
   render() {
