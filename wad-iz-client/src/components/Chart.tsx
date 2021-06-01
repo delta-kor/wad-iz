@@ -65,8 +65,8 @@ export default class Chart extends Component<Props, State> {
   };
 
   onWheelEvent = (e: WheelEvent) => {
-    const upWeight = 0.5;
-    const downWeight = 0.5;
+    const upWeight = 0.1;
+    const downWeight = 0.1;
 
     const candleWidth = this.state.zoom * candleWidthWeight;
     const candleGap = this.state.zoom * candleGapWeight;
@@ -77,10 +77,10 @@ export default class Chart extends Component<Props, State> {
     if (e.deltaY < 0) {
       nextZoom = Math.min(5, this.state.zoom + upWeight);
     } else {
-      nextZoom = Math.max(0.2, this.state.zoom - downWeight);
+      nextZoom = Math.max(0.05, this.state.zoom - downWeight);
     }
 
-    const candleCount = this.state.right / (candleWidth + candleGap);
+    const candleCount = (this.state.right - rightMargin) / (candleWidth + candleGap);
 
     const rightDelta =
       candleCount * (nextZoom - currentZoom) * (candleWidthWeight + candleGapWeight);
