@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { createGlobalStyle } from 'styled-components';
 import App from './App';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
 import { Color } from './styles/color';
 
 const Global = createGlobalStyle`
@@ -20,7 +19,15 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+console.log(
+  `%c
+MM   MMMMMMAMV     \\ / g8"""""8q.        MMMMM      ,,MMMMM,
+MM        AMV   o=--*--=o       \`\`YM.  MN"   "NM    MM    \`Mb
+MM       AMV       / \\           \`MM   MB     MB    MM
+MM      AMV       d   b    ◇     MM   MB     MB    MMNMMMY
+MM     AMV          MM.          ,MP   MB     MB    MM
+MM    AMV           \`Mb.       ,,dP'   MB     MB    MM    ,dP
+MM   AMVMMMMMM        \`"bmmmmmd"'      MB     MB    '"MMMMM"
+`,
+  'color: #FF50A0'
+);
