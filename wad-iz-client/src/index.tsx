@@ -21,6 +21,7 @@ ReactDOM.render(
 
 console.log(
   `%c
+                  d   b
 MM   MMMMMMAMV     \\ / g8"""""8q.        MMMMM      ,,MMMMM,
 MM        AMV   o=--*--=o       \`\`YM.  MN"   "NM    MM    \`Mb
 MM       AMV       / \\           \`MM   MB     MB    MM
