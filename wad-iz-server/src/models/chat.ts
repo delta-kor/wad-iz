@@ -66,6 +66,7 @@ ChatSchema.static(
     profileImage: string,
     chat: Chat
   ): Promise<ChatDocument> => {
+    ip = ip || '#';
     const model = new ChatModel({
       userId,
       ip,
