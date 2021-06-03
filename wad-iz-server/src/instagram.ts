@@ -16,6 +16,7 @@ const targetUserIds = [
   '47653240204', // 김채원
   '6938463993', // 나코
   '5753402370', // 히토미
+  '47913961291', // 조유리
   '6777351116', // 안유진
   '47598283663', // 장원영
 ];
@@ -29,6 +30,7 @@ usernameMap.set('chaestival_', '이채연');
 usernameMap.set('_chaechae_1', '김채원');
 usernameMap.set('75_yabuki', '나코');
 usernameMap.set('10_hitomi_06', '히토미');
+usernameMap.set('zo__glasss', '조유리');
 usernameMap.set('_yujin_an', '안유진');
 usernameMap.set('for_everyoung10', '장원영');
 
