@@ -96,20 +96,24 @@ export default class WeeklyCard extends Component<Props, any> {
 
     const weeklyItems: WeeklyItem[] = [];
 
-    let currentAmount: number = 0;
-    let currentDate: Date = this.props.data[0]?.timestamp;
+    const firstItem = this.props.data[0];
+    weeklyItems.push({
+      amount: firstItem.to,
+      day: firstItem.timestamp.getDay(),
+      isToday: firstItem.timestamp.getDay() === new Date().getDay(),
+    });
+
+    let lastDay: number = firstItem.timestamp.getDay();
     for (const item of this.props.data) {
-      if (item.timestamp.getDate() !== currentDate.getDate()) {
+      const day = item.timestamp.getDay();
+      if (day !== lastDay) {
         weeklyItems.unshift({
-          day: currentDate.getDay(),
-          amount: currentAmount,
-          isToday: currentDate.getDate() === new Date().getDate(),
+          amount: item.to,
+          day: day,
+          isToday: false,
         });
-        currentAmount = item.to;
-        currentDate = item.timestamp;
-        if (weeklyItems.length === 7) break;
-      } else {
-        currentAmount = item.to;
+        lastDay = day;
+        if (weeklyItems.length === 9) break;
       }
     }
 
