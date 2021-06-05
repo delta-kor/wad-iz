@@ -96,24 +96,26 @@ export default class WeeklyCard extends Component<Props, any> {
 
     const weeklyItems: WeeklyItem[] = [];
 
-    const firstItem = this.props.data[0];
-    weeklyItems.push({
-      amount: firstItem.to,
-      day: firstItem.timestamp.getDay(),
-      isToday: firstItem.timestamp.getDay() === new Date().getDay(),
-    });
+    if (this.props.data[0]) {
+      const firstItem = this.props.data[0];
+      weeklyItems.push({
+        amount: firstItem.to,
+        day: firstItem.timestamp.getDay(),
+        isToday: firstItem.timestamp.getDate() === new Date().getDate(),
+      });
 
-    let lastDay: number = firstItem.timestamp.getDay();
-    for (const item of this.props.data) {
-      const day = item.timestamp.getDay();
-      if (day !== lastDay) {
-        weeklyItems.unshift({
-          amount: item.to,
-          day: day,
-          isToday: false,
-        });
-        lastDay = day;
-        if (weeklyItems.length === 9) break;
+      let lastDay: number = firstItem.timestamp.getDay();
+      for (const item of this.props.data) {
+        const day = item.timestamp.getDay();
+        if (day !== lastDay) {
+          weeklyItems.unshift({
+            amount: item.to,
+            day: day,
+            isToday: false,
+          });
+          lastDay = day;
+          if (weeklyItems.length === 9) break;
+        }
       }
     }
 
@@ -135,9 +137,8 @@ export default class WeeklyCard extends Component<Props, any> {
     if (target.length) {
       let index = 0;
       if (target[0].isToday) target = target.reverse();
-      const today = new Date().getDay();
       for (const item of target) {
-        const day = today - (6 - index);
+        const day = item.day;
         items.push(
           <GraphItem
             key={item.amount}
