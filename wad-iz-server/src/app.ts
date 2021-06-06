@@ -9,6 +9,7 @@ import Instagram from './instagram';
 import ChatModel from './models/chat';
 import { ChatMessage } from './models/chat';
 import { Log } from './log';
+import MusicBase from './music';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 
@@ -26,6 +27,7 @@ export default class App {
 
   public chatList: ChatMessage[] = [];
   public videoState: VideoState = { active: false };
+  public radioState: RadioState = { active: false };
 
   public chartData: number[] = [];
   public chartDataTimestamp: number[] = [];
@@ -206,6 +208,29 @@ export default class App {
     return null;
   }
 
+  public startRadio(): void {
+    const music = MusicBase.pick();
+    this.playRadio(music);
+  }
+
+  private playRadio(music: Music): void {
+    this.radioState = {
+      active: true,
+      music,
+      vote: [],
+      until: new Date().getTime() + music.length * 1000 - 10 * 1000,
+    };
+    this.onRadioUpdate();
+    this.startRadioVote();
+  }
+
+  private startRadioVote(): any {
+    if (!this.radioState.active) return false;
+    const candidates = MusicBase.pickMultiple(3, this.radioState.music.id);
+    this.radioState.vote = candidates.map(candidate => ({ music: candidate, voter: [] }));
+    this.onRadioVoteUpdate();
+  }
+
   public onSocketEstablished(ws: Socket, packetId: number): void {
     for (const socket of this.sockets) {
       if (socket === ws) {
@@ -226,6 +251,8 @@ export default class App {
         socket.sendUserSync(users);
         socket.sendChatSync();
         socket.sendVideo();
+        socket.sendRadio();
+        socket.sendRadioVote();
       } else if (socket.state !== SocketState.PENDING) {
         socket.sendConnect(ws.userId!, ws.nickname!, ws.profileImage!);
       }
@@ -289,9 +316,31 @@ export default class App {
   }
 
   public onVideoUpdate(): void {
+    if (this.radioState.active && this.videoState.active) {
+      this.radioState = { active: false };
+      this.onRadioUpdate();
+    }
     for (const socket of this.sockets) {
       if (socket.state === SocketState.PENDING) continue;
       socket.sendVideo();
+    }
+  }
+
+  public onRadioUpdate(): void {
+    if (this.videoState.active && this.radioState.active) {
+      this.videoState = { active: false };
+      this.onVideoUpdate();
+    }
+    for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
+      socket.sendRadio();
+    }
+  }
+
+  public onRadioVoteUpdate(): void {
+    for (const socket of this.sockets) {
+      if (socket.state === SocketState.PENDING) continue;
+      socket.sendRadioVote();
     }
   }
 

@@ -242,6 +242,7 @@ export default class Socket {
           this.sendSystemMessage('stop / play / live / multi / replay 로 입력');
           return false;
         }
+
         if (message.split(' ')[0] === '/vm') {
           if (this.state < SocketState.STAFF) {
             this.sendSystemMessage('권한 부족');
@@ -274,6 +275,23 @@ export default class Socket {
             this.app.onVideoUpdate();
             return true;
           }
+          this.sendSystemMessage('stop / play / replay 로 입력');
+          return false;
+        }
+
+        if (message.split(' ')[0] === '/radio') {
+          if (this.state < SocketState.STAFF) {
+            this.sendSystemMessage('권한 부족');
+            return false;
+          }
+          const operation = message.split(' ')[1];
+          if (operation === 'start') {
+            this.sendSystemMessage('라디오 재생');
+            this.app.startRadio();
+            return true;
+          }
+          this.sendSystemMessage('start / stop 로 입력');
+          return false;
         }
 
         if (message.split(' ')[0] === '/env') {
@@ -597,6 +615,46 @@ export default class Socket {
       };
       this.sendPacket(packet);
     }
+  }
+
+  public sendRadio(): void {
+    const radioState = this.app.radioState;
+    if (radioState.active) {
+      const packet: PlayRadioServerPacket = {
+        type: 'radio',
+        packet_id: null,
+        operation: 'play',
+        id: radioState.music.id,
+        title: radioState.music.title,
+        subtitle: radioState.music.subtitle,
+        album_title: radioState.music.album.title,
+        image_url: radioState.music.album.imageUrl,
+        lyrics: radioState.music.lyrics,
+        length: radioState.music.length,
+      };
+      this.sendPacket(packet);
+    } else {
+      const packet: StopRadioServerPacket = {
+        type: 'radio',
+        packet_id: null,
+        operation: 'stop',
+      };
+      this.sendPacket(packet);
+    }
+  }
+
+  public sendRadioVote(): any {
+    const radioState = this.app.radioState;
+    if (!radioState.active) return false;
+
+    const packet: RadioVoteDataServerPacket = {
+      type: 'vote',
+      packet_id: null,
+      operation: 'data',
+      votes: radioState.vote,
+      until: radioState.until,
+    };
+    this.sendPacket(packet);
   }
 
   public sendChatClear(): void {

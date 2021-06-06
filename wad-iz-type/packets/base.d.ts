@@ -15,6 +15,7 @@ type ClientPacket =
   | InstagramPostClientPacket
   | InstagramProfileClientPacket
   | ProfileUpdateClientPacket
+  | RadioVoteClientPacket
   | TicketClientPacket;
 
 type ServerPacket =
@@ -30,6 +31,8 @@ type ServerPacket =
   | MultipleConnectServerPacket
   | ProfileImageServerPacket
   | ProfileUpdateServerPacket
+  | RadioVoteServerPacket
+  | RadioServerPacket
   | ReloadServerPacket
   | TicketServerPacket
   | TokenServerPacket
