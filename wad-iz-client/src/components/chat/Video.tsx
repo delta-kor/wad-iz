@@ -176,7 +176,7 @@ export default class Video extends Component<Props, State> {
         return false;
       }
 
-      this.setState({ displayLyrics: true, lyricsHeader: lyrics[0], lyricsContent: lyrics[1] });
+      this.setState({ displayLyrics: true, lyricsHeader: lyrics[0], lyricsContent: lyrics[1]! });
     }, 100);
   };
 

@@ -648,7 +648,7 @@ export default class Socket {
     if (!radioState.active) return false;
 
     const packet: RadioVoteDataServerPacket = {
-      type: 'vote',
+      type: 'radio-vote',
       packet_id: null,
       operation: 'data',
       votes: radioState.vote,

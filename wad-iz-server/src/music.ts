@@ -23,17 +23,17 @@ export default class MusicBase {
 
 const ALBUM_COLOR_IZ: Album = {
   title: 'COLOR*IZ',
-  imageUrl: 'http://lt2.kr/image/album/coloriz',
+  imageUrl: 'http://lt2.kr/image/album/coloriz.png',
 };
 
 const ALBUM_HEART_IZ: Album = {
   title: 'HEART*IZ',
-  imageUrl: 'http://lt2.kr/image/album/heartiz',
+  imageUrl: 'http://lt2.kr/image/album/heartiz.png',
 };
 
 const ALBUM_BLOOM_IZ: Album = {
   title: 'BLOOM*IZ',
-  imageUrl: 'http://lt2.kr/image/album/bloomiz',
+  imageUrl: 'http://lt2.kr/image/album/bloomiz.png',
 };
 
 Musics.set('colors', {

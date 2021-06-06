@@ -4,7 +4,7 @@ interface VoteItem {
 }
 
 interface RadioVoteClientPacket extends ClientPacketBase {
-  type: 'vote';
+  type: 'radio-vote';
   packet_id: number;
   vote: string;
 }
@@ -12,7 +12,7 @@ interface RadioVoteClientPacket extends ClientPacketBase {
 type RadioVoteServerPacket = RadioVoteDataServerPacket | RadioVoteEndedServerPacket;
 
 interface RadioVoteDataServerPacket extends ServerPacketBase {
-  type: 'vote';
+  type: 'radio-vote';
   packet_id: null;
   operation: 'data';
   votes: VoteItem[];
@@ -20,7 +20,7 @@ interface RadioVoteDataServerPacket extends ServerPacketBase {
 }
 
 interface RadioVoteEndedServerPacket extends ServerPacketBase {
-  type: 'vote';
+  type: 'radio-vote';
   packet_id: null;
   operation: 'result';
   result: Music;

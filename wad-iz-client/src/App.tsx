@@ -17,6 +17,7 @@ import TotalCard from './components/card/Total';
 import WeeklyCard from './components/card/Weekly';
 import Chart from './components/Chart';
 import ChatWrapper from './components/chat/ChatWrapper';
+import RadioPc from './components/chat/RadioPc';
 import Video from './components/chat/Video';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
@@ -107,6 +108,14 @@ const PcProfileWrapper = styled(motion.div)`
   top: calc(50% - 276px / 2);
 `;
 
+const PcRadioWrapper = styled(motion.div)`
+  position: absolute;
+  left: 480px;
+  right: 414px;
+  top: 0;
+  bottom: 0;
+`;
+
 const PcChatWrapper = styled(motion.div)<any>`
   position: fixed;
   left: ${({ isVideo }) => (isVideo ? 'calc(100% - 414px)' : '480px')};
@@ -115,9 +124,10 @@ const PcChatWrapper = styled(motion.div)<any>`
   bottom: 0;
 `;
 
-const PcChatPanel = styled(motion.div)`
+const PcChatPanel = styled(motion.div)<any>`
   position: absolute;
-  width: 480px;
+  width: ${({ isRadio }) => (isRadio ? 'unset' : '480px')};
+  right: ${({ isRadio }) => (isRadio ? '414px' : 'unset')};
   left: 0px;
   top: 0px;
   bottom: 0;
@@ -185,8 +195,12 @@ interface State {
   dashboardMenu: number;
 
   isVideo: boolean;
+  isRadio: boolean;
+
   selectedVideo: number;
+
   videoState: VideoState;
+  radioState: RadioState;
 
   directAmount: number;
   directLastUpdate: string;
@@ -217,8 +231,12 @@ export default class App extends Component<any, State> {
       dashboardMenu: 0,
 
       isVideo: false,
+      isRadio: false,
+
       selectedVideo: 0,
+
       videoState: { active: false },
+      radioState: { active: false },
 
       directAmount: 0,
       directLastUpdate: '',
@@ -469,6 +487,59 @@ export default class App extends Component<any, State> {
       }
     });
 
+    this.socket.on('radio', (packet: RadioServerPacket) => {
+      if (packet.operation === 'play') {
+        let vote: VoteItem[] = [],
+          until: number = 0;
+
+        if (this.state.radioState.active) {
+          vote = this.state.radioState.vote;
+          until = this.state.radioState.until;
+        }
+
+        const radioState: RadioState = {
+          active: true,
+          music: {
+            id: packet.id,
+            title: packet.title,
+            subtitle: packet.subtitle,
+            album: {
+              title: packet.album_title,
+              imageUrl: packet.image_url,
+            },
+            lyrics: packet.lyrics,
+            length: packet.length,
+          },
+          vote,
+          until,
+        };
+        this.setState({ isRadio: true, radioState });
+      }
+
+      if (packet.operation === 'stop') {
+        this.setState({ isRadio: false, radioState: { active: false } });
+      }
+    });
+
+    this.socket.on('vote', (packet: RadioVoteServerPacket) => {
+      if (!this.state.radioState.active) return false;
+      if (packet.operation === 'data') {
+        const radioState = this.state.radioState;
+        radioState.vote = packet.votes;
+        radioState.until = packet.until;
+        this.setState({ radioState });
+        return true;
+      }
+      if (packet.operation === 'result') {
+        const radioState = this.state.radioState;
+        radioState.vote = [];
+        radioState.until = 0;
+        this.setState({ radioState });
+        return true;
+        // TODO : Vote result
+      }
+    });
+
     this.socket.on('reload', (packet: ReloadServerPacket) => {
       window.location.reload();
     });
@@ -642,7 +713,7 @@ export default class App extends Component<any, State> {
           />
           <ChatWrapper
             isPc={false}
-            isVideo={this.state.isVideo}
+            isVideo={this.state.isVideo || this.state.isRadio}
             messages={this.state.chats}
             userId={this.state.userId}
             emoticons={this.state.emoticons}
@@ -685,7 +756,7 @@ export default class App extends Component<any, State> {
       );
       pcContent = (
         <div>
-          <PcChatWrapper isVideo={this.state.isVideo}>
+          <PcChatWrapper isVideo={this.state.isVideo || this.state.isRadio}>
             <ChatTop
               title={Transform.toCurrency(this.state.directAmount + this.state.wadizAmount)}
               viewers={this.state.users.length}
@@ -694,7 +765,7 @@ export default class App extends Component<any, State> {
             />
             <ChatWrapper
               isPc={true}
-              isVideo={this.state.isVideo}
+              isVideo={this.state.isVideo || this.state.isRadio}
               messages={this.state.chats}
               userId={this.state.userId}
               emoticons={this.state.emoticons}
@@ -740,13 +811,22 @@ export default class App extends Component<any, State> {
               </motion.div>
             )
           ) : (
-            <PcChatPanel layoutId={'navigator'}>
+            <PcChatPanel layoutId={'navigator'} isRadio={this.state.isRadio}>
               <PcChatCardStack layoutId={'card-stack'}>
                 <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
                 {directCard}
                 {wadizCard}
               </PcChatCardStack>
             </PcChatPanel>
+          )}
+          {this.state.isRadio && this.state.radioState.active && (
+            <PcRadioWrapper
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <RadioPc radio={this.state.radioState} />
+            </PcRadioWrapper>
           )}
         </div>
       );
