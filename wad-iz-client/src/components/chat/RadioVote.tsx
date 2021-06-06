@@ -40,7 +40,7 @@ const VoteWrapper = styled.div`
   gap: 12px 0;
 `;
 
-const VoteItem = styled.div`
+const VoteItem = styled.div<any>`
   display: flex;
   min-height: 40px;
   padding: 0 24px;
@@ -48,6 +48,7 @@ const VoteItem = styled.div`
   align-items: center;
   background: ${Color.BACKGROUND};
   border-radius: 8px;
+  box-shadow: ${({ active }) => (active ? ` 0px 0px 0px 3px ${Color.BLUE}` : 'none')};
   cursor: pointer;
   user-select: none;
 `;
@@ -69,6 +70,7 @@ const VoteItemPercent = styled.div`
 interface Props {
   radio: ActiveRadioState;
   timeDelta: number;
+  userId: string;
   onSelect(id: string): void;
 }
 
@@ -100,7 +102,7 @@ export default class RadioVote extends Component<Props, State> {
     const minute = Math.floor(this.state.seconds / 60);
     const text = minute ? `${minute}분 ${second}초` : `${second}초`;
 
-    let total: number = 1;
+    let total: number = 0;
     for (const vote of this.props.radio.vote) total += vote.voter.length;
 
     return (
@@ -111,9 +113,14 @@ export default class RadioVote extends Component<Props, State> {
         </Header>
         <VoteWrapper>
           {this.props.radio.vote.map(vote => (
-            <VoteItem onClick={() => this.props.onSelect(vote.music.id)}>
+            <VoteItem
+              onClick={() => this.props.onSelect(vote.music.id!)}
+              active={vote.voter.includes(this.props.userId)}
+            >
               <VoteItemTitle>{vote.music.title}</VoteItemTitle>
-              <VoteItemPercent>{Math.round((vote.voter.length / total) * 100)}%</VoteItemPercent>
+              <VoteItemPercent>
+                {Math.round((vote.voter.length / (total || 1)) * 100)}%
+              </VoteItemPercent>
             </VoteItem>
           ))}
         </VoteWrapper>

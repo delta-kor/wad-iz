@@ -228,7 +228,10 @@ export default class App {
   private startRadioVote(): any {
     if (!this.radioState.active) return false;
     const candidates = MusicBase.pickMultiple(3, this.radioState.music.id);
-    this.radioState.vote = candidates.map(candidate => ({ music: candidate, voter: [] }));
+    this.radioState.vote = candidates.map(candidate => ({
+      music: MusicBase.simplify(candidate),
+      voter: [],
+    }));
     this.onRadioVoteUpdate();
   }
 

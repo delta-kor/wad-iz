@@ -1,5 +1,5 @@
 interface VoteItem {
-  music: Music;
+  music: Partial<Music>;
   voter: string[];
 }
 

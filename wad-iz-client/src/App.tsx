@@ -833,6 +833,7 @@ export default class App extends Component<any, State> {
                       <RadioVote
                         radio={this.state.radioState}
                         timeDelta={this.state.timeDelta}
+                        userId={this.state.userId}
                         onSelect={this.onRadioVoteSelect}
                       />
                     </PcRadioVoteWrapper>

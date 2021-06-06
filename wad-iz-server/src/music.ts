@@ -20,6 +20,15 @@ export default class MusicBase {
     }
     return items;
   }
+
+  public static simplify(music: Music): Partial<Music> {
+    return {
+      id: music.id,
+      title: music.title,
+      subtitle: music.subtitle,
+      album: music.album,
+    };
+  }
 }
 
 const ALBUM_COLOR_IZ: Album = {
