@@ -345,6 +345,17 @@ export default class App {
     }
   }
 
+  public updateRadioVote(id: string, userId: string): any {
+    if (!this.radioState.active) return false;
+    this.radioState.vote.forEach(vote => (vote.voter = vote.voter.filter(id => id !== userId)));
+
+    const target = this.radioState.vote.find(value => value.music.id === id);
+    if (!target) return false;
+    target.voter.push(userId);
+
+    this.onRadioVoteUpdate();
+  }
+
   public onChatClear(): void {
     this.chatList = [];
     this.saveSystemChat({ type: 'chat-clear' });

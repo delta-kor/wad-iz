@@ -362,6 +362,11 @@ export default class Socket {
     if (packet.type === 'instagram-post') {
       return this.sendInstagramPost(packet.username, packet.packet_id);
     }
+
+    if (packet.type === 'radio-vote') {
+      if (this.state === SocketState.PENDING) return false;
+      this.app.updateRadioVote(packet.vote, this.userId!);
+    }
   }
 
   private sendJson(json: any): void {
