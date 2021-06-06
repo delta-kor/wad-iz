@@ -25,6 +25,7 @@ interface ActiveRadioState {
   music: Music;
   vote: VoteItem[];
   until: number;
+  time: number;
 }
 
 interface StopRadioServerPacket extends ServerPacketBase {
@@ -44,4 +45,5 @@ interface PlayRadioServerPacket extends ServerPacketBase {
   image_url: string;
   lyrics: Lyrics;
   length: number;
+  time: number;
 }

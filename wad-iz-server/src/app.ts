@@ -219,6 +219,7 @@ export default class App {
       music,
       vote: [],
       until: new Date().getTime() + music.length * 1000 - 10 * 1000,
+      time: new Date().getTime(),
     };
     this.onRadioUpdate();
     this.startRadioVote();

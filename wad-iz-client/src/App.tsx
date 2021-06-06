@@ -510,6 +510,7 @@ export default class App extends Component<any, State> {
             lyrics: packet.lyrics,
             length: packet.length,
           },
+          time: packet.time,
           vote,
           until,
         };
@@ -825,7 +826,7 @@ export default class App extends Component<any, State> {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <RadioPc radio={this.state.radioState} />
+              <RadioPc radio={this.state.radioState} timeDelta={this.state.timeDelta} />
             </PcRadioWrapper>
           )}
         </div>

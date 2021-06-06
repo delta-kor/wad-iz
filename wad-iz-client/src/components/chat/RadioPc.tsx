@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
@@ -13,6 +14,7 @@ const Layout = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 64px 0;
 `;
 
 const Content = styled.div`
@@ -46,11 +48,12 @@ const MusicTitle = styled.div`
 
 const MusicSubtitle = styled.div`
   width: 100%;
+  height: 18px;
   margin: -4px 0 0 0;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;
-  line-height: 16px;
+  line-height: 18px;
   text-align: center;
   color: ${Color.BLACK};
   overflow: hidden;
@@ -71,11 +74,149 @@ const AlbumTitle = styled.div`
   white-space: nowrap;
 `;
 
+const LyricsWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 56px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px 0;
+`;
+
+const LyricsHighlighted = styled(motion.div)`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+  text-align: center;
+  color: ${Color.BLACK};
+`;
+
+const Lyrics = styled(motion.div)`
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 24px;
+  text-align: center;
+  color: ${Color.GRAY};
+`;
+
 interface Props {
   radio: ActiveRadioState;
+  timeDelta: number;
 }
 
-export default class RadioPc extends Component<Props, any> {
+interface State {
+  lyricsA: string | null;
+  lyricsB: string | null;
+}
+
+const cdnUrl = 'https://i.iz-cdn.kro.kr/stream?id=';
+
+export default class RadioPc extends Component<Props, State> {
+  audio: HTMLAudioElement;
+  interval: any;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      lyricsA: null,
+      lyricsB: null,
+    };
+    this.audio = new Audio();
+  }
+
+  onLoad = () => {
+    this.loadEventListeners();
+    this.audio.src = cdnUrl + this.props.radio.music.id;
+  };
+
+  loadEventListeners = () => {
+    this.audio.addEventListener('loadeddata', () => {
+      this.audio.play();
+    });
+
+    this.audio.addEventListener('play', () => {
+      const playStartTime = this.props.radio.time + this.props.timeDelta;
+      let playTime = new Date().getTime() - playStartTime;
+
+      const time = playTime / 1000;
+      const videoTime = this.audio.currentTime;
+
+      const delta = Math.abs(videoTime - time);
+
+      if (delta > 1) {
+        this.audio.currentTime = playTime / 1000;
+      }
+    });
+
+    this.audio.addEventListener('timeupdate', () => {
+      const playStartTime = this.props.radio.time + this.props.timeDelta;
+      let playTime = new Date().getTime() - playStartTime;
+
+      const time = playTime / 1000;
+      const videoTime = this.audio.currentTime;
+
+      const delta = Math.abs(videoTime - time);
+
+      if (delta > 1) {
+        this.audio.currentTime = playTime / 1000;
+      }
+    });
+
+    this.interval = setInterval(() => {
+      if (!this.props.radio.music.lyrics) {
+        return false;
+      }
+
+      const timestamps = Object.keys(this.props.radio.music.lyrics).map(Number);
+      const currentTime = this.audio.currentTime * 1000;
+
+      let target: number = timestamps.length - 1;
+
+      if (currentTime < timestamps[0]) {
+        const lyricsA = 'IZ*ONE - ' + this.props.radio.music.title;
+        const lyricsB = this.props.radio.music.lyrics[timestamps[0]];
+
+        this.setState({ lyricsA: lyricsA, lyricsB: lyricsB[0] });
+      }
+
+      for (const timestamp of timestamps) {
+        if (currentTime < timestamp) {
+          const index = timestamps.indexOf(timestamp);
+          target = index - 1;
+          break;
+        }
+      }
+
+      const lyricsA = this.props.radio.music.lyrics[timestamps[target]];
+      const lyricsB = this.props.radio.music.lyrics[timestamps[target + 1]];
+
+      if (!lyricsA) {
+        return false;
+      }
+
+      this.setState({ lyricsA: lyricsA[0], lyricsB: lyricsB ? lyricsB[0] : null });
+    }, 100);
+  };
+
+  componentDidMount = () => {
+    this.onLoad();
+  };
+
+  componentWillUnmount = () => {
+    clearInterval(this.interval);
+    this.audio.pause();
+  };
+
+  componentDidUpdate = (props: Props) => {
+    if (this.props.radio !== props.radio) {
+      this.audio.src = cdnUrl + this.props.radio.music.id;
+      this.audio.load();
+      this.setState({ lyricsA: null, lyricsB: null });
+    }
+  };
+
   render() {
     return (
       <Layout>
@@ -87,6 +228,12 @@ export default class RadioPc extends Component<Props, any> {
           )}
           <AlbumTitle>{this.props.radio.music.album.title}</AlbumTitle>
         </Content>
+        {(this.state.lyricsA || this.state.lyricsB) && (
+          <LyricsWrapper>
+            <LyricsHighlighted>{this.state.lyricsA}</LyricsHighlighted>
+            <Lyrics>{this.state.lyricsB}</Lyrics>
+          </LyricsWrapper>
+        )}
       </Layout>
     );
   }

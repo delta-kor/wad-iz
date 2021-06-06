@@ -631,6 +631,7 @@ export default class Socket {
         image_url: radioState.music.album.imageUrl,
         lyrics: radioState.music.lyrics,
         length: radioState.music.length,
+        time: radioState.time,
       };
       this.sendPacket(packet);
     } else {
