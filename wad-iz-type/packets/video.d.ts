@@ -1,7 +1,19 @@
 type VideoServerPacket = StopVideoServerPacket | PlayVideoServerPacket | MultiPlayVideoServerPacket;
 
+interface Album {
+  title: string;
+  imageUrl: string;
+}
+
+interface Music {
+  title: string;
+  subtitle?: string;
+  album: Album;
+  lyrics: Lyrics;
+}
+
 interface Lyrics {
-  [key: number]: [string | null, string];
+  [key: number]: (string | null)[];
 }
 
 interface VideoState {
