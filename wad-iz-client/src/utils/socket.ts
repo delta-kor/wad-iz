@@ -123,6 +123,15 @@ export default class Socket extends EventEmitter {
     this.sendPacket(packet);
   }
 
+  public sendRadioVote(id: string): void {
+    const packet: RadioVoteClientPacket = {
+      type: 'radio-vote',
+      packet_id: this.packetId,
+      vote: id,
+    };
+    this.sendPacket(packet);
+  }
+
   public requestInstagramProfiles(): Promise<InstagramProfileServerPacket> {
     const packet: InstagramProfileClientPacket = {
       type: 'instagram-profile',

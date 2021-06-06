@@ -18,6 +18,7 @@ import WeeklyCard from './components/card/Weekly';
 import Chart from './components/Chart';
 import ChatWrapper from './components/chat/ChatWrapper';
 import RadioPc from './components/chat/RadioPc';
+import RadioVote from './components/chat/RadioVote';
 import Video from './components/chat/Video';
 import Youtube from './components/chat/Youtube';
 import Copyright from './components/Copyright';
@@ -114,6 +115,11 @@ const PcRadioWrapper = styled(motion.div)`
   right: 414px;
   top: 0;
   bottom: 0;
+`;
+
+const PcRadioVoteWrapper = styled(motion.div)`
+  position: relative;
+  padding: 0 32px;
 `;
 
 const PcChatWrapper = styled(motion.div)<any>`
@@ -522,7 +528,7 @@ export default class App extends Component<any, State> {
       }
     });
 
-    this.socket.on('vote', (packet: RadioVoteServerPacket) => {
+    this.socket.on('radio-vote', (packet: RadioVoteServerPacket) => {
       if (!this.state.radioState.active) return false;
       if (packet.operation === 'data') {
         const radioState = this.state.radioState;
@@ -600,6 +606,10 @@ export default class App extends Component<any, State> {
     } else {
       this.socket.sendTextChat(text);
     }
+  };
+
+  onRadioVoteSelect = (id: string) => {
+    this.socket.sendRadioVote(id);
   };
 
   render() {
@@ -817,6 +827,17 @@ export default class App extends Component<any, State> {
                 <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
                 {directCard}
                 {wadizCard}
+                <>
+                  {this.state.radioState.active && this.state.radioState.vote.length && (
+                    <PcRadioVoteWrapper>
+                      <RadioVote
+                        radio={this.state.radioState}
+                        timeDelta={this.state.timeDelta}
+                        onSelect={this.onRadioVoteSelect}
+                      />
+                    </PcRadioVoteWrapper>
+                  )}
+                </>
               </PcChatCardStack>
             </PcChatPanel>
           )}

@@ -11,11 +11,12 @@ export default class MusicBase {
   }
 
   public static pickMultiple(count: number, except: string): Music[] {
-    const musics = Array.from(Musics.values()).filter(music => music.id !== except);
+    let musics = Array.from(Musics.values()).filter(music => music.id !== except);
     const items: Music[] = [];
     for (let i = 0; i < count; i++) {
       const item = musics[Math.floor(Math.random() * musics.length)];
       items.push(item);
+      musics = musics.filter(music => music.id !== item.id);
     }
     return items;
   }

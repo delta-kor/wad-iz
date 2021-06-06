@@ -30,6 +30,7 @@ const AlbumImage = styled.img`
   height: 250px;
   border-radius: 16px;
   box-shadow: ${Shadow.DOWN};
+  user-select: none;
 `;
 
 const MusicTitle = styled.div`
