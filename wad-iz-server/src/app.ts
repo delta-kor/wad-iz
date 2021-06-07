@@ -152,11 +152,22 @@ export default class App {
       }
     };
 
+    const radioVoteWatcher = () => {
+      if (!this.radioState.active) return false;
+      if (this.radioState.until < Date.now()) {
+        this.electRadioVote();
+      }
+    };
+
     wadizWatcher();
 
     setInterval(() => {
       wadizWatcher();
     }, 3000);
+
+    setInterval(() => {
+      radioVoteWatcher();
+    }, 250);
   }
 
   private async saveChat(
@@ -218,7 +229,7 @@ export default class App {
       active: true,
       music,
       vote: [],
-      until: new Date().getTime() + music.length * 1000 - 10 * 1000,
+      until: new Date().getTime() + music.length * 1000 - 1000,
       time: new Date().getTime(),
     };
     this.onRadioUpdate();
@@ -233,6 +244,25 @@ export default class App {
       voter: [],
     }));
     this.onRadioVoteUpdate();
+  }
+
+  private electRadioVote(): any {
+    if (!this.radioState.active) return false;
+    const voterLength = this.radioState.vote.map(vote => vote.voter.length);
+    const maxVoter = Math.max.apply(null, voterLength);
+
+    const elected: VoteItem[] = [];
+    for (const vote of this.radioState.vote) {
+      if (vote.voter.length === maxVoter) elected.push(vote);
+    }
+
+    const final = elected[Math.floor(Math.random() * elected.length)];
+    for (const music of MusicBase.Musics.values()) {
+      if (music.id === final.music.id) {
+        this.playRadio(music);
+      }
+    }
+    return false;
   }
 
   public onSocketEstablished(ws: Socket, packetId: number): void {

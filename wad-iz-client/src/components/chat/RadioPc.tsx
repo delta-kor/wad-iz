@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
+import PauseIcon from '../../icon/pause.svg';
+import PlayIcon from '../../icon/play.svg';
+import RadioIcon from '../../icon/radio.svg';
+import SoundHighIcon from '../../icon/sound-high.svg';
+import SoundLowIcon from '../../icon/sound-low.svg';
+import SoundMiddleIcon from '../../icon/sound-mid.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 
@@ -102,17 +108,79 @@ const Lyrics = styled(motion.div)`
   color: ${Color.GRAY};
 `;
 
+const ButtonWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  left: 50%;
+  bottom: 128px;
+  transform: translateX(-50%);
+  align-items: center;
+  justify-content: center;
+  gap: 0 32px;
+`;
+
+const Button = styled.div`
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: ${Color.BACKGROUND};
+  border-radius: 100px;
+  cursor: pointer;
+  user-select: none;
+`;
+
+const ButtonIcon = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+  height: 18px;
+`;
+
+const RadioTitleWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  top: 128px;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 0 16px;
+  align-items: flex-end;
+  user-select: none;
+`;
+
+const RadioTitleIcon = styled.img`
+  width: 24px;
+  height: 24px;
+`;
+
+const RadioTitleText = styled.div`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+  color: ${Color.GRAY};
+`;
+
+enum Volume {
+  LOW,
+  MIDDLE,
+  HIGH,
+}
+
 interface Props {
   radio: ActiveRadioState;
   timeDelta: number;
 }
 
 interface State {
+  playing: boolean;
+  volume: Volume;
   lyricsA: string | null;
   lyricsB: string | null;
 }
 
-const cdnUrl = 'https://i.iz-cdn.kro.kr/stream?id=';
+const cdnUrl = 'https://i.iz-cdn.kro.kr/stream?v2=';
 
 export default class RadioPc extends Component<Props, State> {
   audio: HTMLAudioElement;
@@ -121,6 +189,8 @@ export default class RadioPc extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      playing: true,
+      volume: parseInt(localStorage.getItem('radio_volume')!) || Volume.HIGH,
       lyricsA: null,
       lyricsB: null,
     };
@@ -134,10 +204,12 @@ export default class RadioPc extends Component<Props, State> {
 
   loadEventListeners = () => {
     this.audio.addEventListener('loadeddata', () => {
-      this.audio.play();
+      if (this.state.playing) this.audio.play();
     });
 
     this.audio.addEventListener('play', () => {
+      this.setState({ playing: true });
+
       const playStartTime = this.props.radio.time + this.props.timeDelta;
       let playTime = new Date().getTime() - playStartTime;
 
@@ -163,6 +235,10 @@ export default class RadioPc extends Component<Props, State> {
       if (delta > 1) {
         this.audio.currentTime = playTime / 1000;
       }
+    });
+
+    this.audio.addEventListener('pause', () => {
+      this.setState({ playing: false });
     });
 
     this.interval = setInterval(() => {
@@ -210,17 +286,43 @@ export default class RadioPc extends Component<Props, State> {
     this.audio.pause();
   };
 
-  componentDidUpdate = (props: Props) => {
+  componentDidUpdate = (props: Props, state: State) => {
     if (this.props.radio !== props.radio) {
       this.audio.src = cdnUrl + this.props.radio.music.id;
       this.audio.load();
       this.setState({ lyricsA: null, lyricsB: null });
     }
+
+    if (this.state.playing !== state.playing) {
+      if (this.state.playing) this.audio.play();
+      else this.audio.pause();
+    }
+
+    if (this.state.volume !== state.volume) {
+      if (this.state.volume === Volume.HIGH) this.audio.volume = 1;
+      if (this.state.volume === Volume.MIDDLE) this.audio.volume = 0.5;
+      if (this.state.volume === Volume.LOW) this.audio.volume = 0.2;
+    }
+  };
+
+  onPlayClick = () => {
+    this.setState({ playing: !this.state.playing });
+  };
+
+  onVolumeClick = () => {
+    let volume = this.state.volume - 1;
+    if (volume < 0) volume = Volume.HIGH;
+    localStorage.setItem('radio_volume', volume.toString());
+    this.setState({ volume });
   };
 
   render() {
     return (
       <Layout>
+        <RadioTitleWrapper>
+          <RadioTitleIcon src={RadioIcon} />
+          <RadioTitleText>IZ*ONE RADIO</RadioTitleText>
+        </RadioTitleWrapper>
         <Content>
           <AlbumImage src={this.props.radio.music.album.imageUrl} />
           <MusicTitle>{this.props.radio.music.title}</MusicTitle>
@@ -235,6 +337,22 @@ export default class RadioPc extends Component<Props, State> {
             <Lyrics>{this.state.lyricsB}</Lyrics>
           </LyricsWrapper>
         )}
+        <ButtonWrapper>
+          <Button onClick={this.onPlayClick}>
+            <ButtonIcon src={this.state.playing ? PauseIcon : PlayIcon} />
+          </Button>
+          <Button onClick={this.onVolumeClick}>
+            <ButtonIcon
+              src={
+                this.state.volume === Volume.HIGH
+                  ? SoundHighIcon
+                  : this.state.volume === Volume.MIDDLE
+                  ? SoundMiddleIcon
+                  : SoundLowIcon
+              }
+            />
+          </Button>
+        </ButtonWrapper>
       </Layout>
     );
   }

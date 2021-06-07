@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
@@ -43,7 +44,7 @@ const VoteWrapper = styled.div`
 const VoteItem = styled.div<any>`
   display: flex;
   min-height: 40px;
-  padding: 0 24px;
+  padding: 16px 24px;
   justify-content: space-between;
   align-items: center;
   background: ${Color.BACKGROUND};
@@ -51,13 +52,26 @@ const VoteItem = styled.div<any>`
   box-shadow: ${({ active }) => (active ? ` 0px 0px 0px 3px ${Color.BLUE}` : 'none')};
   cursor: pointer;
   user-select: none;
+  transition: 500ms box-shadow;
 `;
 
-const VoteItemTitle = styled.div`
+const VoteItemTitle = styled(motion.div)`
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
   color: ${Color.BLACK};
+`;
+
+const VoteItemSubtitle = styled.div`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 10px;
+  color: ${Color.GRAY};
+`;
+
+const VoteItemHeader = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const VoteItemPercent = styled.div`
@@ -117,7 +131,10 @@ export default class RadioVote extends Component<Props, State> {
               onClick={() => this.props.onSelect(vote.music.id!)}
               active={vote.voter.includes(this.props.userId)}
             >
-              <VoteItemTitle>{vote.music.title}</VoteItemTitle>
+              <VoteItemHeader>
+                <VoteItemTitle>{vote.music.title}</VoteItemTitle>
+                {vote.music.subtitle && <VoteItemSubtitle>{vote.music.subtitle}</VoteItemSubtitle>}
+              </VoteItemHeader>
               <VoteItemPercent>
                 {Math.round((vote.voter.length / (total || 1)) * 100)}%
               </VoteItemPercent>

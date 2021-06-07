@@ -11,8 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "incremental": true
+    "incremental": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "../wad-iz-type/**/*.ts"],
+  "include": ["src/**/*.ts", "../wad-iz-type/**/*.ts", "src/data/*.json"],
   "exclude": ["node_modules"]
 }
