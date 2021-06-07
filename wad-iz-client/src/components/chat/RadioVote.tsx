@@ -9,6 +9,7 @@ const Layout = styled.div`
   height: 100%;
   width: 100%;
   gap: 18px 0;
+  user-select: none;
 `;
 
 const Header = styled.div`
