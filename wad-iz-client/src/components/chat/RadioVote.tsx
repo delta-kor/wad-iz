@@ -81,6 +81,13 @@ const VoteItemPercent = styled.div`
   color: ${Color.BLUE};
 `;
 
+const VoteTotal = styled.div`
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  color: ${Color.GRAY};
+`;
+
 interface Props {
   radio: ActiveRadioState;
   timeDelta: number;
@@ -142,6 +149,7 @@ export default class RadioVote extends Component<Props, State> {
             </VoteItem>
           ))}
         </VoteWrapper>
+        <VoteTotal>{total}명 참여</VoteTotal>
       </Layout>
     );
   }
