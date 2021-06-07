@@ -17,6 +17,7 @@ import TotalCard from './components/card/Total';
 import WeeklyCard from './components/card/Weekly';
 import Chart from './components/Chart';
 import ChatWrapper from './components/chat/ChatWrapper';
+import Radio from './components/chat/Radio';
 import RadioPc from './components/chat/RadioPc';
 import RadioVote from './components/chat/RadioVote';
 import Video from './components/chat/Video';
@@ -761,6 +762,14 @@ export default class App extends Component<any, State> {
                 timeDelta={this.state.timeDelta}
               />
             </motion.div>
+          )}
+          {this.state.isRadio && this.state.radioState.active && (
+            <Radio
+              radio={this.state.radioState}
+              timeDelta={this.state.timeDelta}
+              userId={this.state.userId}
+              onSelect={this.onRadioVoteSelect}
+            />
           )}
           <ChatInputer onTextSend={this.onChatSend} isPc={false} emoticons={this.state.emoticons} />
         </div>
