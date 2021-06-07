@@ -204,7 +204,7 @@ export default class RadioPc extends Component<Props, State> {
 
   loadEventListeners = () => {
     this.audio.addEventListener('loadeddata', () => {
-      if (this.state.playing) this.audio.play();
+      this.audio.play();
     });
 
     this.audio.addEventListener('play', () => {

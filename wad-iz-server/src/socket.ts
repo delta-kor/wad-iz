@@ -285,11 +285,19 @@ export default class Socket {
             return false;
           }
           const operation = message.split(' ')[1];
+
           if (operation === 'start') {
             this.sendSystemMessage('라디오 재생');
             this.app.startRadio();
             return true;
           }
+
+          if (operation === 'stop') {
+            this.sendSystemMessage('라디오 중지');
+            this.app.stopRadio();
+            return true;
+          }
+
           this.sendSystemMessage('start / stop 로 입력');
           return false;
         }

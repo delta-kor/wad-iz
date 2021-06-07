@@ -112,8 +112,9 @@ export default class RadioVote extends Component<Props, State> {
   };
 
   render() {
-    const second = this.state.seconds % 60;
-    const minute = Math.floor(this.state.seconds / 60);
+    const full = this.state.seconds + 1;
+    const second = full % 60;
+    const minute = Math.floor(full / 60);
     const text = minute ? `${minute}분 ${second}초` : `${second}초`;
 
     let total: number = 0;

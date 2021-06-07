@@ -58,6 +58,7 @@ export default class App {
   private mountEventListeners(): void {
     this.server.on('listening', () => {
       Log.info('Server started');
+      this.startRadio();
     });
 
     this.server.on('connection', ws => {
@@ -224,12 +225,17 @@ export default class App {
     this.playRadio(music);
   }
 
+  public stopRadio(): void {
+    this.radioState = { active: false };
+    this.onRadioUpdate();
+  }
+
   private playRadio(music: Music): void {
     this.radioState = {
       active: true,
       music,
       vote: [],
-      until: new Date().getTime() + music.length * 1000 - 1000,
+      until: new Date().getTime() + music.length * 1000 + 2000,
       time: new Date().getTime(),
     };
     this.onRadioUpdate();
