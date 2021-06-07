@@ -14,6 +14,7 @@ const targetUserIds = [
   '47698915733', // 최예나
   '47253291473', // 이채연
   '47653240204', // 김채원
+  '47862599398', // 김민주
   '6938463993', // 나코
   '5753402370', // 히토미
   '47913961291', // 조유리
@@ -28,6 +29,7 @@ usernameMap.set('hyemhyemu', '강혜원');
 usernameMap.set('yena.jigumina', '최예나');
 usernameMap.set('chaestival_', '이채연');
 usernameMap.set('_chaechae_1', '김채원');
+usernameMap.set('minn.__.ju', '김민주');
 usernameMap.set('75_yabuki', '나코');
 usernameMap.set('10_hitomi_06', '히토미');
 usernameMap.set('zo__glasss', '조유리');
