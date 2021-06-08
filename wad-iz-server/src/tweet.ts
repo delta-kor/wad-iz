@@ -42,8 +42,10 @@ export default class Tweet extends EventEmitter {
       }
 
       if (this.rank.get(trend.name) !== index) {
-        this.emit('update', trend.name, this.rank.get(trend.name), index);
-        this.rank.set(trend.name, index);
+        if (this.rank.get(trend.name)! > index) {
+          this.emit('update', trend.name, this.rank.get(trend.name), index);
+          this.rank.set(trend.name, index);
+        }
         continue;
       }
     }
