@@ -106,6 +106,13 @@ export default class ChatWrapper extends Component<Props, State> {
       if (lastChat.type === 'ig-photo-update') {
         lastContent = '인스타그램 업데이트';
       }
+      if (
+        lastChat.type === 'tweet-in' ||
+        lastChat.type === 'tweet-update' ||
+        lastChat.type === 'tweet-out'
+      ) {
+        lastContent = '트위터 업데이트';
+      }
     }
 
     return (

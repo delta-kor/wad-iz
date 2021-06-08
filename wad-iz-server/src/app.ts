@@ -10,6 +10,7 @@ import ChatModel from './models/chat';
 import { ChatMessage } from './models/chat';
 import { Log } from './log';
 import MusicBase from './music';
+import Tweet from './tweet';
 
 const wadizUrl = 'https://www.wadiz.kr/web/campaign/detail/111487';
 
@@ -21,6 +22,7 @@ export default class App {
 
   public vimeo!: Vimeo;
   public instagram!: Instagram;
+  public tweet!: Tweet;
 
   public amount: number | null = null;
   public supporter: number | null = null;
@@ -44,6 +46,8 @@ export default class App {
       this.sockets = new Set();
       this.vimeo = new Vimeo();
       this.instagram = new Instagram();
+      this.tweet = new Tweet();
+
       this.mountEventListeners();
       this.mountWatchers();
       this.loadChartData();
@@ -92,6 +96,45 @@ export default class App {
         username,
         profile_image: profileImage,
         url: `https://instagram.com/${username}/`,
+      };
+      this.saveSystemChat(chat);
+      for (const socket of this.sockets) {
+        socket.sendChat('#', '#', '#', chat, 2);
+      }
+    });
+
+    this.tweet.on('in', (name: string, rank: number) => {
+      if (!Tweet.checkValid(name)) return false;
+      const chat: TweetInChat = {
+        type: 'tweet-in',
+        name,
+        rank,
+      };
+      this.saveSystemChat(chat);
+      for (const socket of this.sockets) {
+        socket.sendChat('#', '#', '#', chat, 2);
+      }
+    });
+
+    this.tweet.on('out', (name: string) => {
+      if (!Tweet.checkValid(name)) return false;
+      const chat: TweetOutChat = {
+        type: 'tweet-out',
+        name,
+      };
+      this.saveSystemChat(chat);
+      for (const socket of this.sockets) {
+        socket.sendChat('#', '#', '#', chat, 2);
+      }
+    });
+
+    this.tweet.on('update', (name: string, from: number, to: number) => {
+      if (!Tweet.checkValid(name)) return false;
+      const chat: TweetUpdateChat = {
+        type: 'tweet-update',
+        name,
+        from,
+        to,
       };
       this.saveSystemChat(chat);
       for (const socket of this.sockets) {

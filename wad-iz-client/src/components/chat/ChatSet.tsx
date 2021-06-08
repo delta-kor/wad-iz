@@ -5,6 +5,7 @@ import CustomFeed from './CustomFeed';
 import EmoticonBubble from './EmoticonBubble';
 import InstagramUpdateFeed from './InstagramUpdateFeed';
 import TextBubble from './TextBubble';
+import TweetFeed from './TweetFeed';
 import WadizGroupFeed from './WadizGroupFeed';
 import WadizUpdateFeed from './WadizUpdateFeed';
 
@@ -90,6 +91,18 @@ export default class ChatSet extends Component<Props, any> {
               key={'f' + index}
             />
           );
+
+        if (chat.type === 'tweet-in') {
+          return <TweetFeed type={'in'} name={chat.name} rank={chat.rank} />;
+        }
+
+        if (chat.type === 'tweet-update') {
+          return <TweetFeed type={'update'} name={chat.name} from={chat.from} to={chat.to} />;
+        }
+
+        if (chat.type === 'tweet-out') {
+          return <TweetFeed type={'out'} name={chat.name} />;
+        }
       });
     }
 

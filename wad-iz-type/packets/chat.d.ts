@@ -36,6 +36,24 @@ interface InstagramStoryUpdateChat {
   url: string;
 }
 
+interface TweetInChat {
+  type: 'tweet-in';
+  name: string;
+  rank: number;
+}
+
+interface TweetUpdateChat {
+  type: 'tweet-update';
+  name: string;
+  from: number;
+  to: number;
+}
+
+interface TweetOutChat {
+  type: 'tweet-out';
+  name: string;
+}
+
 type Chat =
   | TextChat
   | EmoticonChat
@@ -43,7 +61,10 @@ type Chat =
   | ChatClearChat
   | FeedChat
   | InstagramPostUpdateChat
-  | InstagramStoryUpdateChat;
+  | InstagramStoryUpdateChat
+  | TweetInChat
+  | TweetUpdateChat
+  | TweetOutChat;
 
 interface ChatClientPacket extends ClientPacketBase {
   type: 'chat';
