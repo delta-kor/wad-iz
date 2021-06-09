@@ -102,6 +102,7 @@ ChatSchema.static(
   async (userId: string, nickname: string, profileImage: string, role: number) => {
     const chats = await ChatModel.find({ userId });
     for (const chat of chats) {
+      chat.ip = chat.ip || '#old';
       chat.nickname = nickname;
       chat.profileImage = profileImage;
       chat.role = role;
