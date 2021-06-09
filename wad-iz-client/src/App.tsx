@@ -793,7 +793,7 @@ export default class App extends Component<any, State> {
             <ChatInputer
               onTextSend={this.onChatSend}
               isPc={true}
-              isVideo={this.state.isVideo}
+              isVideo={this.state.isVideo || this.state.isRadio}
               emoticons={this.state.emoticons}
             />
           </PcChatWrapper>
