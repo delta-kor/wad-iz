@@ -263,8 +263,8 @@ export default class App {
     return null;
   }
 
-  public startRadio(): void {
-    const music = MusicBase.pick();
+  public startRadio(id?: string): void {
+    const music = id ? MusicBase.Musics.get(id)! : MusicBase.pick();
     this.playRadio(music);
   }
 

@@ -287,8 +287,9 @@ export default class Socket {
           const operation = message.split(' ')[1];
 
           if (operation === 'start') {
+            const id = message.split(' ')[2];
             this.sendSystemMessage('라디오 재생');
-            this.app.startRadio();
+            this.app.startRadio(id);
             return true;
           }
 
