@@ -32,6 +32,7 @@ import Profile from './components/Profile';
 import Statistics from './components/Statistics';
 import { Color } from './styles/color';
 import { parseCandleData } from './utils/candle';
+import { getEmoticonUrlByKey } from './utils/emoticon';
 import playSfx from './utils/sfx';
 import Socket from './utils/socket';
 import { Transform } from './utils/transform';
@@ -217,7 +218,7 @@ interface State {
   userId: string;
   users: User[];
   chats: ChatMessage[];
-  emoticons: Map<string, string>;
+  emoticons: EmoticonSet[];
 
   timeDelta: number;
 
@@ -253,7 +254,7 @@ export default class App extends Component<any, State> {
       userId: '',
       users: [],
       chats: [],
-      emoticons: new Map(),
+      emoticons: [],
 
       timeDelta: 0,
 
@@ -460,7 +461,7 @@ export default class App extends Component<any, State> {
     this.socket.on('emoticon-sync', (packet: EmoticonSyncServerPacket) => {
       const emoticons = this.state.emoticons;
       for (const emoticon of packet.emoticons) {
-        emoticons.set(emoticon.key, emoticon.url);
+        emoticons.push(emoticon);
       }
       this.setState({ emoticons });
     });
@@ -602,7 +603,7 @@ export default class App extends Component<any, State> {
 
   onChatSend = (text: string) => {
     playSfx('chat_send');
-    if (this.state.emoticons.has(text)) {
+    if (getEmoticonUrlByKey(this.state.emoticons, text)) {
       this.socket.sendEmoticonChat(text);
     } else {
       this.socket.sendTextChat(text);

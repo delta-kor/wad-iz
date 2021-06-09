@@ -178,6 +178,7 @@ const Close = styled.div`
   line-height: 24px;
   text-align: center;
   color: ${Color.BLUE};
+  user-select: none;
 `;
 
 enum Volume {

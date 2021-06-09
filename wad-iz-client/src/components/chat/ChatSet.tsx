@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
+import { getEmoticonUrlByKey } from '../../utils/emoticon';
 import CustomFeed from './CustomFeed';
 import EmoticonBubble from './EmoticonBubble';
 import InstagramUpdateFeed from './InstagramUpdateFeed';
@@ -54,7 +55,7 @@ interface Props {
   role: number;
   nickname: string;
   profileImageUrl: string;
-  emoticons: Map<string, string>;
+  emoticons: EmoticonSet[];
 }
 
 export default class ChatSet extends Component<Props, any> {
@@ -132,10 +133,9 @@ export default class ChatSet extends Component<Props, any> {
           {this.props.chats.map((chat, index) => {
             if (chat.type === 'text') return <TextBubble chat={chat} key={index} />;
             if (chat.type === 'emoticon') {
-              if (!this.props.emoticons.has(chat.key)) return false;
-              return (
-                <EmoticonBubble emotionUrl={this.props.emoticons.get(chat.key)!} key={index} />
-              );
+              const key = getEmoticonUrlByKey(this.props.emoticons, chat.key);
+              if (!key) return false;
+              return <EmoticonBubble emotionUrl={key} key={index} />;
             }
             return true;
           })}

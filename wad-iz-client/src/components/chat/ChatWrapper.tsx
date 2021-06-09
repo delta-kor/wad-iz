@@ -38,7 +38,7 @@ interface Props {
   isVideo: boolean;
   messages: ChatMessage[];
   userId: string;
-  emoticons: Map<string, string>;
+  emoticons: EmoticonSet[];
 }
 
 interface State {

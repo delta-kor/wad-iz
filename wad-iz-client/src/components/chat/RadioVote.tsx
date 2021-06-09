@@ -139,6 +139,7 @@ export default class RadioVote extends Component<Props, State> {
             <VoteItem
               onClick={() => this.props.onSelect(vote.music.id!)}
               active={vote.voter.includes(this.props.userId)}
+              key={vote.music.id}
             >
               <VoteItemHeader>
                 <VoteItemTitle>{vote.music.title}</VoteItemTitle>
