@@ -12,7 +12,7 @@ interface TrendsItem {
 
 export default class Tweet extends EventEmitter {
   private readonly client: Twitter;
-  private readonly rank: Map<string, number | null>;
+  private readonly rank: Map<string, number>;
 
   constructor() {
     super();
@@ -42,20 +42,11 @@ export default class Tweet extends EventEmitter {
       }
 
       if (this.rank.get(trend.name) !== index) {
-        if (this.rank.get(trend.name) === null || this.rank.get(trend.name)! > index) {
+        if (this.rank.get(trend.name)! > index) {
           this.emit('update', trend.name, this.rank.get(trend.name), index);
           this.rank.set(trend.name, index);
         }
         continue;
-      }
-    }
-
-    const trendNames = trends.map(trend => trend.name);
-    for (const rank of this.rank) {
-      if (rank[1] === null) continue;
-      if (!trendNames.includes(rank[0])) {
-        this.emit('out', rank[0]);
-        this.rank.set(rank[0], null);
       }
     }
   }
@@ -70,7 +61,7 @@ export default class Tweet extends EventEmitter {
   }
 
   public static checkValid(name: string): boolean {
-    const target = ['iz', 'IZ', '즈원', '예나', 'YENA'];
+    const target = ['iz', 'IZ', '즈원', '예나', 'YENA', '채연', 'Chaeyeon'];
     for (const item of target) {
       if (name.includes(item)) return true;
     }
