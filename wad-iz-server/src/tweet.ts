@@ -70,6 +70,10 @@ export default class Tweet extends EventEmitter {
   }
 
   public static checkValid(name: string): boolean {
-    return name.includes('iz') || name.includes('IZ') || name.includes('즈원');
+    const target = ['iz', 'IZ', '즈원', '예나', 'YENA'];
+    for (const item of target) {
+      if (name.includes(item)) return true;
+    }
+    return false;
   }
 }
