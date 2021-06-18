@@ -38,7 +38,11 @@ for (const music of MusicData) {
   if (lyrics) {
     const keys = Object.keys(lyrics);
     for (const key of keys) {
-      lyricsResult[key] = [lyrics[key]];
+      if (typeof lyrics[key] === 'object') {
+        lyricsResult[key] = lyrics[key];
+      } else {
+        lyricsResult[key] = [lyrics[key]];
+      }
     }
   }
   Musics.set(music.id, {
@@ -48,5 +52,6 @@ for (const music of MusicData) {
     album: music.album,
     lyrics: lyricsResult,
     length: music.length,
+    isJapanese: music.isJapanese || false,
   });
 }

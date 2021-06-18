@@ -296,7 +296,15 @@ export default class Radio extends Component<Props, State> {
         return false;
       }
 
-      this.setState({ lyricsA: lyricsA[0], lyricsB: lyricsB ? lyricsB[0] : null });
+      let displayA = lyricsA[0];
+      let displayB = lyricsB ? lyricsB[0] : null;
+
+      if (this.props.radio.music.isJapanese) {
+        displayA = lyricsA[1];
+        displayB = lyricsA[2];
+      }
+
+      this.setState({ lyricsA: displayA, lyricsB: displayB });
     }, 100);
   };
 

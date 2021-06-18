@@ -646,6 +646,7 @@ export default class Socket {
         lyrics: radioState.music.lyrics,
         length: radioState.music.length,
         time: radioState.time,
+        isJapanese: radioState.music.isJapanese,
       };
       this.sendPacket(packet);
     } else {

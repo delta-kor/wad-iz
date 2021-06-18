@@ -178,6 +178,7 @@ interface State {
   volume: Volume;
   lyricsA: string | null;
   lyricsB: string | null;
+  lyricsC: string | null;
 }
 
 const cdnUrl = 'https://i.iz-cdn.kro.kr/stream?v2=';
@@ -193,6 +194,7 @@ export default class RadioPc extends Component<Props, State> {
       volume: parseInt(localStorage.getItem('radio_volume')!) || Volume.HIGH,
       lyricsA: null,
       lyricsB: null,
+      lyricsC: null,
     };
     this.audio = new Audio();
   }
@@ -255,7 +257,7 @@ export default class RadioPc extends Component<Props, State> {
         const lyricsA = 'IZ*ONE - ' + this.props.radio.music.title;
         const lyricsB = this.props.radio.music.lyrics[timestamps[0]];
 
-        this.setState({ lyricsA: lyricsA, lyricsB: lyricsB[0] });
+        this.setState({ lyricsA: lyricsA, lyricsB: lyricsB[0], lyricsC: null });
       }
 
       for (const timestamp of timestamps) {
@@ -273,7 +275,17 @@ export default class RadioPc extends Component<Props, State> {
         return false;
       }
 
-      this.setState({ lyricsA: lyricsA[0], lyricsB: lyricsB ? lyricsB[0] : null });
+      let displayA = lyricsA[0];
+      let displayB = lyricsB ? lyricsB[0] : null;
+      let displayC = null;
+
+      if (this.props.radio.music.isJapanese) {
+        displayA = lyricsA[0];
+        displayB = lyricsA[2];
+        displayC = lyricsA[1];
+      }
+
+      this.setState({ lyricsA: displayA, lyricsB: displayB, lyricsC: displayC });
     }, 100);
   };
 
@@ -334,6 +346,7 @@ export default class RadioPc extends Component<Props, State> {
         {(this.state.lyricsA || this.state.lyricsB) && (
           <LyricsWrapper>
             <LyricsHighlighted>{this.state.lyricsA}</LyricsHighlighted>
+            {this.state.lyricsC && <Lyrics>{this.state.lyricsC}</Lyrics>}
             <Lyrics>{this.state.lyricsB}</Lyrics>
           </LyricsWrapper>
         )}

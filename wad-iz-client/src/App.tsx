@@ -517,6 +517,7 @@ export default class App extends Component<any, State> {
             },
             lyrics: packet.lyrics,
             length: packet.length,
+            isJapanese: packet.isJapanese,
           },
           time: packet.time,
           vote,

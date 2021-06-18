@@ -14,6 +14,7 @@ interface Music {
   album: Album;
   lyrics: Lyrics;
   length: number;
+  isJapanese: boolean;
 }
 
 interface InactiveRadioState {
@@ -46,4 +47,5 @@ interface PlayRadioServerPacket extends ServerPacketBase {
   lyrics: Lyrics;
   length: number;
   time: number;
+  isJapanese: boolean;
 }
