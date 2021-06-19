@@ -94,6 +94,14 @@ const WadizGraph = styled(motion.div)`
   border-radius: 100px;
 `;
 
+const UniversalGraph = styled(motion.div)`
+  display: inline-block;
+  height: 8px;
+  background: linear-gradient(90deg, #5162fc 0%, #fc5178 100%);
+  box-shadow: ${Shadow.DOWN};
+  border-radius: 100px;
+`;
+
 const EmptyGraph = styled(motion.div)`
   display: inline-block;
   height: 8px;
@@ -196,7 +204,7 @@ export default class SurveyCard extends Component<Props, any> {
             <GraphTitle>참여 인원</GraphTitle>
             <GraphLabel>{Transform.round(supporterPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
-              <WadizGraph
+              <UniversalGraph
                 animate={{ width: Math.min(100, supporterPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30, delay: (this.props.delay || 0) + 0.25 }}
               />

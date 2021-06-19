@@ -139,7 +139,7 @@ export default class DayCard extends Component<Props, State> {
         layoutId={'dashboard-card'}
       >
         <Title>24시간</Title>
-        <Total>{Transform.toCurrency(up - down)}</Total>
+        <Total>{Transform.toCurrencyDelta(up - down)}</Total>
         <Up>+ {Transform.toCurrency(up)}</Up>
         <Down>- {Transform.toCurrency(down)}</Down>
         <GraphWrapper>
