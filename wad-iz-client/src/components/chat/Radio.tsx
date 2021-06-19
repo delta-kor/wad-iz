@@ -212,7 +212,7 @@ export default class Radio extends Component<Props, State> {
     super(props);
     this.state = {
       playing: true,
-      volume: parseInt(localStorage.getItem('radio_volume')!) || Volume.HIGH,
+      volume: parseInt(localStorage.getItem('radio_volume')!) ?? Volume.HIGH,
       lyricsA: null,
       lyricsB: null,
       modal: false,
@@ -278,7 +278,7 @@ export default class Radio extends Component<Props, State> {
         const lyricsA = 'IZ*ONE - ' + this.props.radio.music.title;
         const lyricsB = this.props.radio.music.lyrics[timestamps[0]];
 
-        this.setState({ lyricsA: lyricsA, lyricsB: lyricsB[0] });
+        this.setState({ lyricsA: lyricsA, lyricsB: lyricsB[1] });
       }
 
       for (const timestamp of timestamps) {

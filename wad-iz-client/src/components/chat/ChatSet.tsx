@@ -94,15 +94,23 @@ export default class ChatSet extends Component<Props, any> {
           );
 
         if (chat.type === 'tweet-in') {
-          return <TweetFeed type={'in'} name={chat.name} rank={chat.rank} />;
+          return <TweetFeed type={'in'} name={chat.name} rank={chat.rank} key={'f' + index} />;
         }
 
         if (chat.type === 'tweet-update') {
-          return <TweetFeed type={'update'} name={chat.name} from={chat.from} to={chat.to} />;
+          return (
+            <TweetFeed
+              type={'update'}
+              name={chat.name}
+              from={chat.from}
+              to={chat.to}
+              key={'f' + index}
+            />
+          );
         }
 
         if (chat.type === 'tweet-out') {
-          return <TweetFeed type={'out'} name={chat.name} />;
+          return <TweetFeed type={'out'} name={chat.name} key={'f' + index} />;
         }
       });
     }

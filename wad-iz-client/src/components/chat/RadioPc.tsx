@@ -191,7 +191,7 @@ export default class RadioPc extends Component<Props, State> {
     super(props);
     this.state = {
       playing: true,
-      volume: parseInt(localStorage.getItem('radio_volume')!) || Volume.HIGH,
+      volume: parseInt(localStorage.getItem('radio_volume')!) ?? Volume.HIGH,
       lyricsA: null,
       lyricsB: null,
       lyricsC: null,
@@ -291,6 +291,9 @@ export default class RadioPc extends Component<Props, State> {
 
   componentDidMount = () => {
     this.onLoad();
+    if (this.state.volume === Volume.HIGH) this.audio.volume = 1;
+    if (this.state.volume === Volume.MIDDLE) this.audio.volume = 0.5;
+    if (this.state.volume === Volume.LOW) this.audio.volume = 0.2;
   };
 
   componentWillUnmount = () => {
