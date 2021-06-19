@@ -10,7 +10,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import RadioVote from './RadioVote';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: absolute;
   display: flex;
   width: 100%;
@@ -310,6 +310,9 @@ export default class Radio extends Component<Props, State> {
 
   componentDidMount = () => {
     this.onLoad();
+    if (this.state.volume === Volume.HIGH) this.audio.volume = 1;
+    if (this.state.volume === Volume.MIDDLE) this.audio.volume = 0.5;
+    if (this.state.volume === Volume.LOW) this.audio.volume = 0.2;
   };
 
   componentWillUnmount = () => {
@@ -358,7 +361,7 @@ export default class Radio extends Component<Props, State> {
   render() {
     return (
       <>
-        <Layout>
+        <Layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           <Content>
             <AlbumImage src={this.props.radio.music.album.imageUrl} />
             <MusicInfo>

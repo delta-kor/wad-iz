@@ -7,13 +7,13 @@ import ChatPopup from './ChatPopup';
 import ChatSet from './ChatSet';
 
 const Layout = styled(motion.div)<any>`
-  position: absolute;
+  position: fixed;
   display: flex;
   bottom: 76px;
   padding: 24px ${({ isPc }) => (isPc ? '36px' : '32px')};
   width: 100%;
   height: calc(
-    100% - 76px - 76px - ${({ isVideo }) => (isVideo ? 'min(280px, (100vw * (9 / 16)))' : '0px')}
+    100% - 76px - 76px - ${({ isVideo }) => (isVideo ? 'min(254px, (100vw * (9 / 16)))' : '0px')}
   );
   flex-direction: column;
   justify-content: left;
