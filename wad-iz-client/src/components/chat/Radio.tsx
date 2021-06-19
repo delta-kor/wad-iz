@@ -10,7 +10,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import RadioVote from './RadioVote';
 
-const Layout = styled(motion.div)`
+const Layout = styled.div`
   position: absolute;
   display: flex;
   width: 100%;
@@ -361,7 +361,7 @@ export default class Radio extends Component<Props, State> {
   render() {
     return (
       <>
-        <Layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        <Layout>
           <Content>
             <AlbumImage src={this.props.radio.music.album.imageUrl} />
             <MusicInfo>

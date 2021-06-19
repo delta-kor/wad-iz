@@ -11,7 +11,7 @@ const Layout = styled(motion.div)<any>`
   display: flex;
   bottom: 76px;
   padding: 24px ${({ isPc }) => (isPc ? '36px' : '32px')};
-  width: 100%;
+  width: ${({ isPc }) => (isPc ? '414px' : '100%')};
   height: calc(
     100% - 76px - 76px - ${({ isVideo }) => (isVideo ? 'min(254px, (100vw * (9 / 16)))' : '0px')}
   );
