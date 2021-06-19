@@ -78,7 +78,15 @@ const GraphWrapper = styled.div`
   gap: 0 6px;
 `;
 
-const KwizGraph = styled(motion.div)`
+const DirectGraph = styled(motion.div)`
+  display: inline-block;
+  height: 8px;
+  background: ${Color.RED};
+  box-shadow: ${Shadow.RED};
+  border-radius: 100px;
+`;
+
+const WadizGraph = styled(motion.div)`
   display: inline-block;
   height: 8px;
   background: ${Color.BLUE};
@@ -96,61 +104,31 @@ const EmptyGraph = styled(motion.div)`
 
 const LabelWrapper = styled.div`
   position: absolute;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   top: 172px;
   bottom: 32px;
   left: 0;
   right: 0;
-  row-gap: 6px;
+  gap: 6px 0;
 `;
 
 const LabelItem = styled.div`
-  position: relative;
+  display: flex;
+  gap: 0 8px;
   height: 14px;
 `;
 
-const LabelIconKwiz = styled.div`
-  position: absolute;
+const LabelIconDirect = styled.div`
   width: 10px;
   height: 10px;
-  top: 2px;
-  left: calc(50% - 10px / 2 - 27px);
-  background: ${Color.BLUE};
-  box-shadow: ${Shadow.BLUE};
-  border-radius: 10px;
-`;
-
-const LabelTitleKwiz = styled.div`
-  position: absolute;
-  width: 42px;
-  height: 14px;
-  left: calc(50% - 42px / 2 + 12px);
-  top: 0;
-  font-style: normal;
-  font-weight: bold;
-  text-align: center;
-  font-size: 14px;
-  line-height: 14px;
-  color: ${Color.BLUE};
-`;
-
-const LabelIconIwiz = styled.div`
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  top: 2px;
-  left: calc(50% - 10px / 2 - 27px);
   background: ${Color.RED};
   box-shadow: ${Shadow.RED};
   border-radius: 10px;
 `;
 
-const LabelTitleIwiz = styled.div`
-  position: absolute;
-  width: 42px;
-  height: 14px;
-  left: calc(50% - 42px / 2 + 12px);
-  top: 0;
+const LabelTitleDirect = styled.div`
   font-style: normal;
   font-weight: bold;
   text-align: center;
@@ -159,18 +137,38 @@ const LabelTitleIwiz = styled.div`
   color: ${Color.RED};
 `;
 
+const LabelIconWadiz = styled.div`
+  width: 10px;
+  height: 10px;
+  background: ${Color.BLUE};
+  box-shadow: ${Shadow.BLUE};
+  border-radius: 10px;
+`;
+
+const LabelTitleWadiz = styled.div`
+  font-style: normal;
+  font-weight: bold;
+  text-align: center;
+  font-size: 14px;
+  line-height: 14px;
+  color: ${Color.BLUE};
+`;
+
 interface Props {
   totalAmount: number;
   totalSupporter: number;
-  kwizAmount: number;
-  kwizSupporter: number;
+  directAmount: number;
+  wadizAmount: number;
+  supporter: number;
   delay?: number;
 }
 
 export default class SurveyCard extends Component<Props, any> {
   render() {
-    const kwizAmountPercentage = (this.props.kwizAmount / this.props.totalAmount) * 100;
-    const kwizSupporterPercentage = (this.props.kwizSupporter / this.props.totalSupporter) * 100;
+    const directAmountPercentage = (this.props.directAmount / this.props.totalAmount) * 100;
+    const wadizAmountPercentage = (this.props.wadizAmount / this.props.totalAmount) * 100;
+    const amountTotalPercentage = directAmountPercentage + wadizAmountPercentage;
+    const supporterPercentage = (this.props.supporter / this.props.totalSupporter) * 100;
     return (
       <Layout
         initial={{ zoom: 1, opacity: 0 }}
@@ -181,35 +179,39 @@ export default class SurveyCard extends Component<Props, any> {
         <GraphBlockWrapper>
           <GraphBlock>
             <GraphTitle>참여 금액</GraphTitle>
-            <GraphLabel>{Transform.round(kwizAmountPercentage, 2)} %</GraphLabel>
+            <GraphLabel>{Transform.round(directAmountPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
-              <KwizGraph
-                animate={{ width: Math.min(100, kwizAmountPercentage) + '%' }}
+              <WadizGraph
+                animate={{ width: Math.min(100, wadizAmountPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30, delay: this.props.delay || 0 }}
               />
-              {kwizAmountPercentage < 100 && <EmptyGraph />}
+              <DirectGraph
+                animate={{ width: Math.min(100, directAmountPercentage) + '%' }}
+                transition={{ type: 'spring', damping: 30, delay: this.props.delay || 0 }}
+              />
+              {amountTotalPercentage < 100 && <EmptyGraph />}
             </GraphWrapper>
           </GraphBlock>
           <GraphBlock>
             <GraphTitle>참여 인원</GraphTitle>
-            <GraphLabel>{Transform.round(kwizSupporterPercentage, 2)} %</GraphLabel>
+            <GraphLabel>{Transform.round(supporterPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
-              <KwizGraph
-                animate={{ width: Math.min(100, kwizSupporterPercentage) + '%' }}
+              <WadizGraph
+                animate={{ width: Math.min(100, supporterPercentage) + '%' }}
                 transition={{ type: 'spring', damping: 30, delay: (this.props.delay || 0) + 0.25 }}
               />
-              {kwizSupporterPercentage < 100 && <EmptyGraph />}
+              {supporterPercentage < 100 && <EmptyGraph />}
             </GraphWrapper>
           </GraphBlock>
         </GraphBlockWrapper>
         <LabelWrapper>
           <LabelItem>
-            <LabelIconKwiz />
-            <LabelTitleKwiz>K-WIZ</LabelTitleKwiz>
+            <LabelIconDirect />
+            <LabelTitleDirect>직영</LabelTitleDirect>
           </LabelItem>
           <LabelItem>
-            <LabelIconIwiz />
-            <LabelTitleIwiz>I-WIZ</LabelTitleIwiz>
+            <LabelIconWadiz />
+            <LabelTitleWadiz>wadiz</LabelTitleWadiz>
           </LabelItem>
         </LabelWrapper>
       </Layout>

@@ -639,8 +639,9 @@ export default class App extends Component<any, State> {
       <SurveyCard
         totalAmount={3341459287}
         totalSupporter={9846}
-        kwizAmount={this.state.directAmount + this.state.wadizAmount}
-        kwizSupporter={this.state.wadizSupporter}
+        directAmount={this.state.directAmount}
+        wadizAmount={this.state.wadizAmount}
+        supporter={this.state.wadizSupporter}
         delay={0.1}
       />
     );
