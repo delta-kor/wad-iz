@@ -173,9 +173,14 @@ interface Props {
 
 export default class SurveyCard extends Component<Props, any> {
   render() {
-    const directAmountPercentage = (this.props.directAmount / this.props.totalAmount) * 100;
-    const wadizAmountPercentage = (this.props.wadizAmount / this.props.totalAmount) * 100;
+    let directAmountPercentage: number = (this.props.directAmount / this.props.totalAmount) * 100;
+    let wadizAmountPercentage: number = (this.props.wadizAmount / this.props.totalAmount) * 100;
     const amountTotalPercentage = directAmountPercentage + wadizAmountPercentage;
+    if (amountTotalPercentage < 100) {
+      directAmountPercentage *= 0.92;
+      wadizAmountPercentage *= 0.92;
+    }
+
     const supporterPercentage = (this.props.supporter / this.props.totalSupporter) * 100;
     return (
       <Layout
@@ -187,7 +192,7 @@ export default class SurveyCard extends Component<Props, any> {
         <GraphBlockWrapper>
           <GraphBlock>
             <GraphTitle>참여 금액</GraphTitle>
-            <GraphLabel>{Transform.round(directAmountPercentage, 2)} %</GraphLabel>
+            <GraphLabel>{Transform.round(amountTotalPercentage, 2)} %</GraphLabel>
             <GraphWrapper>
               <WadizGraph
                 animate={{ width: Math.min(100, wadizAmountPercentage) + '%' }}
@@ -195,7 +200,11 @@ export default class SurveyCard extends Component<Props, any> {
               />
               <DirectGraph
                 animate={{ width: Math.min(100, directAmountPercentage) + '%' }}
-                transition={{ type: 'spring', damping: 30, delay: this.props.delay || 0 }}
+                transition={{
+                  type: 'spring',
+                  damping: 30,
+                  delay: this.props.delay ? this.props.delay + 0.2 : 0.2,
+                }}
               />
               {amountTotalPercentage < 100 && <EmptyGraph />}
             </GraphWrapper>
