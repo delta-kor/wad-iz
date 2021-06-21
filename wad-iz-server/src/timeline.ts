@@ -5,7 +5,7 @@ function hash(content: string): string {
   const hasher = crypto.createHash('md5');
   hasher.update(content);
   const hash = hasher.digest();
-  return hash.toString('hex').substr(0, 8);
+  return hash.toString('hex').substr(0, 16);
 }
 
 export default class Timeline {

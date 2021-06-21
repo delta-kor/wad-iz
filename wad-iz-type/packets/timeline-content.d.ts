@@ -1,11 +1,11 @@
 interface TimelineContentServerPacket extends ServerPacketBase {
   type: 'timeline-content';
   packet_id: number;
-  content_id: string;
+  content: string | null;
 }
 
 interface TimelineContentClientPacket extends ClientPacketBase {
   type: 'timeline-content';
   packet_id: number;
-  content: string;
+  content_id: string;
 }

@@ -1,0 +1,88 @@
+import { Component } from 'react';
+import ReactMarkdown from 'react-markdown';
+import styled from 'styled-components';
+import { Color } from '../../styles/color';
+import { Shadow } from '../../styles/shadow';
+
+const Layout = styled.div<any>`
+  display: flex;
+  width: 342px;
+  height: 480px;
+  padding: 32px 24px 32px 32px;
+  flex-direction: column;
+  gap: 16px 0;
+  background: ${Color.WHITE};
+  box-shadow: ${Shadow.DOWN};
+  border-radius: 16px;
+`;
+
+const Markdown = styled(ReactMarkdown)`
+  display: flex;
+  padding: 0 8px 0 0;
+  max-height: 480px;
+  flex-direction: column;
+  gap: 16px 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  word-break: break-all;
+  overflow-y: scroll;
+
+  h4 {
+    font-size: 16px;
+    padding: 0 0 8px 0;
+    border-bottom: 2px solid ${Color.GRAY};
+  }
+
+  a {
+    text-decoration: none;
+    color: ${Color.PURPLE};
+  }
+
+  img {
+    width: 100%;
+  }
+
+  ::-webkit-scrollbar {
+    display: block;
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${Color.BLUE};
+    border-radius: 10000px;
+  }
+`;
+
+interface Props {
+  content: string;
+}
+
+export default class TimelineContent extends Component<Props, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      content: '',
+    };
+  }
+
+  render() {
+    return (
+      <Layout>
+        <Markdown
+          components={{
+            a({ className, children, ...props }) {
+              return (
+                <a href={props.href as string} target={'_blank'} className={className}>
+                  {children}
+                </a>
+              );
+            },
+          }}
+        >
+          {this.props.content || '불러오는 중...'}
+        </Markdown>
+      </Layout>
+    );
+  }
+}

@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import styled from 'styled-components';
-import Socket from '../utils/socket';
-import InstagramPostCard from './card/InstagramPost';
-import InstagramProfileCard from './card/InstagramProfile';
-import InstagramSelectorCard from './card/InstagramSelector';
-import InstagramSelectorPcCard from './card/InstagramSelectorPc';
+import Socket from '../../utils/socket';
+import InstagramPostCard from '../card/InstagramPost';
+import InstagramProfileCard from '../card/InstagramProfile';
+import InstagramSelectorCard from '../card/InstagramSelector';
+import InstagramSelectorPcCard from '../card/InstagramSelectorPc';
 
 const Layout = styled.div<any>`
   display: flex;

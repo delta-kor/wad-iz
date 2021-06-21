@@ -2,6 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import DashboardIcon from '../../icon/dashboard.svg';
 import InstagramIcon from '../../icon/instagram.svg';
+import TimelineIcon from '../../icon/timeline.svg';
 import { Color } from '../../styles/color';
 
 const Layout = styled.div<any>`
@@ -84,6 +85,18 @@ export default class CardSelector extends Component<Props, any> {
           <ItemIcon
             src={InstagramIcon}
             selected={this.props.selected === 1}
+            isPc={this.props.isPc}
+          />
+        </Item>
+        <Item
+          isPc={this.props.isPc}
+          onClick={() => this.props.onChange(2)}
+          selected={this.props.selected === 2}
+        >
+          <ItemHighlight selected={this.props.selected === 2} isPc={this.props.isPc} />
+          <ItemIcon
+            src={TimelineIcon}
+            selected={this.props.selected === 2}
             isPc={this.props.isPc}
           />
         </Item>

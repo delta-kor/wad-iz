@@ -148,4 +148,21 @@ export default class Socket extends EventEmitter {
     };
     return this.request<InstagramPostServerPacket>(packet);
   }
+
+  public requestTimeline(): Promise<TimelineServerPacket> {
+    const packet: TimelineClientPacket = {
+      type: 'timeline',
+      packet_id: this.packetId,
+    };
+    return this.request<TimelineServerPacket>(packet);
+  }
+
+  public requestTimelineContent(id: string): Promise<TimelineContentServerPacket> {
+    const packet: TimelineContentClientPacket = {
+      type: 'timeline-content',
+      packet_id: this.packetId,
+      content_id: id,
+    };
+    return this.request<TimelineContentServerPacket>(packet);
+  }
 }

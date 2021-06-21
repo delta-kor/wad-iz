@@ -402,6 +402,10 @@ export default class Socket {
     if (packet.type === 'timeline') {
       return this.sendTimeline(packet.packet_id);
     }
+
+    if (packet.type === 'timeline-content') {
+      return this.sendTimelineContent(packet.packet_id, packet.content_id);
+    }
   }
 
   private sendJson(json: any): void {
@@ -791,6 +795,15 @@ export default class Socket {
       type: 'timeline',
       packet_id: packetId,
       timeline: Timeline.getList(),
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendTimelineContent(packetId: number, contentId: string): void {
+    const packet: TimelineContentServerPacket = {
+      type: 'timeline-content',
+      packet_id: packetId,
+      content: Timeline.getContent(contentId),
     };
     this.sendPacket(packet);
   }
