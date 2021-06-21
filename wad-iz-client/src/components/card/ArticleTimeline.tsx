@@ -76,12 +76,13 @@ const Description = styled.div`
 `;
 
 const MarkdownWrapper = styled(motion.div)`
-  width: 100%;
+  width: calc(100% + 14px);
   overflow: hidden;
 `;
 
 const Markdown = styled(ReactMarkdown)`
   display: flex;
+  padding: 0 10px 0 0;
   max-height: 480px;
   flex-direction: column;
   gap: 16px 0;
@@ -104,6 +105,28 @@ const Markdown = styled(ReactMarkdown)`
 
   img {
     width: 100%;
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 0 18px;
+    gap: 16px 0;
+  }
+
+  ol > li::marker {
+    font-weight: bold;
+    color: ${Color.BLUE};
+  }
+
+  ::-webkit-scrollbar {
+    display: block;
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${Color.BLUE};
+    border-radius: 10000px;
   }
 `;
 
@@ -134,9 +157,14 @@ export default class ArticleTimeline extends Component<Props, State> {
 
   componentDidUpdate = async (props: Props, state: State) => {
     if (this.props.isPc && state.expand !== this.state.expand) {
-      const response = await this.props.socket.requestTimelineContent(this.props.content_id);
-      if (response.content) {
-        this.props.setContent && this.props.setContent(response.content);
+      if (!this.state.content) {
+        const response = await this.props.socket.requestTimelineContent(this.props.content_id);
+        if (response.content) {
+          this.props.setContent && this.props.setContent(response.content);
+          this.setState({ content: response.content });
+        }
+      } else {
+        this.props.setContent && this.props.setContent(this.state.content);
       }
       return true;
     }

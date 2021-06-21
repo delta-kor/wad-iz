@@ -19,7 +19,8 @@ const PcStickyFlex = styled.div`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
-  top: calc((100% - 770px) / 2);
+  top: calc((100vh - 770px) / 2);
+  height: calc(100vh - ((100vh - 770px) / 2) * 2);
   gap: 24px 0;
 `;
 

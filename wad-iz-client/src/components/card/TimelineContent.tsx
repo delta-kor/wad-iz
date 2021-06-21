@@ -7,7 +7,7 @@ import { Shadow } from '../../styles/shadow';
 const Layout = styled.div<any>`
   display: flex;
   width: 342px;
-  height: 480px;
+  height: 100%;
   padding: 32px 24px 32px 32px;
   flex-direction: column;
   gap: 16px 0;
@@ -19,17 +19,16 @@ const Layout = styled.div<any>`
 const Markdown = styled(ReactMarkdown)`
   display: flex;
   padding: 0 8px 0 0;
-  max-height: 480px;
   flex-direction: column;
   gap: 16px 0;
   font-style: normal;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 13px;
   word-break: break-all;
   overflow-y: scroll;
 
   h4 {
-    font-size: 16px;
+    font-size: 18px;
     padding: 0 0 8px 0;
     border-bottom: 2px solid ${Color.GRAY};
   }
@@ -41,6 +40,18 @@ const Markdown = styled(ReactMarkdown)`
 
   img {
     width: 100%;
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 0 18px;
+    gap: 16px 0;
+  }
+
+  ol > li::marker {
+    font-weight: bold;
+    color: ${Color.BLUE};
   }
 
   ::-webkit-scrollbar {
