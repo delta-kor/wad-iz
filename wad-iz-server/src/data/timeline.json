@@ -1,0 +1,42 @@
+[
+  {
+    "type": "기사",
+    "date": "2021. 03. 10.",
+    "title": "아이즈원, 결국 해체 [공식]",
+    "description": "이데일리",
+    "action": "url",
+    "url": "http://starin.edaily.co.kr/news/newspath.asp?newsid=01341526628982008"
+  },
+  {
+    "type": "기사",
+    "date": "2021. 10. 29.",
+    "title": "아이즈원, 재결합 확정",
+    "description": "평행우주",
+    "action": "url",
+    "url": "http://reboot-iz.one/"
+  },
+  {
+    "type": "기사",
+    "date": "2021. 10. 29.",
+    "title": "아이즈원, 재결합 확정",
+    "description": "평행우주",
+    "action": "url",
+    "url": "http://reboot-iz.one/"
+  },
+  {
+    "type": "기사",
+    "date": "2021. 10. 29.",
+    "title": "아이즈원, 재결합 확정",
+    "description": "평행우주",
+    "action": "url",
+    "url": "http://reboot-iz.one/"
+  },
+  {
+    "type": "공지",
+    "date": "2021. 10. 29.",
+    "title": "아이즈원, 재결합 공지",
+    "description": "성공!",
+    "action": "action",
+    "content": "하나가 되는 순간 모두가 주목해"
+  }
+]

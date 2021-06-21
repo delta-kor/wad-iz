@@ -16,7 +16,9 @@ type ClientPacket =
   | InstagramProfileClientPacket
   | ProfileUpdateClientPacket
   | RadioVoteClientPacket
-  | TicketClientPacket;
+  | TicketClientPacket
+  | TimelineClientPacket
+  | TimelineContentClientPacket;
 
 type ServerPacket =
   | ChatClearServerPacket
@@ -35,6 +37,8 @@ type ServerPacket =
   | RadioServerPacket
   | ReloadServerPacket
   | TicketServerPacket
+  | TimelineServerPacket
+  | TimelineContentServerPacket
   | TokenServerPacket
   | UserSyncServerPacket
   | VideoServerPacket

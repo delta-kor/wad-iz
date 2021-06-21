@@ -8,6 +8,7 @@ import MultiVideo from './multi-video';
 import Env from './models/env';
 import Lyrics from './lyrics';
 import { Log } from './log';
+import Timeline from './timeline';
 
 export enum SocketState {
   PENDING,
@@ -59,16 +60,37 @@ export default class Socket {
 
       if (packet.token) {
         jwt.verify(packet.token, process.env.SECRET!, (err, decoded: any) => {
-          if (err) throw new Error();
-          const connectedUser = this.app.getUserId(decoded.user_id);
-          if (connectedUser) {
-            connectedUser.closeForMultipleConnect();
+          if (err) {
+            const userId = crypto.randomBytes(8).toString('hex');
+            const nickname = `WIZ-${Math.round(Math.random() * 10000)
+              .toString()
+              .padStart(4, '0')}`;
+            const profileImage = 'logo.iz.1';
+            this.userId = userId;
+            this.nickname = nickname;
+            this.profileImage = profileImage;
+            this.state = SocketState.DEFAULT;
+            const token = jwt.sign(
+              {
+                user_id: this.userId,
+                nickname: this.nickname,
+                profile_image: this.profileImage,
+                role: this.state - 1,
+              },
+              process.env.SECRET!
+            );
+            this.sendToken(token);
+          } else {
+            const connectedUser = this.app.getUserId(decoded.user_id);
+            if (connectedUser) {
+              connectedUser.closeForMultipleConnect();
+            }
+            if (!decoded.role) decoded.role = 0;
+            this.userId = decoded.user_id || null;
+            this.nickname = decoded.nickname || null;
+            this.profileImage = decoded.profile_image || null;
+            this.state = decoded.role + 1;
           }
-          if (!decoded.role) decoded.role = 0;
-          this.userId = decoded.user_id || null;
-          this.nickname = decoded.nickname || null;
-          this.profileImage = decoded.profile_image || null;
-          this.state = decoded.role + 1;
         });
       } else {
         const userId = crypto.randomBytes(8).toString('hex');
@@ -374,7 +396,11 @@ export default class Socket {
 
     if (packet.type === 'radio-vote') {
       if (this.state === SocketState.PENDING) return false;
-      this.app.updateRadioVote(packet.vote, this.userId!);
+      return this.app.updateRadioVote(packet.vote, this.userId!);
+    }
+
+    if (packet.type === 'timeline') {
+      return this.sendTimeline(packet.packet_id);
     }
   }
 
@@ -756,6 +782,15 @@ export default class Socket {
       type: 'instagram-post',
       packet_id: packetId,
       posts: result,
+    };
+    this.sendPacket(packet);
+  }
+
+  public sendTimeline(packetId: number): void {
+    const packet: TimelineServerPacket = {
+      type: 'timeline',
+      packet_id: packetId,
+      timeline: Timeline.getList(),
     };
     this.sendPacket(packet);
   }
