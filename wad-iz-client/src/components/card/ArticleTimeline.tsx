@@ -158,6 +158,7 @@ export default class ArticleTimeline extends Component<Props, State> {
   componentDidUpdate = async (props: Props, state: State) => {
     if (this.props.isPc && state.expand !== this.state.expand) {
       if (!this.state.content) {
+        this.props.setContent && this.props.setContent('');
         const response = await this.props.socket.requestTimelineContent(this.props.content_id);
         if (response.content) {
           this.props.setContent && this.props.setContent(response.content);
