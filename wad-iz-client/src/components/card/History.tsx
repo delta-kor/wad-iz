@@ -81,6 +81,7 @@ interface Props {
   delay?: number;
   onChartClick?(): void;
   items: CandleData[];
+  layoutId?: string;
 }
 
 interface State {
@@ -115,9 +116,9 @@ export default class HistoryCard extends Component<Props, State> {
       items.push(
         <HistoryItem
           key={index}
-          initial={{ zoom: 0, opacity: 0 }}
+          initial={{ zoom: 0.01, opacity: 0 }}
           animate={{ zoom: 1, opacity: 1 }}
-          transition={{ delay: (this.props.delay || 0) + index * 0.05 + 0.2 }}
+          transition={{ delay: (this.props.delay || 0) + index * 0.1 + 0.2 }}
         >
           <HistoryAmount delta={item.delta}>{Transform.toCurrencyDelta(item.delta)}</HistoryAmount>
           <HistoryTime>{Transform.toTimeHistoryText(timeDelta)}</HistoryTime>
@@ -127,11 +128,7 @@ export default class HistoryCard extends Component<Props, State> {
     }
 
     return (
-      <Layout
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-      >
+      <Layout layoutId={this.props.layoutId}>
         <Title>기록</Title>
         <ViewChart onClick={this.onChartClick}>차트 보기</ViewChart>
         <HistoryWrapper>{items}</HistoryWrapper>

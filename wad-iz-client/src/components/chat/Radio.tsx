@@ -10,7 +10,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import RadioVote from './RadioVote';
 
-const Layout = styled.div`
+const Layout = styled(motion.div)`
   position: absolute;
   display: flex;
   width: 100%;
@@ -361,7 +361,7 @@ export default class Radio extends Component<Props, State> {
   render() {
     return (
       <>
-        <Layout>
+        <Layout layoutId={'direct-card'}>
           <Content>
             <AlbumImage src={this.props.radio.music.album.imageUrl} />
             <MusicInfo>

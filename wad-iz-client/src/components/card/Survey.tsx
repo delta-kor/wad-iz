@@ -5,7 +5,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled(motion.div)`
+const Layout = styled.div`
   position: relative;
   height: 239px;
   background: ${Color.WHITE};
@@ -183,11 +183,7 @@ export default class SurveyCard extends Component<Props, any> {
 
     const supporterPercentage = (this.props.supporter / this.props.totalSupporter) * 100;
     return (
-      <Layout
-        initial={{ zoom: 1, opacity: 0 }}
-        animate={{ zoom: 1, opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-      >
+      <Layout>
         <Title>수요조사</Title>
         <GraphBlockWrapper>
           <GraphBlock>

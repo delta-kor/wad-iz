@@ -132,12 +132,7 @@ export default class DayCard extends Component<Props, State> {
 
     const upPercentage = (up / (up + down)) * 100;
     return (
-      <Layout
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-        layoutId={'dashboard-card'}
-      >
+      <Layout layoutId={'dashboard-card'}>
         <Title>24시간</Title>
         <Total>{Transform.toCurrencyDelta(up - down)}</Total>
         <Up>+ {Transform.toCurrency(up)}</Up>

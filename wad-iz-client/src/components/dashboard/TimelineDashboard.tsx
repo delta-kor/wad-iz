@@ -65,8 +65,9 @@ export default class TimelineDashboard extends Component<Props, State> {
           <>
             <PcFlex>
               {this.state.timeline.map((timeline, index) => {
+                const delay = 0.2 + index * 0.1;
                 if (timeline.action === 'url') {
-                  return <UrlTimeline {...timeline} isPc={true} key={index} />;
+                  return <UrlTimeline {...timeline} isPc={true} delay={delay} key={index} />;
                 }
                 if (timeline.action === 'article') {
                   return (
@@ -75,6 +76,7 @@ export default class TimelineDashboard extends Component<Props, State> {
                       socket={this.props.socket}
                       isPc={true}
                       setContent={content => this.setState({ content })}
+                      delay={delay}
                       key={index}
                     />
                   );

@@ -617,13 +617,19 @@ export default class App extends Component<any, State> {
   };
 
   render() {
+    const totalCard = (
+      <TotalCard
+        amount={this.state.directAmount + this.state.wadizAmount}
+        layoutId={'total-card'}
+      />
+    );
     const directCard = (
       <MoneyCard
         title={'직영'}
         label={this.state.directLastUpdate}
         amount={this.state.directAmount}
         noShadow={this.state.menu === 1}
-        delay={0.1}
+        layoutId={'direct-card'}
       />
     );
     const wadizCard = (
@@ -632,7 +638,7 @@ export default class App extends Component<any, State> {
         label={Transform.toSupporterText(this.state.wadizSupporter)}
         amount={this.state.wadizAmount}
         noShadow={this.state.menu === 1}
-        delay={0.2}
+        layoutId={'wadiz-card'}
       />
     );
     const dayCard = <DayCard data={this.state.candleData} delay={0} />;
@@ -652,6 +658,7 @@ export default class App extends Component<any, State> {
         items={this.state.candleData}
         delay={0.3}
         onChartClick={() => this.onNavigatorClick(3)}
+        layoutId={'history-card'}
       />
     );
 
@@ -691,7 +698,7 @@ export default class App extends Component<any, State> {
           {this.state.dashboardMenu === 0 && (
             <>
               <PcCardStackLeft layoutId={'card-stack'}>
-                <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+                {totalCard}
                 {directCard}
                 {wadizCard}
               </PcCardStackLeft>
@@ -847,7 +854,7 @@ export default class App extends Component<any, State> {
           ) : (
             <PcChatPanel layoutId={'navigator'} isRadio={this.state.isRadio}>
               <PcChatCardStack layoutId={'card-stack'}>
-                <TotalCard amount={this.state.directAmount + this.state.wadizAmount} />
+                {totalCard}
                 {directCard}
                 {wadizCard}
                 <>

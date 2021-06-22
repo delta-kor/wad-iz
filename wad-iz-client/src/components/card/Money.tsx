@@ -72,18 +72,13 @@ interface Props {
   label: string;
   amount: number;
   noShadow?: boolean;
-  delay?: number;
+  layoutId?: string;
 }
 
 export default class MoneyCard extends Component<Props, any> {
   render() {
     return (
-      <Layout
-        noShadow={this.props.noShadow}
-        initial={{ zoom: 0.5, opacity: 0 }}
-        animate={{ zoom: 1, opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-      >
+      <Layout noShadow={this.props.noShadow} layoutId={this.props.layoutId}>
         <Title>{this.props.title}</Title>
         <Label>{this.props.label}</Label>
         <Amount>{Transform.toCurrency(this.props.amount)}</Amount>

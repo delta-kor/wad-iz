@@ -1,10 +1,11 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import UrlIcon from '../../icon/url.svg';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   display: flex;
   width: ${({ isPc }) => (isPc ? '342px' : 'unset')};
   padding: 32px;
@@ -77,12 +78,18 @@ interface Props {
   description: string;
   url: string;
   isPc: boolean;
+  delay?: number;
 }
 
 export default class UrlTimeline extends Component<Props, any> {
   render() {
     return (
-      <Layout isPc={this.props.isPc}>
+      <Layout
+        isPc={this.props.isPc}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: this.props.delay || 0 }}
+      >
         <Header>
           <Type>{this.props.type}</Type>
           <Date>{this.props.date}</Date>

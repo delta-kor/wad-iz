@@ -42,7 +42,7 @@ const VoteWrapper = styled.div`
   gap: 12px 0;
 `;
 
-const VoteItem = styled.div<any>`
+const VoteItem = styled(motion.div)<any>`
   display: flex;
   min-height: 40px;
   padding: 16px 24px;
@@ -135,11 +135,14 @@ export default class RadioVote extends Component<Props, State> {
           <Timer>{text} 후 종료</Timer>
         </Header>
         <VoteWrapper>
-          {this.props.radio.vote.map(vote => (
+          {this.props.radio.vote.map((vote, index) => (
             <VoteItem
               onClick={() => this.props.onSelect(vote.music.id!)}
               active={vote.voter.includes(this.props.userId)}
               key={vote.music.id}
+              initial={{ opacity: 0, zoom: 0.01 }}
+              animate={{ opacity: 1, zoom: 1 }}
+              transition={{ delay: 0.1 * index + 0.2 }}
             >
               <VoteItemHeader>
                 <VoteItemTitle>{vote.music.title}</VoteItemTitle>

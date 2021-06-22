@@ -7,7 +7,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import Socket from '../../utils/socket';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   display: flex;
   width: ${({ isPc }) => (isPc ? '342px' : 'unset')};
   padding: 32px;
@@ -139,6 +139,7 @@ interface Props {
   socket: Socket;
   isPc: boolean;
   setContent?(content: string): void;
+  delay?: number;
 }
 
 interface State {
@@ -187,7 +188,12 @@ export default class ArticleTimeline extends Component<Props, State> {
 
   render() {
     return (
-      <Layout isPc={this.props.isPc}>
+      <Layout
+        isPc={this.props.isPc}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: this.props.delay || 0 }}
+      >
         <Header>
           <Type>{this.props.type}</Type>
           <Date>{this.props.date}</Date>

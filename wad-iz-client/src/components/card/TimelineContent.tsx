@@ -1,10 +1,11 @@
+import { motion } from 'framer-motion';
 import { Component } from 'react';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 
-const Layout = styled.div<any>`
+const Layout = styled(motion.div)<any>`
   display: flex;
   width: 342px;
   height: 100%;
@@ -79,7 +80,7 @@ export default class TimelineContent extends Component<Props, any> {
 
   render() {
     return (
-      <Layout>
+      <Layout layoutId={'history-card'}>
         <Markdown
           components={{
             a({ className, children, ...props }) {

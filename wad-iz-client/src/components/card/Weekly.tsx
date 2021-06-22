@@ -5,7 +5,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled(motion.div)`
+const Layout = styled.div`
   position: relative;
   height: 192px;
   background: ${Color.WHITE};
@@ -160,11 +160,7 @@ export default class WeeklyCard extends Component<Props, any> {
     }
 
     return (
-      <Layout
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-      >
+      <Layout>
         <Title>일별</Title>
         <GraphWrapper>{items}</GraphWrapper>
       </Layout>

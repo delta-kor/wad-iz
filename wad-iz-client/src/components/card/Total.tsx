@@ -45,18 +45,13 @@ const Description = styled.div`
 interface Props {
   amount: number;
   noShadow?: boolean;
-  delay?: number;
+  layoutId?: string;
 }
 
 export default class TotalCard extends Component<Props, any> {
   render() {
     return (
-      <Layout
-        noShadow={this.props.noShadow}
-        initial={{ zoom: 0.5, opacity: 0 }}
-        animate={{ zoom: 1, opacity: 1 }}
-        transition={{ delay: this.props.delay || 0 }}
-      >
+      <Layout noShadow={this.props.noShadow} layoutId={this.props.layoutId}>
         <Amount>{Transform.toCurrency(this.props.amount)}</Amount>
         <Description>{Transform.toCurrencyLocaleNumber(this.props.amount)}</Description>
       </Layout>
