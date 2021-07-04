@@ -59,8 +59,11 @@ export default class Instagram extends EventEmitter {
 
   private async login(): Promise<void> {
     this.client.state.generateDevice(process.env.IG_USERNAME!);
+    Log.info('Starting instagram login flow');
+    await this.client.simulate.preLoginFlow();
     await this.client.account.login(process.env.IG_USERNAME!, process.env.IG_PASSWORD!);
-    Log.info('Instagram login');
+    await this.client.simulate.postLoginFlow();
+    Log.info('Instagram logined');
   }
 
   private async loadUsers(): Promise<void> {
