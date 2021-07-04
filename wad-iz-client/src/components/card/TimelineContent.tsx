@@ -80,7 +80,7 @@ export default class TimelineContent extends Component<Props, any> {
 
   render() {
     return (
-      <Layout layoutId={'history-card'}>
+      <Layout>
         <Markdown
           components={{
             a({ className, children, ...props }) {

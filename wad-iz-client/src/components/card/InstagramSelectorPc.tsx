@@ -5,7 +5,7 @@ import { Color } from '../../styles/color';
 import { Shadow } from '../../styles/shadow';
 import { Transform } from '../../utils/transform';
 
-const Layout = styled(motion.div)<any>`
+const Layout = styled.div<any>`
   position: relative;
   width: 342px;
   height: 490px;
@@ -105,15 +105,15 @@ interface Props {
 export default class InstagramSelectorPcCard extends Component<Props, any> {
   render() {
     return (
-      <Layout layoutId={'dashboard-card'}>
+      <Layout>
         <Title>프로필</Title>
         <ProfileItemWrapper>
           {this.props.profiles.map((profile, index) => (
             <ProfileItem
               key={profile.username}
               onClick={() => this.props.onSelect(index)}
-              initial={{ zoom: 0, opacity: 0 }}
-              animate={{ zoom: 1, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ delay: index * 0.05 + 0.2 }}
             >
               <ProfileImageWrapper>

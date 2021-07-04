@@ -63,6 +63,9 @@ export default class TimelineDashboard extends Component<Props, State> {
       <Layout isPc={this.props.isPc}>
         {this.props.isPc && (
           <>
+            <PcStickyFlex>
+              <TimelineContent content={this.state.content} />
+            </PcStickyFlex>
             <PcFlex>
               {this.state.timeline.map((timeline, index) => {
                 const delay = 0.2 + index * 0.1;
@@ -83,9 +86,6 @@ export default class TimelineDashboard extends Component<Props, State> {
                 }
               })}
             </PcFlex>
-            <PcStickyFlex>
-              <TimelineContent content={this.state.content} />
-            </PcStickyFlex>
           </>
         )}
         {!this.props.isPc &&

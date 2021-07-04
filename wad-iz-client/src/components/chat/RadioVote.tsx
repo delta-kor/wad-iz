@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Color } from '../../styles/color';
@@ -42,7 +41,7 @@ const VoteWrapper = styled.div`
   gap: 12px 0;
 `;
 
-const VoteItem = styled(motion.div)<any>`
+const VoteItem = styled.div<any>`
   display: flex;
   min-height: 40px;
   padding: 16px 24px;
@@ -56,7 +55,7 @@ const VoteItem = styled(motion.div)<any>`
   transition: 500ms box-shadow;
 `;
 
-const VoteItemTitle = styled(motion.div)`
+const VoteItemTitle = styled.div`
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
@@ -140,9 +139,6 @@ export default class RadioVote extends Component<Props, State> {
               onClick={() => this.props.onSelect(vote.music.id!)}
               active={vote.voter.includes(this.props.userId)}
               key={vote.music.id}
-              initial={{ opacity: 0, zoom: 0.01 }}
-              animate={{ opacity: 1, zoom: 1 }}
-              transition={{ delay: 0.1 * index + 0.2 }}
             >
               <VoteItemHeader>
                 <VoteItemTitle>{vote.music.title}</VoteItemTitle>

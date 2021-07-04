@@ -46,7 +46,7 @@ const CardStack = styled.div`
   row-gap: 24px;
 `;
 
-const PcCardStackLeft = styled(motion.div)`
+const PcCardStackLeft = styled.div`
   position: absolute;
   display: flex;
   top: 0;
@@ -696,8 +696,8 @@ export default class App extends Component<any, State> {
       pcContent = (
         <>
           {this.state.dashboardMenu === 0 && (
-            <>
-              <PcCardStackLeft layoutId={'card-stack'}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <PcCardStackLeft>
                 {totalCard}
                 {directCard}
                 {wadizCard}
@@ -711,21 +711,21 @@ export default class App extends Component<any, State> {
                 {historyCard}
               </PcCardStackRight>
               <Copyright isPc={true} />
-            </>
+            </motion.div>
           )}
           {this.state.dashboardMenu === 1 && (
-            <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <PcInstagramWrapper>
                 <InstagramDashboard socket={this.socket} isPc={true} />
               </PcInstagramWrapper>
-            </>
+            </motion.div>
           )}
           {this.state.dashboardMenu === 2 && (
-            <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <PcInstagramWrapper>
                 <TimelineDashboard socket={this.socket} isPc={true} />
               </PcInstagramWrapper>
-            </>
+            </motion.div>
           )}
           <PcCardSelector>
             <CardSelector
@@ -934,11 +934,13 @@ export default class App extends Component<any, State> {
     return (
       <AnimateSharedLayout>
         <MediaQuery maxWidth={1024}>
-          <Navigator
-            onClick={this.onNavigatorClick}
-            active={this.state.menu}
-            display={![1, 3, 4].includes(this.state.menu)}
-          />
+          {this.state.menu !== 4 && (
+            <Navigator
+              onClick={this.onNavigatorClick}
+              active={this.state.menu}
+              display={![1, 3, 4].includes(this.state.menu)}
+            />
+          )}
           {content}
         </MediaQuery>
         <MediaQuery minWidth={1024}>
