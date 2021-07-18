@@ -192,7 +192,15 @@ export default class Chart extends Component<Props, State> {
 
     const lines = [];
     let interval: number = Infinity;
-    if (peekDelta > 10_000_000) {
+    if (peekDelta > 1_000_000_000) {
+      interval = 500_000_000;
+    } else if (peekDelta > 500_000_000) {
+      interval = 100_000_000;
+    } else if (peekDelta > 100_000_000) {
+      interval = 50_000_000;
+    } else if (peekDelta > 50_000_000) {
+      interval = 10_000_000;
+    } else if (peekDelta > 10_000_000) {
       interval = 2_000_000;
     } else if (peekDelta > 5_000_000) {
       interval = 1_000_000;
