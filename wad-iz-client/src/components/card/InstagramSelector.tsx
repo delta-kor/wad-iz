@@ -96,8 +96,8 @@ export default class InstagramSelectorCard extends Component<Props, any> {
             <ProfileItem
               key={profile.username}
               onClick={() => this.props.onSelect(index)}
-              initial={{ zoom: 0, opacity: 0 }}
-              animate={{ zoom: 1, opacity: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ delay: index * 0.05 + 0.2 }}
             >
               <ProfileImageWrapper>

@@ -68,7 +68,7 @@ export default class TimelineDashboard extends Component<Props, State> {
             </PcStickyFlex>
             <PcFlex>
               {this.state.timeline.map((timeline, index) => {
-                const delay = 0.2 + index * 0.1;
+                const delay = Math.min(0.2 + index * 0.1, 1);
                 if (timeline.action === 'url') {
                   return <UrlTimeline {...timeline} isPc={true} delay={delay} key={index} />;
                 }
