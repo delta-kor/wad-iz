@@ -29,6 +29,7 @@ import TimelineDashboard from './components/dashboard/TimelineDashboard';
 import Loading from './components/Loading';
 import MultiVideoSelector from './components/MultiVideoSelector';
 import MultiVideoSelectorPc from './components/MultiVideoSelectorPc';
+import OutOfService from './components/OutOfService';
 import Profile from './components/Profile';
 import Statistics from './components/Statistics';
 import { Color } from './styles/color';
@@ -308,7 +309,7 @@ export default class App extends Component<any, State> {
 
     this.socket.on('welcome', (packet: WelcomeServerPacket) => {
       this.setState({ timeDelta: new Date().getTime() - packet.server_time });
-      this.setState({ menu: 0 });
+      this.setState({ menu: 5 });
     });
 
     this.socket.on('ticket', (packet: TicketServerPacket) => {
@@ -929,6 +930,9 @@ export default class App extends Component<any, State> {
     } else if (this.state.menu === 4) {
       content = <Loading />;
       pcContent = content;
+    } else if (this.state.menu === 5) {
+      content = <OutOfService onContinue={() => this.setState({ menu: 0 })} />;
+      pcContent = content;
     }
 
     return (
@@ -938,13 +942,13 @@ export default class App extends Component<any, State> {
             <Navigator
               onClick={this.onNavigatorClick}
               active={this.state.menu}
-              display={![1, 3, 4].includes(this.state.menu)}
+              display={![1, 3, 4, 5].includes(this.state.menu)}
             />
           )}
           {content}
         </MediaQuery>
         <MediaQuery minWidth={1024}>
-          {![1, 3, 4].includes(this.state.menu) && (
+          {![1, 3, 4, 5].includes(this.state.menu) && (
             <NavigatorPc onClick={this.onNavigatorClick} active={this.state.menu} />
           )}
           {pcContent}
