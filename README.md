@@ -1,4 +1,4 @@
-# WAD-IZ
+# WAD-IZ (DEPRECATED)
 
 ### IZ\*ONE Parallel Universe Project Live Viewer
 
