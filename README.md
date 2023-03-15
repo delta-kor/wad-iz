@@ -2,7 +2,7 @@
 
 ### IZ\*ONE Parallel Universe Project Live Viewer
 
-[http://lt2.kr/](http://lt2.kr/)
+[http://izflix.net/](http://izflix.net/)
 
 ## Project Image
 
