@@ -2,8 +2,6 @@
 
 ### IZ\*ONE Parallel Universe Project Live Viewer
 
-[http://izflix.net/](http://izflix.net/)
-
 ## Project Image
 
 ### Home
